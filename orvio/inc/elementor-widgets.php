@@ -310,7 +310,7 @@ class Orvio_Widget_Products extends Orvio_Widget_Base {
 		$this->add_control( 'car_auto', array( 'label' => orvio_t( 'Autoplay milliseconds', 'پخش خودکار (میلی‌ثانیه)' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 0, 'min' => 0, 'max' => 12000, 'condition' => array( 'layout' => 'carousel' ) ) );
 		$this->add_control( 'car_loop', array( 'label' => orvio_t( 'Loop', 'حلقه' ), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => array( 'layout' => 'carousel' ) ) );
 		$this->add_control( 'car_arrows', array( 'label' => orvio_t( 'Show arrows', 'نمایش فلش‌ها' ), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => array( 'layout' => 'carousel' ) ) );
-		$this->add_control( 'car_dots', array( 'label' => orvio_t( 'Show dots', 'نمایش نقطه‌ها' ), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => array( 'layout' => 'carousel' ) );
+		$this->add_control( 'car_dots', array( 'label' => orvio_t( 'Show dots', 'نمایش نقطه‌ها' ), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => array( 'layout' => 'carousel' ) ) );
 		$this->end_controls_section();
 		$this->orvio_register_style();
 		$this->orvio_register_part( 'title', orvio_t( 'Card title', 'عنوان کارت' ), '{{WRAPPER}} .orvio-card__title, {{WRAPPER}} .orvio-card__title a' );
