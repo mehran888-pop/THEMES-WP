@@ -33,6 +33,7 @@ $cart_href  = 'page' === $o['cart_type'] ? ' href="' . esc_url( function_exists(
 				<span class="orvio-logo__word"><strong><?php bloginfo( 'name' ); ?></strong><small><?php bloginfo( 'description' ); ?></small></span>
 			</a>
 		<?php endif; ?>
+		<?php if ( ! empty( $o['show_search'] ) ) : ?>
 		<form class="orvio-search" role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
 			<span class="orvio-search__icon"><?php echo orvio_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 			<input type="search" name="s" data-search placeholder="<?php echo esc_attr( orvio_t( 'Search the edit…', 'جستجو میان اشیاء…' ) ); ?>" value="<?php echo esc_attr( get_search_query() ); ?>" autocomplete="off">
@@ -43,15 +44,20 @@ $cart_href  = 'page' === $o['cart_type'] ? ' href="' . esc_url( function_exists(
 			<div class="orvio-suggest" data-suggest hidden></div>
 		</form>
 		<button type="button" class="orvio-iconbtn orvio-search-toggle" data-open="search" aria-label="<?php echo esc_attr( orvio_t( 'Search', 'جستجو' ) ); ?>"><?php echo orvio_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></button>
+		<?php endif; ?>
 		<div class="orvio-tools">
+			<?php if ( ! empty( $o['show_account'] ) ) : ?>
 			<a class="orvio-tool" href="<?php echo esc_url( orvio_account_url() ); ?>"><span class="orvio-tool__icon"><?php echo orvio_icon( 'user' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span><span class="orvio-tool__label"><?php echo esc_html( orvio_t( 'Account', 'حساب' ) ); ?></span></a>
+			<?php endif; ?>
 			<?php if ( ! empty( $o['enable_wishlist'] ) ) : ?>
 				<button type="button" class="orvio-tool" data-open="wish"><span class="orvio-tool__icon"><?php echo orvio_icon( 'heart' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span class="orvio-count is-zero" data-wish-count>0</span></span><span class="orvio-tool__label"><?php echo esc_html( orvio_t( 'Saved', 'علاقه‌مندی' ) ); ?></span></button>
 			<?php endif; ?>
+			<?php if ( ! empty( $o['show_cart'] ) ) : ?>
 			<<?php echo esc_attr( $cart_tag ); ?> class="orvio-tool orvio-cartbtn"<?php echo $cart_href . $cart_open; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<span class="orvio-tool__icon"><?php echo orvio_icon( 'bag' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span class="orvio-count<?php echo $cart_count ? '' : ' is-zero'; ?>" data-cart-count><?php echo esc_html( (string) $cart_count ); ?></span></span>
 				<span class="orvio-tool__meta"><span class="orvio-tool__label"><?php echo esc_html( orvio_t( 'Bag', 'سبد' ) ); ?></span><span class="orvio-cartbtn__total" data-cart-total><?php echo wp_kses_post( orvio_cart_total_html() ); ?></span></span>
 			</<?php echo esc_attr( $cart_tag ); ?>>
+			<?php endif; ?>
 		</div>
 	</div>
 	<div class="orvio-searchpanel" data-searchpanel>
@@ -63,9 +69,11 @@ $cart_href  = 'page' === $o['cart_type'] ? ' href="' . esc_url( function_exists(
 			</div>
 		</form>
 	</div>
+	<?php if ( ! empty( $o['show_catbar'] ) ) : ?>
 	<nav class="orvio-catbar" aria-label="<?php echo esc_attr( orvio_t( 'Categories', 'دسته‌ها' ) ); ?>">
 		<div class="orvio-container orvio-catbar__row">
 			<?php get_template_part( 'template-parts/header/category-menu' ); ?>
 		</div>
 	</nav>
+	<?php endif; ?>
 </header>

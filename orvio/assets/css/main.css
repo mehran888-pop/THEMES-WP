@@ -218,6 +218,14 @@ html[dir="rtl"] .orvio-display {
   overflow: visible;
 }
 .orvio-header.is-stuck { border-bottom-color: var(--line); box-shadow: 0 8px 24px rgba(28,25,22,0.04); }
+body.orvio-header-static .orvio-header { position: relative; top: auto; }
+.orvio-el-header.is-hide-search .orvio-search,
+.orvio-el-header.is-hide-search .orvio-search-toggle,
+.orvio-el-header.is-hide-account .orvio-tools > a.orvio-tool:not(.orvio-cartbtn),
+.orvio-el-header.is-hide-wish [data-open="wish"],
+.orvio-el-header.is-hide-cart .orvio-cartbtn,
+.orvio-el-header.is-hide-cats .orvio-catbar,
+.orvio-el-header.is-hide-announce .orvio-announce { display: none !important; }
 .orvio-header__row {
   display: flex;
   align-items: center;

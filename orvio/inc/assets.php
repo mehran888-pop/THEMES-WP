@@ -35,7 +35,7 @@ function orvio_enqueue() {
 
 add_action( 'admin_enqueue_scripts', 'orvio_admin_assets' );
 function orvio_admin_assets( $hook ) {
-	if ( 'toplevel_page_orvio-settings' !== $hook ) {
+	if ( false === strpos( (string) $hook, 'orvio' ) ) {
 		return;
 	}
 	wp_enqueue_style( 'orvio-admin', ORVIO_URI . '/assets/css/admin.css', array(), ORVIO_VERSION );

@@ -33,8 +33,18 @@ function orvio_defaults() {
 		'dark'               => '#171512',
 		'radius'             => 16,
 		'container'          => 1220,
+		'body_font'          => 'vazirmatn',
+		'heading_font'       => 'vazirmatn',
+		'font_size'          => 15,
 		'header_layout'      => 'classic',
+		'header_bg'          => '#FFFCF8',
+		'header_ink'         => '#1C1916',
+		'menu_size'          => 14,
 		'sticky_header'      => 1,
+		'show_search'        => 1,
+		'show_account'       => 1,
+		'show_cart'          => 1,
+		'show_catbar'        => 1,
 		'show_announcement'  => 1,
 		'announcement'       => 'ارسال رایگان برای سفارش‌های بالای ۲ میلیون تومان  ·  بازگشت آسان تا ۳۰ روز',
 		'announcement_en'    => 'Free shipping over the threshold · Easy 30-day returns',
@@ -79,12 +89,17 @@ function orvio_opt( $key, $fallback = null ) {
 function orvio_sanitize_settings( $input ) {
 	$defaults = orvio_defaults();
 	$clean    = array();
-	$hex      = array( 'accent', 'bg', 'ink', 'dark' );
+	$hex      = array( 'accent', 'bg', 'ink', 'dark', 'header_bg', 'header_ink' );
 	foreach ( $hex as $key ) {
 		$clean[ $key ] = sanitize_hex_color( $input[ $key ] ?? '' ) ?: $defaults[ $key ];
 	}
 	$clean['radius']            = max( 0, min( 28, absint( $input['radius'] ?? $defaults['radius'] ) ) );
 	$clean['container']         = max( 960, min( 1600, absint( $input['container'] ?? $defaults['container'] ) ) );
+	$clean['font_size']         = max( 13, min( 20, absint( $input['font_size'] ?? $defaults['font_size'] ) ) );
+	$clean['menu_size']         = max( 12, min( 20, absint( $input['menu_size'] ?? $defaults['menu_size'] ) ) );
+	$fonts                      = array( 'vazirmatn', 'instrument', 'fraunces', 'system' );
+	$clean['body_font']         = in_array( $input['body_font'] ?? '', $fonts, true ) ? $input['body_font'] : 'vazirmatn';
+	$clean['heading_font']      = in_array( $input['heading_font'] ?? '', $fonts, true ) ? $input['heading_font'] : 'vazirmatn';
 	$clean['header_layout']     = in_array( $input['header_layout'] ?? '', array( 'classic', 'centered' ), true ) ? $input['header_layout'] : 'classic';
 	$clean['cart_type']         = in_array( $input['cart_type'] ?? '', array( 'drawer', 'page' ), true ) ? $input['cart_type'] : 'drawer';
 	$clean['card_style']        = in_array( $input['card_style'] ?? '', array( 'classic', 'minimal', 'overlay' ), true ) ? $input['card_style'] : 'classic';
@@ -92,7 +107,7 @@ function orvio_sanitize_settings( $input ) {
 	$clean['products_per_page'] = max( 4, min( 48, absint( $input['products_per_page'] ?? 12 ) ) );
 	$clean['related_count']     = max( 2, min( 8, absint( $input['related_count'] ?? 4 ) ) );
 	$clean['free_shipping']     = max( 0, absint( $input['free_shipping'] ?? 0 ) );
-	$toggles                    = array( 'sticky_header', 'show_announcement', 'shop_sidebar', 'sticky_summary', 'enable_wishlist', 'enable_quick_view' );
+	$toggles                    = array( 'sticky_header', 'show_announcement', 'shop_sidebar', 'sticky_summary', 'enable_wishlist', 'enable_quick_view', 'show_search', 'show_account', 'show_cart', 'show_catbar' );
 	foreach ( $toggles as $key ) {
 		$clean[ $key ] = empty( $input[ $key ] ) ? 0 : 1;
 	}
@@ -164,9 +179,17 @@ function orvio_render_settings_page() {
 		<?php if ( isset( $_GET['orvio-imported'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 			<div class="notice notice-success"><p><?php echo esc_html( orvio_t( 'Demo catalog installed.', 'کاتالوگ دمو نصب شد.' ) ); ?></p></div>
 		<?php endif; ?>
+		<style>
+		.orvio-admin__panel{display:none!important}
+		.orvio-admin__panel.is-on,.orvio-admin__shell:has(#orvio-tab-header:checked) [data-panel="header"],.orvio-admin__shell:has(#orvio-tab-general:checked) [data-panel="general"],.orvio-admin__shell:has(#orvio-tab-footer:checked) [data-panel="footer"],.orvio-admin__shell:has(#orvio-tab-shop:checked) [data-panel="shop"],.orvio-admin__shell:has(#orvio-tab-product:checked) [data-panel="product"],.orvio-admin__shell:has(#orvio-tab-checkout:checked) [data-panel="checkout"],.orvio-admin__shell:has(#orvio-tab-contact:checked) [data-panel="contact"]{display:grid!important}
+		</style>
+		<div class="orvio-admin__shell">
+		<?php foreach ( $tabs as $id => $label ) : ?>
+			<input class="orvio-admin__radio" type="radio" name="orvio_tab_ui" id="orvio-tab-<?php echo esc_attr( $id ); ?>" <?php checked( 'general', $id ); ?>>
+		<?php endforeach; ?>
 		<nav class="orvio-admin__tabs" role="tablist">
 			<?php foreach ( $tabs as $id => $label ) : ?>
-				<button type="button" class="<?php echo 'general' === $id ? 'is-on' : ''; ?>" data-tab="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></button>
+				<label for="orvio-tab-<?php echo esc_attr( $id ); ?>" class="<?php echo 'general' === $id ? 'is-on' : ''; ?>"><?php echo esc_html( $label ); ?></label>
 			<?php endforeach; ?>
 		</nav>
 		<form method="post" action="options.php" class="orvio-admin__form">
@@ -179,9 +202,12 @@ function orvio_render_settings_page() {
 				orvio_field_color( 'dark', orvio_t( 'Dark sections', 'بخش‌های تیره' ), $o );
 				orvio_field_number( 'radius', orvio_t( 'Corner radius', 'گردی گوشه‌ها' ), $o, 0, 28 );
 				orvio_field_number( 'container', orvio_t( 'Container width', 'عرض محتوا' ), $o, 960, 1600 );
+				orvio_field_select( 'body_font', orvio_t( 'Body font', 'فونت متن' ), $o, orvio_font_choices() );
+				orvio_field_select( 'heading_font', orvio_t( 'Heading font', 'فونت عنوان' ), $o, orvio_font_choices() );
+				orvio_field_number( 'font_size', orvio_t( 'Base font size', 'اندازه فونت' ), $o, 13, 20 );
 				?>
 			</section>
-			<section data-panel="header" class="orvio-admin__panel" hidden>
+			<section data-panel="header" class="orvio-admin__panel">
 				<?php
 				orvio_field_select( 'header_layout', orvio_t( 'Header layout', 'چیدمان هدر' ), $o, array(
 					'classic'  => orvio_t( 'Standard', 'استاندارد' ),
@@ -191,9 +217,16 @@ function orvio_render_settings_page() {
 				orvio_field_check( 'show_announcement', orvio_t( 'Announcement bar', 'نوار اعلان' ), $o );
 				orvio_field_text( 'announcement', orvio_t( 'Announcement (primary)', 'متن اعلان' ), $o );
 				orvio_field_text( 'announcement_en', orvio_t( 'Announcement (English)', 'متن اعلان انگلیسی' ), $o );
+				orvio_field_color( 'header_bg', orvio_t( 'Header background', 'پس‌زمینه هدر' ), $o );
+				orvio_field_color( 'header_ink', orvio_t( 'Header text', 'رنگ متن هدر' ), $o );
+				orvio_field_number( 'menu_size', orvio_t( 'Menu font size', 'اندازه فونت منو' ), $o, 12, 20 );
+				orvio_field_check( 'show_search', orvio_t( 'Search', 'جستجو' ), $o );
+				orvio_field_check( 'show_account', orvio_t( 'Account', 'حساب' ), $o );
+				orvio_field_check( 'show_cart', orvio_t( 'Cart button', 'دکمه سبد' ), $o );
+				orvio_field_check( 'show_catbar', orvio_t( 'Category menu', 'منوی دسته‌ها' ), $o );
 				?>
 			</section>
-			<section data-panel="footer" class="orvio-admin__panel" hidden>
+			<section data-panel="footer" class="orvio-admin__panel">
 				<?php
 				orvio_field_text( 'footer_about', orvio_t( 'Footer about', 'معرفی فوتر' ), $o );
 				orvio_field_text( 'copyright', orvio_t( 'Copyright', 'کپی‌رایت' ), $o );
@@ -202,7 +235,7 @@ function orvio_render_settings_page() {
 				orvio_field_text( 'whatsapp', 'WhatsApp', $o );
 				?>
 			</section>
-			<section data-panel="shop" class="orvio-admin__panel" hidden>
+			<section data-panel="shop" class="orvio-admin__panel">
 				<?php
 				orvio_field_number( 'shop_columns', orvio_t( 'Shop columns', 'ستون‌های فروشگاه' ), $o, 2, 5 );
 				orvio_field_number( 'products_per_page', orvio_t( 'Products per page', 'تعداد در هر صفحه' ), $o, 4, 48 );
@@ -216,13 +249,13 @@ function orvio_render_settings_page() {
 				orvio_field_check( 'enable_quick_view', orvio_t( 'Quick view', 'نگاه سریع' ), $o );
 				?>
 			</section>
-			<section data-panel="product" class="orvio-admin__panel" hidden>
+			<section data-panel="product" class="orvio-admin__panel">
 				<?php
 				orvio_field_check( 'sticky_summary', orvio_t( 'Sticky product summary', 'خلاصه چسبان محصول' ), $o );
 				orvio_field_number( 'related_count', orvio_t( 'Related products', 'کالاهای مرتبط' ), $o, 2, 8 );
 				?>
 			</section>
-			<section data-panel="checkout" class="orvio-admin__panel" hidden>
+			<section data-panel="checkout" class="orvio-admin__panel">
 				<?php
 				orvio_field_select( 'cart_type', orvio_t( 'Cart button behaviour', 'رفتار دکمه سبد' ), $o, array(
 					'drawer' => orvio_t( 'Slide-over drawer', 'کشو' ),
@@ -231,7 +264,7 @@ function orvio_render_settings_page() {
 				orvio_field_number( 'free_shipping', orvio_t( 'Free-shipping threshold', 'آستانه ارسال رایگان' ), $o, 0, 999999999 );
 				?>
 			</section>
-			<section data-panel="contact" class="orvio-admin__panel" hidden>
+			<section data-panel="contact" class="orvio-admin__panel">
 				<?php
 				orvio_field_text( 'phone', orvio_t( 'Phone', 'تلفن' ), $o );
 				orvio_field_text( 'email', orvio_t( 'Email', 'ایمیل' ), $o );
@@ -241,8 +274,46 @@ function orvio_render_settings_page() {
 			</section>
 			<?php submit_button( orvio_t( 'Save settings', 'ذخیره تنظیمات' ) ); ?>
 		</form>
+		</div>
+		<script>
+		(function () {
+			var root = document.querySelector(".orvio-admin__shell");
+			if (!root) return;
+			function show() {
+				var on = root.querySelector(".orvio-admin__radio:checked");
+				var id = on ? on.id.replace("orvio-tab-", "") : "general";
+				root.querySelectorAll("[data-panel]").forEach(function (panel) {
+					panel.classList.toggle("is-on", panel.getAttribute("data-panel") === id);
+				});
+				root.querySelectorAll(".orvio-admin__tabs label").forEach(function (label) {
+					label.classList.toggle("is-on", label.getAttribute("for") === "orvio-tab-" + id);
+				});
+			}
+			root.addEventListener("change", show);
+			show();
+		})();
+		</script>
 	</div>
 	<?php
+}
+
+function orvio_font_choices() {
+	return array(
+		'vazirmatn'  => 'Vazirmatn',
+		'instrument' => 'Instrument Sans',
+		'fraunces'   => 'Fraunces',
+		'system'     => orvio_t( 'System', 'سیستمی' ),
+	);
+}
+
+function orvio_font_stack( $key ) {
+	$stacks = array(
+		'vazirmatn'  => '"Vazirmatn", system-ui, sans-serif',
+		'instrument' => '"Instrument Sans", "Vazirmatn", system-ui, sans-serif',
+		'fraunces'   => '"Fraunces", "Vazirmatn", Georgia, serif',
+		'system'     => 'system-ui, Tahoma, sans-serif',
+	);
+	return $stacks[ $key ] ?? $stacks['vazirmatn'];
 }
 
 function orvio_field_color( $key, $label, $o ) {
@@ -267,9 +338,15 @@ function orvio_field_select( $key, $label, $o, $choices ) {
 
 add_action( 'wp_head', 'orvio_print_css_vars', 20 );
 function orvio_print_css_vars() {
-	$o = orvio_settings();
-	$css = ':root{--accent:' . $o['accent'] . ';--accent-dark:' . $o['accent'] . ';--bg:' . $o['bg'] . ';--ink:' . $o['ink'] . ';--dark:' . $o['dark'] . ';--radius:' . intval( $o['radius'] ) . 'px;--radius-sm:' . max( 4, intval( $o['radius'] ) - 4 ) . 'px;--container:' . intval( $o['container'] ) . 'px;--cols:' . intval( $o['shop_columns'] ) . ';}';
-	echo '<style id="orvio-vars">' . $css . '</style>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- hex/int sanitized.
+	$o    = orvio_settings();
+	$body = orvio_font_stack( $o['body_font'] );
+	$head = orvio_font_stack( $o['heading_font'] );
+	$css  = ':root{--accent:' . $o['accent'] . ';--accent-dark:' . $o['accent'] . ';--bg:' . $o['bg'] . ';--ink:' . $o['ink'] . ';--dark:' . $o['dark'] . ';--radius:' . intval( $o['radius'] ) . 'px;--radius-sm:' . max( 4, intval( $o['radius'] ) - 4 ) . 'px;--container:' . intval( $o['container'] ) . 'px;--cols:' . intval( $o['shop_columns'] ) . ';--font:' . $body . ';--display:' . $head . ';--header-bg:' . $o['header_bg'] . ';--header-ink:' . $o['header_ink'] . ';--menu-size:' . intval( $o['menu_size'] ) . 'px;}';
+	$css .= 'body{font-size:' . intval( $o['font_size'] ) . 'px;}';
+	$css .= 'h1,h2,h3,h4,.orvio-logo__word strong{font-family:var(--display);}';
+	$css .= '.orvio-header,.orvio-catbar{background:var(--header-bg);color:var(--header-ink);}';
+	$css .= '.orvio-catbar__menu>li>a,.orvio-tool__label,.orvio-logo__word{font-size:var(--menu-size);}';
+	echo '<style id="orvio-vars">' . $css . '</style>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- hex/int/font stacks sanitized.
 }
 
 add_filter( 'body_class', 'orvio_body_classes' );
@@ -283,6 +360,9 @@ function orvio_body_classes( $classes ) {
 	}
 	if ( empty( $o['sticky_summary'] ) ) {
 		$classes[] = 'orvio-summary-static';
+	}
+	if ( empty( $o['sticky_header'] ) ) {
+		$classes[] = 'orvio-header-static';
 	}
 	return $classes;
 }

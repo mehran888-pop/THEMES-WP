@@ -14,17 +14,35 @@
 .orvio-admin__hero h1 { color: #fff; margin: 0 0 6px; font-size: 28px; }
 .orvio-admin__hero p { margin: 0; max-width: 52ch; color: #D9D0C6; }
 .orvio-admin__warn { color: #F6E6DC; }
+.orvio-admin__radio { position: absolute; opacity: 0; pointer-events: none; }
 .orvio-admin__tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-.orvio-admin__tabs button {
+.orvio-admin__tabs label {
   border: 1px solid #E5DDD3;
   background: #fff;
   border-radius: 999px;
   min-height: 36px;
   padding: 0 14px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
 }
-.orvio-admin__tabs button.is-on { background: #171512; color: #fff; border-color: #171512; }
-.orvio-admin__panel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fff; border: 1px solid #E5DDD3; border-radius: 16px; padding: 16px; }
+.orvio-admin__tabs label.is-on,
+.orvio-admin__shell:has(#orvio-tab-general:checked) label[for="orvio-tab-general"],
+.orvio-admin__shell:has(#orvio-tab-header:checked) label[for="orvio-tab-header"],
+.orvio-admin__shell:has(#orvio-tab-footer:checked) label[for="orvio-tab-footer"],
+.orvio-admin__shell:has(#orvio-tab-shop:checked) label[for="orvio-tab-shop"],
+.orvio-admin__shell:has(#orvio-tab-product:checked) label[for="orvio-tab-product"],
+.orvio-admin__shell:has(#orvio-tab-checkout:checked) label[for="orvio-tab-checkout"],
+.orvio-admin__shell:has(#orvio-tab-contact:checked) label[for="orvio-tab-contact"] { background: #171512; color: #fff; border-color: #171512; }
+.orvio-admin__panel { display: none !important; grid-template-columns: 1fr 1fr; gap: 12px; background: #fff; border: 1px solid #E5DDD3; border-radius: 16px; padding: 16px; }
+.orvio-admin__panel.is-on,
+.orvio-admin__shell:has(#orvio-tab-general:checked) [data-panel="general"],
+.orvio-admin__shell:has(#orvio-tab-header:checked) [data-panel="header"],
+.orvio-admin__shell:has(#orvio-tab-footer:checked) [data-panel="footer"],
+.orvio-admin__shell:has(#orvio-tab-shop:checked) [data-panel="shop"],
+.orvio-admin__shell:has(#orvio-tab-product:checked) [data-panel="product"],
+.orvio-admin__shell:has(#orvio-tab-checkout:checked) [data-panel="checkout"],
+.orvio-admin__shell:has(#orvio-tab-contact:checked) [data-panel="contact"] { display: grid !important; }
 .orvio-admin__field, .orvio-admin__check { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
 .orvio-admin__field--wide { grid-column: 1 / -1; }
 .orvio-admin__field input[type="text"], .orvio-admin__field input[type="number"], .orvio-admin__field select {
@@ -34,6 +52,7 @@
 }
 .orvio-admin__check { flex-direction: row; align-items: center; }
 @media (max-width: 782px) {
-  .orvio-admin__hero, .orvio-admin__panel { grid-template-columns: 1fr; display: grid; }
+  .orvio-admin__panel.is-on,
+  .orvio-admin__shell:has(.orvio-admin__radio:checked) .orvio-admin__panel { grid-template-columns: 1fr; }
   .orvio-admin__hero { display: flex; flex-direction: column; align-items: flex-start; }
 }

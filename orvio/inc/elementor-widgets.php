@@ -16,6 +16,84 @@ abstract class Orvio_Widget_Base extends \Elementor\Widget_Base {
 	public function get_icon() {
 		return 'eicon-star';
 	}
+
+	protected function orvio_register_style( $selector = '{{WRAPPER}}' ) {
+		$text = $selector . ', ' . $selector . ' h1, ' . $selector . ' h2, ' . $selector . ' h3, ' . $selector . ' h4, ' . $selector . ' p, ' . $selector . ' a, ' . $selector . ' button, ' . $selector . ' span, ' . $selector . ' strong';
+		$this->start_controls_section( 'orvio_style', array(
+			'label' => orvio_t( 'Style', 'استایل' ),
+			'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
+		) );
+		if ( class_exists( '\Elementor\Group_Control_Typography' ) ) {
+			$this->add_group_control( \Elementor\Group_Control_Typography::get_type(), array(
+				'name'     => 'orvio_typo',
+				'label'    => orvio_t( 'Font', 'فونت' ),
+				'selector' => $text,
+			) );
+		}
+		$this->add_control( 'orvio_color', array(
+			'label'     => orvio_t( 'Text color', 'رنگ متن' ),
+			'type'      => \Elementor\Controls_Manager::COLOR,
+			'selectors' => array( $text => 'color: {{VALUE}};' ),
+		) );
+		$this->add_control( 'orvio_bg', array(
+			'label'     => orvio_t( 'Background', 'پس‌زمینه' ),
+			'type'      => \Elementor\Controls_Manager::COLOR,
+			'selectors' => array( $selector => 'background-color: {{VALUE}};' ),
+		) );
+		$this->add_responsive_control( 'orvio_align', array(
+			'label'     => orvio_t( 'Alignment', 'تراز' ),
+			'type'      => \Elementor\Controls_Manager::CHOOSE,
+			'options'   => array(
+				'right'  => array( 'title' => orvio_t( 'Right', 'راست' ), 'icon' => 'eicon-text-align-right' ),
+				'center' => array( 'title' => orvio_t( 'Center', 'وسط' ), 'icon' => 'eicon-text-align-center' ),
+				'left'   => array( 'title' => orvio_t( 'Left', 'چپ' ), 'icon' => 'eicon-text-align-left' ),
+			),
+			'selectors' => array( $selector => 'text-align: {{VALUE}};' ),
+		) );
+		$this->add_responsive_control( 'orvio_pad', array(
+			'label'      => orvio_t( 'Padding', 'فاصله داخلی' ),
+			'type'       => \Elementor\Controls_Manager::DIMENSIONS,
+			'size_units' => array( 'px', 'em', '%' ),
+			'selectors'  => array( $selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+		) );
+		$this->add_responsive_control( 'orvio_margin', array(
+			'label'      => orvio_t( 'Margin', 'فاصله بیرونی' ),
+			'type'       => \Elementor\Controls_Manager::DIMENSIONS,
+			'size_units' => array( 'px', 'em', '%' ),
+			'selectors'  => array( $selector => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+		) );
+		$this->add_responsive_control( 'orvio_radius', array(
+			'label'      => orvio_t( 'Radius', 'گردی گوشه' ),
+			'type'       => \Elementor\Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 40 ) ),
+			'selectors'  => array( $selector => 'border-radius: {{SIZE}}{{UNIT}};' ),
+		) );
+		$this->end_controls_section();
+
+		$this->start_controls_section( 'orvio_style_btn', array(
+			'label' => orvio_t( 'Button', 'دکمه' ),
+			'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
+		) );
+		if ( class_exists( '\Elementor\Group_Control_Typography' ) ) {
+			$this->add_group_control( \Elementor\Group_Control_Typography::get_type(), array(
+				'name'     => 'orvio_btn_typo',
+				'label'    => orvio_t( 'Button font', 'فونت دکمه' ),
+				'selector' => $selector . ' .orvio-btn, ' . $selector . ' button',
+			) );
+		}
+		$this->add_control( 'orvio_btn_color', array(
+			'label'     => orvio_t( 'Button text', 'متن دکمه' ),
+			'type'      => \Elementor\Controls_Manager::COLOR,
+			'selectors' => array( $selector . ' .orvio-btn, ' . $selector . ' button' => 'color: {{VALUE}};' ),
+		) );
+		$this->add_control( 'orvio_btn_bg', array(
+			'label'     => orvio_t( 'Button background', 'پس‌زمینه دکمه' ),
+			'type'      => \Elementor\Controls_Manager::COLOR,
+			'selectors' => array( $selector . ' .orvio-btn, ' . $selector . ' button' => 'background-color: {{VALUE}};' ),
+		) );
+		$this->end_controls_section();
+	}
 }
 
 class Orvio_Widget_Products extends Orvio_Widget_Base {
@@ -62,6 +140,7 @@ class Orvio_Widget_Products extends Orvio_Widget_Base {
 			),
 		) );
 		$this->end_controls_section();
+		$this->orvio_register_style();
 	}
 	protected function render() {
 		if ( ! function_exists( 'wc_get_product' ) ) {
@@ -134,6 +213,7 @@ class Orvio_Widget_Banner extends Orvio_Widget_Base {
 		$this->add_control( 'title_2', array( 'label' => orvio_t( 'Second title', 'عنوان دوم' ), 'type' => \Elementor\Controls_Manager::TEXT, 'condition' => array( 'model' => 'duo' ) ) );
 		$this->add_control( 'link_2', array( 'label' => orvio_t( 'Second link', 'پیوند دوم' ), 'type' => \Elementor\Controls_Manager::URL, 'condition' => array( 'model' => 'duo' ) ) );
 		$this->end_controls_section();
+		$this->orvio_register_style();
 	}
 	protected function render() {
 		$s   = $this->get_settings_for_display();
@@ -183,6 +263,7 @@ class Orvio_Widget_Contact extends Orvio_Widget_Base {
 		$this->add_control( 'title', array( 'label' => orvio_t( 'Title', 'عنوان' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'Contact', 'ارتباط با ما' ) ) );
 		$this->add_control( 'show_info', array( 'label' => orvio_t( 'Show studio info', 'نمایش اطلاعات استودیو' ), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes' ) );
 		$this->end_controls_section();
+		$this->orvio_register_style();
 	}
 	protected function render() {
 		$s = $this->get_settings_for_display();
@@ -225,6 +306,7 @@ class Orvio_Widget_About extends Orvio_Widget_Base {
 		$rep->add_control( 'label', array( 'label' => orvio_t( 'Label', 'برچسب' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'Workshops', 'کارگاه' ) ) );
 		$this->add_control( 'stats', array( 'label' => orvio_t( 'Stats', 'آمار' ), 'type' => \Elementor\Controls_Manager::REPEATER, 'fields' => $rep->get_controls(), 'title_field' => '{{{ label }}}' ) );
 		$this->end_controls_section();
+		$this->orvio_register_style();
 	}
 	protected function render() {
 		$s   = $this->get_settings_for_display();
@@ -255,6 +337,7 @@ class Orvio_Widget_Cart_Button extends Orvio_Widget_Base {
 		$this->add_control( 'show_total', array( 'label' => orvio_t( 'Show total', 'نمایش مبلغ' ), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes' ) );
 		$this->add_control( 'label', array( 'label' => orvio_t( 'Label', 'برچسب' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'Bag', 'سبد' ) ) );
 		$this->end_controls_section();
+		$this->orvio_register_style();
 	}
 	protected function render() {
 		$s     = $this->get_settings_for_display();
@@ -289,6 +372,7 @@ class Orvio_Widget_Category_Menu extends Orvio_Widget_Base {
 			),
 		) );
 		$this->end_controls_section();
+		$this->orvio_register_style();
 	}
 	protected function render() {
 		$s = $this->get_settings_for_display();
@@ -305,11 +389,54 @@ class Orvio_Widget_Header extends Orvio_Widget_Base {
 	public function get_keywords() { return array( 'header', 'logo', 'search', 'cart' ); }
 	protected function register_controls() {
 		$this->start_controls_section( 's', array( 'label' => orvio_t( 'Header elements', 'المان‌های هدر' ) ) );
-		$this->add_control( 'note', array( 'type' => \Elementor\Controls_Manager::RAW_HTML, 'raw' => esc_html( orvio_t( 'Place this in an Elementor header template, or use the separate logo, search, account and cart widgets.', 'این ویجت را در قالب هدر المنتور بگذارید، یا از ویجت‌های جداگانه لوگو، جستجو، حساب و سبد استفاده کنید.' ) ) ) );
+		$this->add_control( 'layout', array(
+			'label'   => orvio_t( 'Layout', 'چیدمان' ),
+			'type'    => \Elementor\Controls_Manager::SELECT,
+			'default' => 'classic',
+			'options' => array(
+				'classic'  => orvio_t( 'Standard', 'استاندارد' ),
+				'centered' => orvio_t( 'Centered logo', 'لوگوی وسط' ),
+			),
+		) );
+		foreach ( array(
+			'show_search'  => orvio_t( 'Search', 'جستجو' ),
+			'show_account' => orvio_t( 'Account', 'حساب' ),
+			'show_wish'    => orvio_t( 'Wishlist', 'علاقه‌مندی' ),
+			'show_cart'    => orvio_t( 'Cart', 'سبد' ),
+			'show_cats'    => orvio_t( 'Category menu', 'منوی دسته‌ها' ),
+			'show_bar'     => orvio_t( 'Announcement', 'نوار اعلان' ),
+		) as $key => $label ) {
+			$this->add_control( $key, array(
+				'label'   => $label,
+				'type'    => \Elementor\Controls_Manager::SWITCHER,
+				'default' => 'yes',
+			) );
+		}
 		$this->end_controls_section();
+		$this->orvio_register_style( '{{WRAPPER}} .orvio-header, {{WRAPPER}} .orvio-catbar, {{WRAPPER}} .orvio-announce' );
 	}
 	protected function render() {
+		$s    = $this->get_settings_for_display();
+		$map  = array(
+			'show_search'  => 'is-hide-search',
+			'show_account' => 'is-hide-account',
+			'show_wish'    => 'is-hide-wish',
+			'show_cart'    => 'is-hide-cart',
+			'show_cats'    => 'is-hide-cats',
+			'show_bar'     => 'is-hide-announce',
+		);
+		$classes = array( 'orvio-el-header' );
+		if ( 'centered' === ( $s['layout'] ?? '' ) ) {
+			$classes[] = 'orvio-h-centered';
+		}
+		foreach ( $map as $key => $class ) {
+			if ( isset( $s[ $key ] ) && 'yes' !== $s[ $key ] ) {
+				$classes[] = $class;
+			}
+		}
+		echo '<div class="' . esc_attr( implode( ' ', $classes ) ) . '">';
 		get_template_part( 'template-parts/header/site-header' );
+		echo '</div>';
 	}
 }
 
@@ -321,6 +448,7 @@ class Orvio_Widget_Footer extends Orvio_Widget_Base {
 		$this->start_controls_section( 's', array( 'label' => orvio_t( 'Footer elements', 'المان‌های فوتر' ) ) );
 		$this->add_control( 'note', array( 'type' => \Elementor\Controls_Manager::RAW_HTML, 'raw' => esc_html( orvio_t( 'Columns, newsletter text and payment marks come from Orvio settings.', 'ستون‌ها، متن و نشان پرداخت از تنظیمات اُرویو می‌آیند.' ) ) ) );
 		$this->end_controls_section();
+		$this->orvio_register_style();
 	}
 	protected function render() {
 		get_template_part( 'template-parts/footer/site-footer' );
@@ -331,7 +459,7 @@ class Orvio_Widget_Logo extends Orvio_Widget_Base {
 	public function get_name() { return 'orvio-logo'; }
 	public function get_title() { return orvio_t( 'Logo', 'لوگو' ); }
 	public function get_icon() { return 'eicon-site-logo'; }
-	protected function register_controls() {}
+	protected function register_controls() { $this->orvio_register_style(); }
 	protected function render() {
 		if ( has_custom_logo() ) {
 			the_custom_logo();
@@ -345,7 +473,7 @@ class Orvio_Widget_Search extends Orvio_Widget_Base {
 	public function get_name() { return 'orvio-search'; }
 	public function get_title() { return orvio_t( 'Search', 'جستجو' ); }
 	public function get_icon() { return 'eicon-search'; }
-	protected function register_controls() {}
+	protected function register_controls() { $this->orvio_register_style(); }
 	protected function render() {
 		echo '<form class="orvio-search" style="display:flex" role="search" method="get" action="' . esc_url( home_url( '/' ) ) . '">';
 		echo '<span class="orvio-search__icon">' . orvio_icon( 'search' ) . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -361,7 +489,7 @@ class Orvio_Widget_Account extends Orvio_Widget_Base {
 	public function get_name() { return 'orvio-account'; }
 	public function get_title() { return orvio_t( 'Account button', 'دکمه حساب' ); }
 	public function get_icon() { return 'eicon-user-circle-o'; }
-	protected function register_controls() {}
+	protected function register_controls() { $this->orvio_register_style(); }
 	protected function render() {
 		echo '<a class="orvio-tool" href="' . esc_url( orvio_account_url() ) . '"><span class="orvio-tool__icon">' . orvio_icon( 'user' ) . '</span><span class="orvio-tool__label">' . esc_html( orvio_t( 'Account', 'حساب' ) ) . '</span></a>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
@@ -371,7 +499,7 @@ class Orvio_Widget_Wishlist extends Orvio_Widget_Base {
 	public function get_name() { return 'orvio-wishlist'; }
 	public function get_title() { return orvio_t( 'Wishlist button', 'دکمه علاقه‌مندی' ); }
 	public function get_icon() { return 'eicon-heart-o'; }
-	protected function register_controls() {}
+	protected function register_controls() { $this->orvio_register_style(); }
 	protected function render() {
 		echo '<button type="button" class="orvio-tool" data-open="wish"><span class="orvio-tool__icon">' . orvio_icon( 'heart' ) . '<span class="orvio-count is-zero" data-wish-count>0</span></span><span class="orvio-tool__label">' . esc_html( orvio_t( 'Saved', 'علاقه‌مندی' ) ) . '</span></button>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
@@ -385,6 +513,7 @@ class Orvio_Widget_Announce extends Orvio_Widget_Base {
 		$this->start_controls_section( 's', array( 'label' => orvio_t( 'Text', 'متن' ) ) );
 		$this->add_control( 'text', array( 'label' => orvio_t( 'Text', 'متن' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_announcement_text() ) );
 		$this->end_controls_section();
+		$this->orvio_register_style();
 	}
 	protected function render() {
 		$s = $this->get_settings_for_display();
@@ -401,6 +530,7 @@ class Orvio_Widget_Newsletter extends Orvio_Widget_Base {
 		$this->add_control( 'title', array( 'label' => orvio_t( 'Title', 'عنوان' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'A short letter', 'نامه‌های کوتاه' ) ) );
 		$this->add_control( 'text', array( 'label' => orvio_t( 'Text', 'متن' ), 'type' => \Elementor\Controls_Manager::TEXTAREA, 'default' => orvio_t( 'Only when something is worth saying.', 'فقط وقتی چیزی ارزش گفتن دارد.' ) ) );
 		$this->end_controls_section();
+		$this->orvio_register_style();
 	}
 	protected function render() {
 		$s = $this->get_settings_for_display();
@@ -413,7 +543,7 @@ class Orvio_Widget_Features extends Orvio_Widget_Base {
 	public function get_name() { return 'orvio-features'; }
 	public function get_title() { return orvio_t( 'Trust row', 'نوار اعتماد' ); }
 	public function get_icon() { return 'eicon-check-circle'; }
-	protected function register_controls() {}
+	protected function register_controls() { $this->orvio_register_style(); }
 	protected function render() {
 		$items = array(
 			array( 'truck', orvio_t( 'Shipping', 'ارسال سراسری' ), orvio_t( 'Most cities in 48 hours', 'بیشتر شهرها تا ۴۸ ساعت' ) ),
