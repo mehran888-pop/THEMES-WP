@@ -219,5 +219,3 @@ function orvio_seed_elementor_home( $page_id ) {
 		unset( $e );
 	}
 }
-
-
