@@ -90,28 +90,73 @@
       var track = root.querySelector(".orvio-carousel__track");
       if (!track) return;
       var index = 0;
+      var cols = parseInt(root.getAttribute("data-cols") || "4", 10) || 4;
+      var gap = parseInt(root.getAttribute("data-gap") || "16", 10) || 16;
+      var loop = root.getAttribute("data-loop") === "1";
       function cardStep() {
-        var card = track.querySelector(".orvio-card");
+        var card = track.querySelector(".orvio-card, .orvio-dealcard, .orvio-catcard");
+        if (!card) card = track.firstElementChild;
         if (!card) return 1;
-        var gap = 16;
         return card.getBoundingClientRect().width + gap;
       }
       function visible() {
         var view = root.querySelector(".orvio-carousel__view");
-        return Math.max(1, Math.round(view.clientWidth / cardStep()));
+        if (!view) return cols;
+        return Math.max(1, Math.min(cols, Math.round(view.clientWidth / Math.max(1, cardStep()))));
       }
-      function go(dir) {
-        var max = Math.max(0, track.children.length - visible());
-        index = Math.min(max, Math.max(0, index + dir));
+      function maxIndex() { return Math.max(0, track.children.length - visible()); }
+      function paint() {
         var sign = document.documentElement.dir === "rtl" ? 1 : -1;
         track.style.transform = "translateX(" + (sign * index * cardStep()) + "px)";
+        root.querySelectorAll("[data-dot]").forEach(function (dot, i) {
+          dot.classList.toggle("is-on", i === index);
+        });
+      }
+      function go(dir) {
+        var max = maxIndex();
+        index += dir;
+        if (loop) {
+          if (index > max) index = 0;
+          if (index < 0) index = max;
+        } else {
+          index = Math.min(max, Math.max(0, index));
+        }
+        paint();
+      }
+      var dots = root.querySelector("[data-dots]");
+      if (dots && !dots.children.length) {
+        for (var i = 0; i <= maxIndex(); i++) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.setAttribute("data-dot", String(i));
+          b.addEventListener("click", function () { index = parseInt(this.getAttribute("data-dot"), 10) || 0; paint(); });
+          dots.appendChild(b);
+        }
       }
       var prev = root.querySelector("[data-prev]");
       var next = root.querySelector("[data-next]");
       if (prev) prev.addEventListener("click", function () { go(-1); });
       if (next) next.addEventListener("click", function () { go(1); });
+      var auto = parseInt(root.getAttribute("data-autoplay") || "0", 10);
+      if (auto > 800) setInterval(function () { go(1); }, auto);
       window.addEventListener("resize", function () { go(0); });
+      paint();
     });
+  }
+  function initTimers() {
+    function tick() {
+      document.querySelectorAll("[data-orvio-timer]").forEach(function (el) {
+        var end = Date.parse(el.getAttribute("data-orvio-timer") || "");
+        if (!end) return;
+        var left = Math.max(0, end - Date.now());
+        var h = Math.floor(left / 3600000);
+        var m = Math.floor((left % 3600000) / 60000);
+        var s = Math.floor((left % 60000) / 1000);
+        el.textContent = (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+      });
+    }
+    tick();
+    setInterval(tick, 1000);
   }
 
   function initGallery() {
@@ -292,6 +337,7 @@
     initAnnounce();
     initQty();
     initCarousel();
+    initTimers();
     initGallery();
     initCatMenu();
     if (!window.ORVIO_CATALOG && typeof renderWish === "function") renderWish();

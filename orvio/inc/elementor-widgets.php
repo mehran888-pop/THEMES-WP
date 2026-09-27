@@ -184,6 +184,34 @@ abstract class Orvio_Widget_Base extends \Elementor\Widget_Base {
 		$this->end_controls_section();
 	}
 
+	protected function orvio_register_header_button_style( $selector = '{{WRAPPER}} .orvio-tool' ) {
+		$this->start_controls_section( 'orvio_header_button_style', array(
+			'label' => orvio_t( 'Button preset', 'قالب دکمه' ),
+			'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
+		) );
+		$this->add_control( 'orvio_button_preset', array(
+			'label'   => orvio_t( 'Preset', 'قالب آماده' ),
+			'type'    => \Elementor\Controls_Manager::SELECT,
+			'default' => '',
+			'options' => array(
+				''        => orvio_t( 'Use button setting', 'استفاده از تنظیمات دکمه' ),
+				'minimal' => orvio_t( 'Minimal', 'مینیمال' ),
+				'pill'    => orvio_t( 'Pill', 'گرد' ),
+				'solid'   => orvio_t( 'Solid', 'پر' ),
+				'outline' => orvio_t( 'Outline', 'خطی' ),
+				'soft'    => orvio_t( 'Soft', 'نرم' ),
+			),
+		) );
+		if ( class_exists( '\Elementor\Group_Control_Typography' ) ) {
+			$this->add_group_control( \Elementor\Group_Control_Typography::get_type(), array( 'name' => 'orvio_header_button_typo', 'selector' => $selector ) );
+		}
+		$this->add_control( 'orvio_header_button_color', array( 'label' => orvio_t( 'Text color', 'رنگ متن' ), 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => array( $selector => 'color: {{VALUE}};' ) ) );
+		$this->add_control( 'orvio_header_button_bg', array( 'label' => orvio_t( 'Background', 'پس‌زمینه' ), 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => array( $selector => 'background-color: {{VALUE}};' ) ) );
+		$this->add_control( 'orvio_header_button_border', array( 'label' => orvio_t( 'Border', 'حاشیه' ), 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => array( $selector => 'border-color: {{VALUE}};' ) ) );
+		$this->add_responsive_control( 'orvio_header_button_radius', array( 'label' => orvio_t( 'Radius', 'گردی' ), 'type' => \Elementor\Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 0, 'max' => 50 ) ), 'selectors' => array( $selector => 'border-radius: {{SIZE}}{{UNIT}};' ) ) );
+		$this->end_controls_section();
+	}
+
 	protected function orvio_register_part( $id, $label, $selector ) {
 		$this->start_controls_section( 'orvio_part_' . $id, array(
 			'label' => $label,
@@ -227,15 +255,17 @@ class Orvio_Widget_Products extends Orvio_Widget_Base {
 			'type'    => \Elementor\Controls_Manager::SELECT,
 			'default' => 'latest',
 			'options' => array(
-				'latest'   => orvio_t( 'Latest', 'جدیدترین' ),
-				'featured' => orvio_t( 'Featured', 'ویژه' ),
-				'sale'     => orvio_t( 'On sale', 'تخفیف‌دار' ),
-				'category' => orvio_t( 'Category', 'دسته' ),
+				'latest'      => orvio_t( 'Latest', 'جدیدترین' ),
+				'recommended' => orvio_t( 'Recommended', 'پیشنهادی' ),
+				'featured'    => orvio_t( 'Featured', 'ویژه' ),
+				'best'        => orvio_t( 'Best rated', 'پربازدید و امتیاز بالا' ),
+				'sale'        => orvio_t( 'Sale / deals', 'تخفیف و پیشنهاد ویژه' ),
+				'category'    => orvio_t( 'Category', 'دسته' ),
 			),
 		) );
-		$this->add_control( 'category', array( 'label' => orvio_t( 'Category slug', 'نامک دسته' ), 'type' => \Elementor\Controls_Manager::TEXT ) );
-		$this->add_control( 'limit', array( 'label' => orvio_t( 'Count', 'تعداد' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 8, 'min' => 1, 'max' => 24 ) );
-		$this->add_control( 'columns', array( 'label' => orvio_t( 'Columns', 'ستون' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => '4', 'options' => array( '2' => '2', '3' => '3', '4' => '4', '5' => '5' ) ) );
+		$this->add_control( 'category', array( 'label' => orvio_t( 'Category slug', 'نامک دسته' ), 'type' => \Elementor\Controls_Manager::TEXT, 'condition' => array( 'source' => 'category' ) ) );
+		$this->add_control( 'limit', array( 'label' => orvio_t( 'Count', 'تعداد' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 8, 'min' => 1, 'max' => 36 ) );
+		$this->add_control( 'columns', array( 'label' => orvio_t( 'Columns', 'ستون' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => '4', 'options' => array( '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6' ) ) );
 		$this->add_control( 'layout', array(
 			'label'   => orvio_t( 'Layout', 'چیدمان' ),
 			'type'    => \Elementor\Controls_Manager::SELECT,
@@ -243,21 +273,44 @@ class Orvio_Widget_Products extends Orvio_Widget_Base {
 			'options' => array(
 				'grid'     => orvio_t( 'Grid', 'شبکه' ),
 				'list'     => orvio_t( 'List', 'فهرست' ),
-				'carousel' => orvio_t( 'Carousel', 'چرخ فلک' ),
 				'compact'  => orvio_t( 'Compact', 'فشرده' ),
+				'grouped'  => orvio_t( 'Grouped by category', 'گروه‌بندی بر اساس دسته' ),
+				'carousel' => orvio_t( 'Carousel', 'چرخ فلک' ),
 			),
 		) );
 		$this->add_control( 'card', array(
 			'label'   => orvio_t( 'Card style', 'مدل کارت' ),
 			'type'    => \Elementor\Controls_Manager::SELECT,
+			'default' => 'classic',
+			'options' => array(
+				'classic'   => orvio_t( 'Classic', 'کلاسیک' ),
+				'minimal'   => orvio_t( 'Minimal', 'مینیمال' ),
+				'overlay'   => orvio_t( 'Overlay', 'روی تصویر' ),
+				'editorial' => orvio_t( 'Editorial', 'ادیتوریال' ),
+				'deal'      => orvio_t( 'Deal', 'تخفیف' ),
+				'polaroid'  => orvio_t( 'Polaroid', 'پولاروید' ),
+				'magazine'  => orvio_t( 'Magazine', 'مجله‌ای' ),
+			),
+		) );
+		$this->add_control( 'atc', array(
+			'label'   => orvio_t( 'Add to cart button', 'دکمه افزودن به سبد' ),
+			'type'    => \Elementor\Controls_Manager::SELECT,
 			'default' => '',
 			'options' => array(
 				''        => orvio_t( 'Theme default', 'پیش‌فرض قالب' ),
-				'classic' => orvio_t( 'Classic', 'کلاسیک' ),
-				'minimal' => orvio_t( 'Minimal', 'مینیمال' ),
-				'overlay' => orvio_t( 'Overlay', 'روی تصویر' ),
+				'pill'    => orvio_t( 'Pill', 'گرد' ),
+				'block'   => orvio_t( 'Full width', 'تمام‌عرض' ),
+				'outline' => orvio_t( 'Outline', 'خطی' ),
+				'soft'    => orvio_t( 'Soft', 'نرم' ),
 			),
 		) );
+		$this->add_control( 'sale_end', array( 'label' => orvio_t( 'Deal ends', 'پایان پیشنهاد' ), 'type' => \Elementor\Controls_Manager::DATE_TIME, 'condition' => array( 'source' => 'sale' ) ) );
+		$this->add_control( 'car_cols', array( 'label' => orvio_t( 'Visible slides', 'تعداد اسلاید قابل نمایش' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 4, 'min' => 1, 'max' => 6, 'condition' => array( 'layout' => 'carousel' ) ) );
+		$this->add_control( 'car_gap', array( 'label' => orvio_t( 'Carousel gap', 'فاصله کروسل' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 16, 'min' => 0, 'max' => 48, 'condition' => array( 'layout' => 'carousel' ) ) );
+		$this->add_control( 'car_auto', array( 'label' => orvio_t( 'Autoplay milliseconds', 'پخش خودکار (میلی‌ثانیه)' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 0, 'min' => 0, 'max' => 12000, 'condition' => array( 'layout' => 'carousel' ) ) );
+		$this->add_control( 'car_loop', array( 'label' => orvio_t( 'Loop', 'حلقه' ), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => array( 'layout' => 'carousel' ) ) );
+		$this->add_control( 'car_arrows', array( 'label' => orvio_t( 'Show arrows', 'نمایش فلش‌ها' ), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => array( 'layout' => 'carousel' ) ) );
+		$this->add_control( 'car_dots', array( 'label' => orvio_t( 'Show dots', 'نمایش نقطه‌ها' ), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => array( 'layout' => 'carousel' ) );
 		$this->end_controls_section();
 		$this->orvio_register_style();
 		$this->orvio_register_part( 'title', orvio_t( 'Card title', 'عنوان کارت' ), '{{WRAPPER}} .orvio-card__title, {{WRAPPER}} .orvio-card__title a' );
@@ -268,62 +321,135 @@ class Orvio_Widget_Products extends Orvio_Widget_Base {
 			echo '<p class="orvio-note">' . esc_html( orvio_t( 'WooCommerce is required.', 'ووکامرس لازم است.' ) ) . '</p>';
 			return;
 		}
-		$s    = $this->get_settings_for_display();
+		$s = $this->get_settings_for_display();
+		$source = $s['source'] ?? 'latest';
+		if ( 'orvio-deals' === $this->get_name() ) {
+			$source = 'sale';
+		} elseif ( 'orvio-recommended' === $this->get_name() ) {
+			$source = 'recommended';
+		}
 		$args = array(
 			'post_type'      => 'product',
-			'posts_per_page' => max( 1, (int) $s['limit'] ),
+			'posts_per_page' => max( 1, (int) ( $s['limit'] ?? 8 ) ),
 			'post_status'    => 'publish',
 		);
-		if ( 'featured' === $s['source'] ) {
+		if ( in_array( $source, array( 'featured', 'recommended' ), true ) ) {
 			$args['tax_query'] = array( array( 'taxonomy' => 'product_visibility', 'field' => 'name', 'terms' => 'featured' ) );
-		} elseif ( 'sale' === $s['source'] ) {
+		} elseif ( 'best' === $source ) {
+			$args['meta_key'] = '_wc_average_rating';
+			$args['orderby']  = 'meta_value_num';
+			$args['order']    = 'DESC';
+		} elseif ( 'sale' === $source ) {
 			$args['post__in'] = array_merge( array( 0 ), wc_get_product_ids_on_sale() );
-		} elseif ( 'category' === $s['source'] && ! empty( $s['category'] ) ) {
+			$args['orderby']  = 'post__in';
+		} elseif ( 'category' === $source && ! empty( $s['category'] ) ) {
 			$args['tax_query'] = array( array( 'taxonomy' => 'product_cat', 'field' => 'slug', 'terms' => sanitize_title( $s['category'] ) ) );
 		}
-		$q      = new WP_Query( $args );
-		$layout = $s['layout'] ?: 'grid';
-		$card   = $s['card'] ? ' orvio-cards-' . sanitize_html_class( $s['card'] ) : '';
-		$cols   = (int) $s['columns'];
-		echo '<section class="orvio-section orvio-el-products' . esc_attr( $card ) . '">';
-		if ( ! empty( $s['heading'] ) ) {
-			echo '<div class="orvio-section__head"><h2>' . esc_html( $s['heading'] ) . '</h2></div>';
-		}
-		if ( 'carousel' === $layout ) {
-			echo '<div class="orvio-carousel" data-carousel><div class="orvio-carousel__view"><div class="orvio-carousel__track">';
-		} else {
-			$list = 'list' === $layout ? ' is-list' : '';
-			$compact = 'compact' === $layout ? ' is-list' : '';
-			echo '<div class="orvio-grid' . esc_attr( $list . $compact ) . '" style="--cols:' . esc_attr( $cols ) . '">';
-		}
-		while ( $q->have_posts() ) {
-			$q->the_post();
-			orvio_wc_card( wc_get_product( get_the_ID() ) );
+		$q = new WP_Query( $args );
+		$products = array();
+		foreach ( $q->posts as $post ) {
+			$product = wc_get_product( $post->ID );
+			if ( $product && $product->is_visible() ) {
+				$products[] = $product;
+			}
 		}
 		wp_reset_postdata();
-		echo 'carousel' === $layout ? '</div></div></div>' : '</div>';
+		$layout = $s['layout'] ?? 'grid';
+		$card   = in_array( $s['card'] ?? '', array( 'classic', 'minimal', 'overlay', 'editorial', 'deal', 'polaroid', 'magazine' ), true ) ? $s['card'] : 'classic';
+		$atc    = in_array( $s['atc'] ?? '', array( 'pill', 'block', 'outline', 'soft' ), true ) ? $s['atc'] : '';
+		$sale_end = ! empty( $s['sale_end'] ) ? $s['sale_end'] : ( $s['deal_end'] ?? '' );
+		$classes = array( 'orvio-section', 'orvio-el-products', 'orvio-cards-' . $card );
+		if ( $atc ) {
+			$classes[] = 'orvio-atc-' . $atc;
+		}
+		echo '<section class="' . esc_attr( implode( ' ', $classes ) ) . '">';
+		if ( ! empty( $s['heading'] ) || ( 'sale' === $source && ! empty( $sale_end ) ) ) {
+			echo '<div class="orvio-section__head"><h2>' . esc_html( $s['heading'] ?? '' ) . '</h2>';
+			if ( 'sale' === $source && ! empty( $sale_end ) ) {
+				echo '<span class="orvio-section__timer">' . esc_html( orvio_t( 'Ends in', 'پایان پیشنهاد' ) ) . ' <span class="orvio-timer" data-orvio-timer="' . esc_attr( $sale_end ) . '">' . esc_html( $sale_end ) . '</span></span>';
+			}
+			echo '</div>';
+		}
+		$render_grid = function ( $items, $extra = '' ) use ( $s, $layout ) {
+			$cols = max( 1, min( 6, (int) ( $s['columns'] ?? 4 ) ) );
+			echo '<div class="orvio-grid' . esc_attr( $extra ) . '" style="--cols:' . esc_attr( $cols ) . '">';
+			foreach ( $items as $product ) {
+				orvio_wc_card( $product );
+			}
+			echo '</div>';
+		};
+		if ( 'carousel' === $layout ) {
+			$cols = max( 1, min( 6, (int) ( $s['car_cols'] ?? 4 ) ) );
+			$gap = max( 0, min( 48, (int) ( $s['car_gap'] ?? 16 ) ) );
+			$loop = ! empty( $s['car_loop'] ) && 'no' !== $s['car_loop'];
+			echo '<div class="orvio-carousel" data-carousel data-cols="' . esc_attr( $cols ) . '" data-gap="' . esc_attr( $gap ) . '" data-autoplay="' . esc_attr( (int) ( $s['car_auto'] ?? 0 ) ) . '" data-loop="' . ( $loop ? '1' : '0' ) . '" style="--carousel-cols:' . esc_attr( $cols ) . ';--carousel-gap:' . esc_attr( $gap ) . 'px;">';
+			if ( empty( $s['car_arrows'] ) || 'yes' === $s['car_arrows'] ) {
+				echo '<div class="orvio-carousel__nav"><button type="button" data-prev aria-label="' . esc_attr( orvio_t( 'Previous', 'قبلی' ) ) . '">' . orvio_icon( 'chev' ) . '</button><button type="button" data-next aria-label="' . esc_attr( orvio_t( 'Next', 'بعدی' ) ) . '">' . orvio_icon( 'chev' ) . '</button></div>';
+			}
+			echo '<div class="orvio-carousel__view"><div class="orvio-carousel__track">';
+			foreach ( $products as $product ) {
+				orvio_wc_card( $product );
+			}
+			echo '</div></div>';
+			if ( empty( $s['car_dots'] ) || 'yes' === $s['car_dots'] ) {
+				echo '<div class="orvio-carousel__dots" data-dots></div>';
+			}
+			echo '</div>';
+		} elseif ( 'grouped' === $layout ) {
+			$groups = array();
+			foreach ( $products as $product ) {
+				$terms = get_the_terms( $product->get_id(), 'product_cat' );
+				$name = ( $terms && ! is_wp_error( $terms ) ) ? $terms[0]->name : orvio_t( 'Products', 'محصولات' );
+				$groups[ $name ][] = $product;
+			}
+			echo '<div class="orvio-group">';
+			foreach ( $groups as $name => $items ) {
+				echo '<section><div class="orvio-group__head"><h3>' . esc_html( $name ) . '</h3></div>';
+				$render_grid( $items );
+				echo '</section>';
+			}
+			echo '</div>';
+		} else {
+			$extra = 'list' === $layout ? ' is-list' : ( 'compact' === $layout ? ' is-compact' : '' );
+			$render_grid( $products, $extra );
+		}
 		echo '</section>';
 	}
 }
 
+class Orvio_Widget_Deals extends Orvio_Widget_Products {
+	public function get_name() { return 'orvio-deals'; }
+	public function get_title() { return orvio_t( 'Sale products with timer', 'محصولات تخفیف‌دار با تایمر' ); }
+	public function get_icon() { return 'eicon-countdown'; }
+	protected function register_controls() {
+		parent::register_controls();
+		$this->start_controls_section( 'deal_settings', array( 'label' => orvio_t( 'Deal timer', 'تایمر پیشنهاد' ) ) );
+		$this->add_control( 'deal_end', array( 'label' => orvio_t( 'Deal ends', 'پایان پیشنهاد' ), 'type' => \Elementor\Controls_Manager::DATE_TIME ) );
+		$this->end_controls_section();
+	}
+}
+
+class Orvio_Widget_Recommended extends Orvio_Widget_Products {
+	public function get_name() { return 'orvio-recommended'; }
+	public function get_title() { return orvio_t( 'Recommended products', 'محصولات پیشنهادی' ); }
+	public function get_icon() { return 'eicon-star'; }
+}
+
 class Orvio_Widget_Banner extends Orvio_Widget_Base {
 	public function get_name() { return 'orvio-product-banner'; }
-	public function get_title() { return orvio_t( 'Product banner', 'بنر محصول' ); }
+	public function get_title() { return orvio_t( 'Creative product banner', 'بنر خلاق محصول' ); }
 	public function get_icon() { return 'eicon-banner'; }
 	protected function register_controls() {
 		$this->start_controls_section( 's', array( 'label' => orvio_t( 'Banner', 'بنر' ) ) );
-		$this->add_control( 'model', array(
-			'label'   => orvio_t( 'Model', 'مدل' ),
-			'type'    => \Elementor\Controls_Manager::SELECT,
-			'default' => 'split',
-			'options' => array(
-				'split'   => orvio_t( 'Split', 'اسپلیت' ),
-				'overlay' => orvio_t( 'Overlay', 'پوششی' ),
-				'duo'     => orvio_t( 'Duo', 'دوگانه' ),
-				'card'    => orvio_t( 'Card', 'کارتی' ),
-				'ribbon'  => orvio_t( 'Ribbon', 'نواری' ),
-			),
-		) );
+		$this->add_control( 'model', array( 'label' => orvio_t( 'Model', 'مدل' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'split', 'options' => array( 'split' => orvio_t( 'Split', 'اسپلیت' ), 'overlay' => orvio_t( 'Overlay', 'پوششی' ), 'duo' => orvio_t( 'Duo', 'دوگانه' ), 'card' => orvio_t( 'Card', 'کارتی' ), 'ribbon' => orvio_t( 'Ribbon', 'نواری' ), 'product' => orvio_t( 'Product spotlight', 'محصول ویژه' ) ) ) );
+		$this->add_control( 'size', array( 'label' => orvio_t( 'Banner size', 'سایز بنر' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'full', 'options' => array( 'full' => orvio_t( 'Full', 'کامل' ), 'wide' => orvio_t( 'Wide', 'عریض' ), 'medium' => orvio_t( 'Medium', 'متوسط' ), 'small' => orvio_t( 'Small strip', 'نواری کوچک' ) ) ) );
+		$product_options = array( '' => orvio_t( 'Choose a product', 'انتخاب محصول' ) );
+		if ( function_exists( 'wc_get_products' ) ) {
+			foreach ( wc_get_products( array( 'status' => 'publish', 'limit' => 80, 'return' => 'objects' ) ) as $product ) {
+				$product_options[ (string) $product->get_id() ] = $product->get_name();
+			}
+		}
+		$this->add_control( 'product_id', array( 'label' => orvio_t( 'Product', 'محصول' ), 'type' => \Elementor\Controls_Manager::SELECT2, 'options' => $product_options, 'condition' => array( 'model' => 'product' ) ) );
 		$this->add_control( 'image', array( 'label' => orvio_t( 'Image', 'تصویر' ), 'type' => \Elementor\Controls_Manager::MEDIA ) );
 		$this->add_control( 'image_2', array( 'label' => orvio_t( 'Second image', 'تصویر دوم' ), 'type' => \Elementor\Controls_Manager::MEDIA, 'condition' => array( 'model' => 'duo' ) ) );
 		$this->add_control( 'kicker', array( 'label' => orvio_t( 'Kicker', 'برچسب' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'Edit', 'مجموعه' ) ) );
@@ -339,38 +465,52 @@ class Orvio_Widget_Banner extends Orvio_Widget_Base {
 		$this->orvio_register_part( 'kicker', orvio_t( 'Kicker', 'برچسب' ), '{{WRAPPER}} .orvio-kicker' );
 	}
 	protected function render() {
-		$s   = $this->get_settings_for_display();
+		$s = $this->get_settings_for_display();
+		$model = in_array( $s['model'] ?? '', array( 'split', 'overlay', 'duo', 'card', 'ribbon', 'product' ), true ) ? $s['model'] : 'split';
+		$size = in_array( $s['size'] ?? '', array( 'full', 'wide', 'medium', 'small' ), true ) ? $s['size'] : 'full';
 		$img = ! empty( $s['image']['url'] ) ? $s['image']['url'] : ORVIO_URI . '/assets/images/hero.jpg';
 		$img2 = ! empty( $s['image_2']['url'] ) ? $s['image_2']['url'] : ORVIO_URI . '/assets/images/products/headphones.jpg';
 		$url = ! empty( $s['link']['url'] ) ? $s['link']['url'] : '#';
 		$url2 = ! empty( $s['link_2']['url'] ) ? $s['link_2']['url'] : '#';
-		$model = $s['model'] ?: 'split';
+		$product = ( ! empty( $s['product_id'] ) && function_exists( 'wc_get_product' ) ) ? wc_get_product( (int) $s['product_id'] ) : false;
+		if ( 'product' === $model && $product ) {
+			$img = wp_get_attachment_image_url( $product->get_image_id(), 'large' ) ?: $img;
+			$url = $product->get_permalink();
+			$title = $product->get_name();
+			$price = $product->get_price_html();
+			echo '<article class="orvio-banner orvio-product-banner orvio-banner--product orvio-banner--size-' . esc_attr( $size ) . '"><div class="orvio-product-banner__media"><img src="' . esc_url( $img ) . '" alt="' . esc_attr( $title ) . '"></div><div class="orvio-banner__copy">';
+			if ( ! empty( $s['kicker'] ) ) {
+				echo '<p class="orvio-kicker">' . esc_html( $s['kicker'] ) . '</p>';
+			}
+			echo '<h2>' . esc_html( $title ) . '</h2><div class="orvio-product-banner__price">' . wp_kses_post( $price ) . '</div>';
+			if ( ! empty( $s['text'] ) ) {
+				echo '<p>' . esc_html( $s['text'] ) . '</p>';
+			}
+			if ( ! empty( $s['button'] ) ) {
+				echo '<a class="orvio-btn orvio-btn--dark" href="' . esc_url( $url ) . '">' . esc_html( $s['button'] ) . '</a>';
+			}
+			echo '</div></article>';
+			return;
+		}
 		if ( 'duo' === $model ) {
-			echo '<div class="orvio-duo">';
-			echo '<a href="' . esc_url( $url ) . '"><img src="' . esc_url( $img ) . '" alt=""><span class="cap"><strong>' . esc_html( $s['title'] ) . '</strong></span></a>';
-			echo '<a href="' . esc_url( $url2 ) . '"><img src="' . esc_url( $img2 ) . '" alt=""><span class="cap"><strong>' . esc_html( $s['title_2'] ) . '</strong></span></a>';
-			echo '</div>';
+			echo '<div class="orvio-duo orvio-banner--size-' . esc_attr( $size ) . '"><a href="' . esc_url( $url ) . '"><img src="' . esc_url( $img ) . '" alt=""><span class="cap"><strong>' . esc_html( $s['title'] ) . '</strong></span></a><a href="' . esc_url( $url2 ) . '"><img src="' . esc_url( $img2 ) . '" alt=""><span class="cap"><strong>' . esc_html( $s['title_2'] ?? '' ) . '</strong></span></a></div>';
 			return;
 		}
 		if ( 'ribbon' === $model ) {
-			echo '<div class="orvio-ribbon"><img src="' . esc_url( $img ) . '" alt=""><p><strong>' . esc_html( $s['title'] ) . '</strong><span>' . esc_html( $s['text'] ) . '</span></p><a class="orvio-btn orvio-btn--light" href="' . esc_url( $url ) . '">' . esc_html( $s['button'] ) . '</a></div>';
+			echo '<div class="orvio-ribbon orvio-banner--size-' . esc_attr( $size ) . '"><img src="' . esc_url( $img ) . '" alt=""><p><strong>' . esc_html( $s['title'] ) . '</strong><span>' . esc_html( $s['text'] ) . '</span></p><a class="orvio-btn orvio-btn--light" href="' . esc_url( $url ) . '">' . esc_html( $s['button'] ) . '</a></div>';
 			return;
 		}
-		$cls = 'orvio-banner orvio-banner--' . sanitize_html_class( $model );
-		echo '<article class="' . esc_attr( $cls ) . '"><img src="' . esc_url( $img ) . '" alt="">';
-		echo '<div class="orvio-banner__copy">';
-		if ( $s['kicker'] ) {
+		$cls = 'orvio-banner orvio-banner--' . sanitize_html_class( $model ) . ' orvio-banner--size-' . sanitize_html_class( $size );
+		echo '<article class="' . esc_attr( $cls ) . '"><img src="' . esc_url( $img ) . '" alt=""><div class="orvio-banner__copy">';
+		if ( ! empty( $s['kicker'] ) ) {
 			echo '<p class="orvio-kicker">' . esc_html( $s['kicker'] ) . '</p>';
 		}
 		echo '<h2>' . esc_html( $s['title'] ) . '</h2>';
-		if ( $s['text'] ) {
+		if ( ! empty( $s['text'] ) ) {
 			echo '<p>' . esc_html( $s['text'] ) . '</p>';
 		}
-		if ( $s['button'] ) {
-			$btn = 'overlay' === $model ? 'orvio-btn orvio-btn--ghost-light' : 'orvio-btn orvio-btn--light';
-			if ( 'card' === $model ) {
-				$btn = 'orvio-btn orvio-btn--dark';
-			}
+		if ( ! empty( $s['button'] ) ) {
+			$btn = 'overlay' === $model ? 'orvio-btn orvio-btn--ghost-light' : ( 'card' === $model ? 'orvio-btn orvio-btn--dark' : 'orvio-btn orvio-btn--light' );
 			echo '<a class="' . esc_attr( $btn ) . '" href="' . esc_url( $url ) . '">' . esc_html( $s['button'] ) . '</a>';
 		}
 		echo '</div></article>';
@@ -459,8 +599,10 @@ class Orvio_Widget_Cart_Button extends Orvio_Widget_Base {
 		$this->start_controls_section( 's', array( 'label' => orvio_t( 'Cart button', 'دکمه سبد' ) ) );
 		$this->add_control( 'show_total', array( 'label' => orvio_t( 'Show total', 'نمایش مبلغ' ), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes' ) );
 		$this->add_control( 'label', array( 'label' => orvio_t( 'Label', 'برچسب' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'Bag', 'سبد' ) ) );
+		$this->add_control( 'preset', array( 'label' => orvio_t( 'Button preset', 'قالب آماده دکمه' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'pill', 'options' => array( 'minimal' => orvio_t( 'Minimal', 'مینیمال' ), 'pill' => orvio_t( 'Pill', 'گرد' ), 'solid' => orvio_t( 'Solid', 'پر' ), 'outline' => orvio_t( 'Outline', 'خطی' ), 'soft' => orvio_t( 'Soft', 'نرم' ) ) ) );
 		$this->end_controls_section();
 		$this->orvio_register_style();
+		$this->orvio_register_header_button_style();
 	}
 	protected function render() {
 		$s     = $this->get_settings_for_display();
@@ -469,7 +611,9 @@ class Orvio_Widget_Cart_Button extends Orvio_Widget_Base {
 		$attr  = 'page' === orvio_opt( 'cart_type' )
 			? ' href="' . esc_url( function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '#' ) . '"'
 			: ' type="button" data-open="cart"';
-		echo '<' . $tag . ' class="orvio-tool orvio-cartbtn"' . $attr . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		$presets = array( 'minimal', 'pill', 'solid', 'outline', 'soft' );
+		$preset = in_array( $s['orvio_button_preset'] ?? '', $presets, true ) ? $s['orvio_button_preset'] : ( in_array( $s['preset'] ?? '', $presets, true ) ? $s['preset'] : 'pill' );
+		echo '<' . $tag . ' class="orvio-tool orvio-cartbtn orvio-headerbtn--' . esc_attr( $preset ) . '"' . $attr . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '<span class="orvio-tool__icon">' . orvio_icon( 'bag' ) . '<span class="orvio-count' . ( $count ? '' : ' is-zero' ) . '" data-cart-count>' . esc_html( (string) $count ) . '</span></span>';
 		echo '<span class="orvio-tool__meta"><span class="orvio-tool__label">' . esc_html( $s['label'] ) . '</span>';
 		if ( 'yes' === $s['show_total'] ) {
@@ -521,6 +665,8 @@ class Orvio_Widget_Header extends Orvio_Widget_Base {
 				'centered' => orvio_t( 'Centered logo', 'لوگوی وسط' ),
 			),
 		) );
+		$this->add_control( 'cart_style', array( 'label' => orvio_t( 'Cart button preset', 'قالب دکمه سبد' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'pill', 'options' => array( 'minimal' => orvio_t( 'Minimal', 'مینیمال' ), 'pill' => orvio_t( 'Pill', 'گرد' ), 'solid' => orvio_t( 'Solid', 'پر' ), 'outline' => orvio_t( 'Outline', 'خطی' ), 'soft' => orvio_t( 'Soft', 'نرم' ) ) ) );
+		$this->add_control( 'account_style', array( 'label' => orvio_t( 'Account button preset', 'قالب دکمه حساب' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'minimal', 'options' => array( 'minimal' => orvio_t( 'Minimal', 'مینیمال' ), 'pill' => orvio_t( 'Pill', 'گرد' ), 'solid' => orvio_t( 'Solid', 'پر' ), 'outline' => orvio_t( 'Outline', 'خطی' ), 'soft' => orvio_t( 'Soft', 'نرم' ) ) ) );
 		foreach ( array(
 			'show_search'  => orvio_t( 'Search', 'جستجو' ),
 			'show_account' => orvio_t( 'Account', 'حساب' ),
@@ -537,6 +683,7 @@ class Orvio_Widget_Header extends Orvio_Widget_Base {
 		}
 		$this->end_controls_section();
 		$this->orvio_register_style( '{{WRAPPER}} .orvio-header, {{WRAPPER}} .orvio-catbar, {{WRAPPER}} .orvio-announce' );
+		$this->orvio_register_header_button_style( '{{WRAPPER}} .orvio-tool' );
 	}
 	protected function render() {
 		$s    = $this->get_settings_for_display();
@@ -557,6 +704,9 @@ class Orvio_Widget_Header extends Orvio_Widget_Base {
 				$classes[] = $class;
 			}
 		}
+		$header_styles = array( 'minimal', 'pill', 'solid', 'outline', 'soft' );
+		$classes[] = 'orvio-header-cart-' . ( in_array( $s['cart_style'] ?? '', $header_styles, true ) ? $s['cart_style'] : 'pill' );
+		$classes[] = 'orvio-header-account-' . ( in_array( $s['account_style'] ?? '', $header_styles, true ) ? $s['account_style'] : 'minimal' );
 		echo '<div class="' . esc_attr( implode( ' ', $classes ) ) . '">';
 		get_template_part( 'template-parts/header/site-header' );
 		echo '</div>';
@@ -612,9 +762,19 @@ class Orvio_Widget_Account extends Orvio_Widget_Base {
 	public function get_name() { return 'orvio-account'; }
 	public function get_title() { return orvio_t( 'Account button', 'دکمه حساب' ); }
 	public function get_icon() { return 'eicon-user-circle-o'; }
-	protected function register_controls() { $this->orvio_register_style(); }
+	protected function register_controls() {
+		$this->start_controls_section( 's', array( 'label' => orvio_t( 'Account button', 'دکمه حساب' ) ) );
+		$this->add_control( 'label', array( 'label' => orvio_t( 'Label', 'برچسب' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'Account', 'حساب' ) ) );
+		$this->add_control( 'preset', array( 'label' => orvio_t( 'Button preset', 'قالب آماده دکمه' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'minimal', 'options' => array( 'minimal' => orvio_t( 'Minimal', 'مینیمال' ), 'pill' => orvio_t( 'Pill', 'گرد' ), 'solid' => orvio_t( 'Solid', 'پر' ), 'outline' => orvio_t( 'Outline', 'خطی' ), 'soft' => orvio_t( 'Soft', 'نرم' ) ) ) );
+		$this->end_controls_section();
+		$this->orvio_register_style();
+		$this->orvio_register_header_button_style();
+	}
 	protected function render() {
-		echo '<a class="orvio-tool" href="' . esc_url( orvio_account_url() ) . '"><span class="orvio-tool__icon">' . orvio_icon( 'user' ) . '</span><span class="orvio-tool__label">' . esc_html( orvio_t( 'Account', 'حساب' ) ) . '</span></a>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		$s = $this->get_settings_for_display();
+		$presets = array( 'minimal', 'pill', 'solid', 'outline', 'soft' );
+		$preset = in_array( $s['orvio_button_preset'] ?? '', $presets, true ) ? $s['orvio_button_preset'] : ( in_array( $s['preset'] ?? '', $presets, true ) ? $s['preset'] : 'minimal' );
+		echo '<a class="orvio-tool orvio-accountbtn orvio-headerbtn--' . esc_attr( $preset ) . '" href="' . esc_url( orvio_account_url() ) . '"><span class="orvio-tool__icon">' . orvio_icon( 'user' ) . '</span><span class="orvio-tool__label">' . esc_html( $s['label'] ?? orvio_t( 'Account', 'حساب' ) ) . '</span></a>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }
 
@@ -684,34 +844,34 @@ class Orvio_Widget_Features extends Orvio_Widget_Base {
 
 class Orvio_Widget_Hero extends Orvio_Widget_Base {
 	public function get_name() { return 'orvio-hero'; }
-	public function get_title() { return orvio_t( 'Hero', 'هیرو' ); }
+	public function get_title() { return orvio_t( 'Hero', 'هیرو خلاق' ); }
 	public function get_icon() { return 'eicon-banner'; }
 	protected function register_controls() {
 		$this->start_controls_section( 's', array( 'label' => orvio_t( 'Hero', 'هیرو' ) ) );
+		$this->add_control( 'model', array( 'label' => orvio_t( 'Hero model', 'مدل هیرو' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'split', 'options' => array( 'split' => orvio_t( 'Split showcase', 'نمایش دو بخشی' ), 'poster' => orvio_t( 'Poster overlay', 'پوستر پوششی' ), 'fullscreen' => orvio_t( 'Full screen', 'تمام‌صفحه' ), 'editorial' => orvio_t( 'Editorial', 'ادیتوریال' ) ) ) );
 		$this->add_control( 'kicker', array( 'label' => orvio_t( 'Kicker', 'برچسب' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'Autumn edit', 'مجموعه پاییز' ) ) );
 		$this->add_control( 'title', array( 'label' => orvio_t( 'Title', 'عنوان' ), 'type' => \Elementor\Controls_Manager::TEXTAREA, 'default' => orvio_t( 'Objects for a quieter house', 'اشیائی برای خانه‌ای که آرام است' ) ) );
 		$this->add_control( 'lead', array( 'label' => orvio_t( 'Lead', 'متن' ), 'type' => \Elementor\Controls_Manager::TEXTAREA, 'default' => orvio_t( 'A considered shop of ceramic, leather, wool and light.', 'ویترینی از سرامیک، چرم، پشم و نور.' ) ) );
+		$this->add_control( 'badge', array( 'label' => orvio_t( 'Badge', 'نشان' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'New collection', 'کالکشن جدید' ) ) );
 		$this->add_control( 'button', array( 'label' => orvio_t( 'Button', 'دکمه' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'Enter the shop', 'ورود به فروشگاه' ) ) );
 		$this->add_control( 'link', array( 'label' => orvio_t( 'Link', 'پیوند' ), 'type' => \Elementor\Controls_Manager::URL, 'default' => array( 'url' => '' ) ) );
 		$this->add_control( 'image', array( 'label' => orvio_t( 'Image', 'تصویر' ), 'type' => \Elementor\Controls_Manager::MEDIA ) );
-		$this->add_responsive_control( 'image_height', array(
-			'label'      => orvio_t( 'Image height', 'ارتفاع تصویر' ),
-			'type'       => \Elementor\Controls_Manager::SLIDER,
-			'size_units' => array( 'px' ),
-			'range'      => array( 'px' => array( 'min' => 220, 'max' => 760 ) ),
-			'selectors'  => array( '{{WRAPPER}} .orvio-hero__media > img' => 'height: {{SIZE}}{{UNIT}};' ),
-		) );
+		$rep = new \Elementor\Repeater();
+		$rep->add_control( 'num', array( 'label' => orvio_t( 'Number', 'عدد' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => '18' ) );
+		$rep->add_control( 'label', array( 'label' => orvio_t( 'Label', 'برچسب' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'Objects', 'شیء' ) ) );
+		$this->add_control( 'stats', array( 'label' => orvio_t( 'Stats', 'آمار' ), 'type' => \Elementor\Controls_Manager::REPEATER, 'fields' => $rep->get_controls(), 'title_field' => '{{{ label }}}', 'condition' => array( 'model' => 'split' ) ) );
+		$this->add_responsive_control( 'image_height', array( 'label' => orvio_t( 'Image height', 'ارتفاع تصویر' ), 'type' => \Elementor\Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 220, 'max' => 900 ) ), 'selectors' => array( '{{WRAPPER}} .orvio-hero__media > img' => 'height: {{SIZE}}{{UNIT}};' ) ) );
 		$this->end_controls_section();
 		$this->orvio_register_style( '{{WRAPPER}} .orvio-hero' );
 		$this->orvio_register_part( 'htitle', orvio_t( 'Title', 'عنوان' ), '{{WRAPPER}} h1' );
 		$this->orvio_register_part( 'lead', orvio_t( 'Lead', 'متن' ), '{{WRAPPER}} .orvio-lead' );
 	}
 	protected function render() {
-		$s   = $this->get_settings_for_display();
+		$s = $this->get_settings_for_display();
+		$model = in_array( $s['model'] ?? '', array( 'split', 'poster', 'fullscreen', 'editorial' ), true ) ? $s['model'] : 'split';
 		$url = ! empty( $s['link']['url'] ) ? $s['link']['url'] : ( function_exists( 'orvio_shop_url' ) ? orvio_shop_url() : '#' );
 		$img = ! empty( $s['image']['url'] ) ? $s['image']['url'] : ORVIO_URI . '/assets/images/hero.jpg';
-		echo '<section class="orvio-hero"><div class="orvio-container orvio-hero__grid">';
-		echo '<div class="orvio-hero__copy">';
+		echo '<section class="orvio-hero orvio-hero--' . esc_attr( $model ) . '"><div class="orvio-container orvio-hero__grid"><div class="orvio-hero__copy">';
 		if ( ! empty( $s['kicker'] ) ) {
 			echo '<p class="orvio-kicker">' . esc_html( $s['kicker'] ) . '</p>';
 		}
@@ -722,62 +882,86 @@ class Orvio_Widget_Hero extends Orvio_Widget_Base {
 		if ( ! empty( $s['button'] ) ) {
 			echo '<div class="orvio-hero__actions"><a class="orvio-btn orvio-btn--primary" href="' . esc_url( $url ) . '">' . esc_html( $s['button'] ) . '</a></div>';
 		}
-		echo '</div><div class="orvio-hero__media"><img src="' . esc_url( $img ) . '" alt="" width="1600" height="900"></div></div></section>';
+		if ( 'split' === $model && ! empty( $s['stats'] ) ) {
+			echo '<div class="orvio-hero__stats">';
+			foreach ( $s['stats'] as $stat ) {
+				echo '<div><strong>' . esc_html( $stat['num'] ) . '</strong><span>' . esc_html( $stat['label'] ) . '</span></div>';
+			}
+			echo '</div>';
+		}
+		echo '</div><div class="orvio-hero__media"><img src="' . esc_url( $img ) . '" alt="" width="1600" height="900">';
+		if ( ! empty( $s['badge'] ) ) {
+			echo '<span class="orvio-hero__badge">' . esc_html( $s['badge'] ) . '</span>';
+		}
+		echo '</div></div></section>';
 	}
 }
 
 class Orvio_Widget_Categories extends Orvio_Widget_Base {
 	public function get_name() { return 'orvio-categories'; }
-	public function get_title() { return orvio_t( 'Category grid', 'شبکه دسته‌ها' ); }
+	public function get_title() { return orvio_t( 'Category showcase', 'نمایش حرفه‌ای دسته‌بندی' ); }
 	public function get_icon() { return 'eicon-gallery-grid'; }
 	protected function register_controls() {
 		$this->start_controls_section( 's', array( 'label' => orvio_t( 'Categories', 'دسته‌ها' ) ) );
 		$this->add_control( 'heading', array( 'label' => orvio_t( 'Heading', 'عنوان' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'Shop by room', 'خرید بر اساس فضا' ) ) );
-		$this->add_control( 'limit', array( 'label' => orvio_t( 'Count', 'تعداد' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 5, 'min' => 2, 'max' => 8 ) );
+		$this->add_control( 'limit', array( 'label' => orvio_t( 'Count', 'تعداد' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 6, 'min' => 2, 'max' => 18 ) );
+		$this->add_control( 'layout', array( 'label' => orvio_t( 'Layout', 'چیدمان' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'mosaic', 'options' => array( 'mosaic' => orvio_t( 'Mosaic', 'موزاییکی' ), 'cards' => orvio_t( 'Cards', 'کارتی' ), 'pills' => orvio_t( 'Pills', 'برچسبی' ), 'carousel' => orvio_t( 'Carousel', 'کروسل' ) ) ) );
+		$this->add_control( 'columns', array( 'label' => orvio_t( 'Columns', 'ستون' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => '4', 'options' => array( '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6' ), 'condition' => array( 'layout!' => 'carousel' ) ) );
+		$this->add_control( 'sort', array( 'label' => orvio_t( 'Order', 'ترتیب' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'name', 'options' => array( 'name' => orvio_t( 'Name', 'نام' ), 'count' => orvio_t( 'Product count', 'تعداد کالا' ), 'date' => orvio_t( 'Newest', 'جدیدترین' ) ) ) );
+		$this->add_control( 'show_count', array( 'label' => orvio_t( 'Show product count', 'نمایش تعداد کالا' ), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes' ) );
+		$this->add_control( 'car_cols', array( 'label' => orvio_t( 'Visible slides', 'اسلاید قابل نمایش' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 4, 'min' => 1, 'max' => 6, 'condition' => array( 'layout' => 'carousel' ) ) );
+		$this->add_control( 'car_auto', array( 'label' => orvio_t( 'Autoplay milliseconds', 'پخش خودکار (میلی‌ثانیه)' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 0, 'min' => 0, 'max' => 12000, 'condition' => array( 'layout' => 'carousel' ) ) );
 		$this->end_controls_section();
 		$this->orvio_register_style();
 		$this->orvio_register_part( 'label', orvio_t( 'Label', 'برچسب' ), '{{WRAPPER}} .orvio-catcard span' );
 	}
 	protected function render() {
-		$s     = $this->get_settings_for_display();
-		$limit = max( 2, (int) $s['limit'] );
+		$s = $this->get_settings_for_display();
+		$limit = max( 2, (int) ( $s['limit'] ?? 6 ) );
 		$items = array();
 		if ( taxonomy_exists( 'product_cat' ) ) {
-			$terms = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false, 'number' => $limit, 'exclude' => array( (int) get_option( 'default_product_cat' ) ) ) );
+			$order = 'name' === ( $s['sort'] ?? 'name' ) ? 'name' : ( 'count' === ( $s['sort'] ?? '' ) ? 'count' : 'term_id' );
+			$terms = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false, 'number' => $limit, 'orderby' => $order, 'order' => 'DESC', 'exclude' => array( (int) get_option( 'default_product_cat' ) ) ) );
 			if ( ! is_wp_error( $terms ) ) {
 				foreach ( $terms as $term ) {
-					$thumb = function_exists( 'get_term_meta' ) ? (int) get_term_meta( $term->term_id, 'thumbnail_id', true ) : 0;
-					$items[] = array(
-						'name' => $term->name,
-						'url'  => get_term_link( $term ),
-						'img'  => $thumb ? wp_get_attachment_image_url( $thumb, 'large' ) : '',
-					);
+					$thumb = (int) get_term_meta( $term->term_id, 'thumbnail_id', true );
+					$items[] = array( 'name' => $term->name, 'count' => (int) $term->count, 'url' => get_term_link( $term ), 'img' => $thumb ? wp_get_attachment_image_url( $thumb, 'large' ) : '' );
 				}
 			}
 		}
 		if ( ! $items && function_exists( 'orvio_sample_categories' ) ) {
-			foreach ( array_slice( orvio_sample_categories(), 0, $limit, true ) as $slug => $cat ) {
-				$items[] = array(
-					'name' => is_rtl() ? $cat['fa'] : $cat['en'],
-					'url'  => function_exists( 'orvio_shop_url' ) ? orvio_shop_url() : '#',
-					'img'  => ORVIO_URI . '/' . $cat['img'],
-				);
+			foreach ( array_slice( orvio_sample_categories(), 0, $limit, true ) as $cat ) {
+				$items[] = array( 'name' => is_rtl() ? $cat['fa'] : $cat['en'], 'count' => 0, 'url' => function_exists( 'orvio_shop_url' ) ? orvio_shop_url() : '#', 'img' => ORVIO_URI . '/' . $cat['img'] );
 			}
 		}
-		echo '<section class="orvio-section"><div class="orvio-container">';
+		$layout = $s['layout'] ?? 'mosaic';
+		$classes = array( 'orvio-section', 'orvio-el-categories', 'orvio-categories--' . sanitize_html_class( $layout ) );
+		echo '<section class="' . esc_attr( implode( ' ', $classes ) ) . '"><div class="orvio-container">';
 		if ( ! empty( $s['heading'] ) ) {
 			echo '<div class="orvio-section__head"><h2>' . esc_html( $s['heading'] ) . '</h2></div>';
 		}
-		echo '<div class="orvio-cats">';
+		if ( 'carousel' === $layout ) {
+			$cols = max( 1, min( 6, (int) ( $s['car_cols'] ?? 4 ) ) );
+			echo '<div class="orvio-carousel orvio-carousel--categories" data-carousel data-cols="' . esc_attr( $cols ) . '" data-gap="14" data-autoplay="' . esc_attr( (int) ( $s['car_auto'] ?? 0 ) ) . '" data-loop="1" style="--carousel-cols:' . esc_attr( $cols ) . ';--carousel-gap:14px;"><div class="orvio-carousel__nav"><button type="button" data-prev aria-label="' . esc_attr( orvio_t( 'Previous', 'قبلی' ) ) . '">' . orvio_icon( 'chev' ) . '</button><button type="button" data-next aria-label="' . esc_attr( orvio_t( 'Next', 'بعدی' ) ) . '">' . orvio_icon( 'chev' ) . '</button></div><div class="orvio-carousel__view"><div class="orvio-carousel__track">';
+		} else {
+			$cols = max( 2, min( 6, (int) ( $s['columns'] ?? 4 ) ) );
+			echo '<div class="orvio-cats" style="--cat-cols:' . esc_attr( $cols ) . '">';
+		}
 		foreach ( $items as $i => $item ) {
-			$cls = 0 === $i ? ' orvio-catcard--feature' : '';
-			echo '<a class="orvio-catcard' . esc_attr( $cls ) . '" href="' . esc_url( $item['url'] ) . '">';
+			$feature = ( 'mosaic' === $layout && 0 === $i ) ? ' orvio-catcard--feature' : '';
+			$count = ! empty( $s['show_count'] ) && $item['count'] ? '<small>' . esc_html( (string) $item['count'] ) . ' ' . esc_html( orvio_t( 'items', 'کالا' ) ) . '</small>' : '';
+			echo '<a class="orvio-catcard' . esc_attr( $feature ) . '" href="' . esc_url( $item['url'] ) . '">';
 			if ( $item['img'] ) {
 				echo '<img src="' . esc_url( $item['img'] ) . '" alt="">';
 			}
-			echo '<span>' . esc_html( $item['name'] ) . '</span></a>';
+			echo '<span>' . esc_html( $item['name'] ) . $count . '</span></a>';
 		}
-		echo '</div></div></section>';
+		if ( 'carousel' === $layout ) {
+			echo '</div></div><div class="orvio-carousel__dots" data-dots></div></div>';
+		} else {
+			echo '</div>';
+		}
+		echo '</div></section>';
 	}
 }
 
@@ -786,6 +970,8 @@ function orvio_elementor_widget_list() {
 		'Orvio_Widget_Hero',
 		'Orvio_Widget_Categories',
 		'Orvio_Widget_Products',
+		'Orvio_Widget_Deals',
+		'Orvio_Widget_Recommended',
 		'Orvio_Widget_Banner',
 		'Orvio_Widget_Contact',
 		'Orvio_Widget_About',
