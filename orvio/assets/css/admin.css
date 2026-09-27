@@ -1,0 +1,39 @@
+.orvio-admin { max-width: 980px; }
+.orvio-admin__hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-end;
+  background: #171512;
+  color: #F6F1EA;
+  border-radius: 18px;
+  padding: 22px 24px;
+  margin: 16px 0;
+}
+.orvio-admin__kicker { letter-spacing: 0.16em; font-size: 12px; margin: 0 0 6px; color: #E7C3B0; }
+.orvio-admin__hero h1 { color: #fff; margin: 0 0 6px; font-size: 28px; }
+.orvio-admin__hero p { margin: 0; max-width: 52ch; color: #D9D0C6; }
+.orvio-admin__warn { color: #F6E6DC; }
+.orvio-admin__tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.orvio-admin__tabs button {
+  border: 1px solid #E5DDD3;
+  background: #fff;
+  border-radius: 999px;
+  min-height: 36px;
+  padding: 0 14px;
+  cursor: pointer;
+}
+.orvio-admin__tabs button.is-on { background: #171512; color: #fff; border-color: #171512; }
+.orvio-admin__panel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fff; border: 1px solid #E5DDD3; border-radius: 16px; padding: 16px; }
+.orvio-admin__field, .orvio-admin__check { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
+.orvio-admin__field--wide { grid-column: 1 / -1; }
+.orvio-admin__field input[type="text"], .orvio-admin__field input[type="number"], .orvio-admin__field select {
+  min-height: 40px;
+  border-radius: 10px;
+  border: 1px solid #D5CCC0;
+}
+.orvio-admin__check { flex-direction: row; align-items: center; }
+@media (max-width: 782px) {
+  .orvio-admin__hero, .orvio-admin__panel { grid-template-columns: 1fr; display: grid; }
+  .orvio-admin__hero { display: flex; flex-direction: column; align-items: flex-start; }
+}

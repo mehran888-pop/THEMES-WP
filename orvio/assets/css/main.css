@@ -1,0 +1,1483 @@
+/* Orvio — design system, chrome, home components */
+
+@font-face {
+  font-family: "Vazirmatn";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/Vazirmatn-wght.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Instrument Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/instrument-sans-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Instrument Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/instrument-sans-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/fraunces-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/fraunces-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --bg: #F3EFE8;
+  --bg-2: #E8E1D6;
+  --surface: #FFFCF8;
+  --ink: #1C1916;
+  --muted: #6E665E;
+  --faint: #8C837A;
+  --line: #E5DDD3;
+  --line-strong: #D5CCC0;
+  --accent: #A34B2B;
+  --accent-dark: #843C22;
+  --accent-soft: #F6E6DC;
+  --forest: #234237;
+  --sale: #9C2F2F;
+  --star: #A7843C;
+  --dark: #171512;
+  --dark-2: #241F1B;
+  --ok: #1C6B45;
+  --warn: #8A6412;
+  --info: #1E4E6B;
+  --radius: 16px;
+  --radius-sm: 12px;
+  --radius-xs: 8px;
+  --shadow: 0 18px 50px rgba(28, 25, 22, 0.1);
+  --shadow-sm: 0 8px 24px rgba(28, 25, 22, 0.06);
+  --header-h: 74px;
+  --container: 1220px;
+  --font: "Instrument Sans", "Vazirmatn", system-ui, sans-serif;
+  --display: "Fraunces", "Vazirmatn", Georgia, serif;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --cols: 4;
+  color-scheme: light;
+}
+
+html[dir="rtl"] {
+  --font: "Vazirmatn", system-ui, sans-serif;
+  --display: "Vazirmatn", system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.7;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+.orvio-summary-static .orvio-summary { position: static; }
+.orvio-carousel__nav [data-prev] svg { transform: rotate(90deg); }
+.orvio-carousel__nav [data-next] svg { transform: rotate(-90deg); }
+html[dir="rtl"] .orvio-carousel__nav [data-prev] svg { transform: rotate(-90deg); }
+html[dir="rtl"] .orvio-carousel__nav [data-next] svg { transform: rotate(90deg); }
+body.is-locked { overflow: hidden; }
+img, svg, video { max-width: 100%; display: block; }
+img { height: auto; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3, h4, p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+::selection { background: #E8CDBE; color: var(--ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.orvio-skip {
+  position: absolute;
+  inset-inline-start: 12px;
+  top: -40px;
+  background: var(--ink);
+  color: #fff;
+  padding: 8px 12px;
+  z-index: 100;
+  border-radius: 8px;
+}
+.orvio-skip:focus { top: 8px; }
+
+.orvio-container {
+  width: min(var(--container), calc(100% - 32px));
+  margin-inline: auto;
+}
+.orvio-display, h1, h2, .orvio-hero h1 {
+  font-family: var(--display);
+  font-weight: 620;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+}
+html[dir="rtl"] h1,
+html[dir="rtl"] h2,
+html[dir="rtl"] .orvio-display {
+  font-weight: 750;
+  letter-spacing: 0;
+  line-height: 1.45;
+}
+
+/* Buttons */
+.orvio-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-weight: 650;
+  font-size: 14px;
+  line-height: 1;
+  transition: background 0.2s var(--ease), color 0.2s, border-color 0.2s, transform 0.2s;
+  white-space: nowrap;
+}
+.orvio-btn:hover { transform: translateY(-1px); }
+.orvio-btn--primary { background: var(--accent); color: #fff; }
+.orvio-btn--primary:hover { background: var(--accent-dark); }
+.orvio-btn--dark { background: var(--ink); color: #F6F1EA; }
+.orvio-btn--dark:hover { background: #000; }
+.orvio-btn--light { background: #fff; color: var(--ink); }
+.orvio-btn--ghost { border-color: var(--line-strong); background: transparent; color: var(--ink); }
+.orvio-btn--ghost:hover { border-color: var(--ink); }
+.orvio-btn--ghost-light { border-color: rgba(255,255,255,0.4); color: #fff; }
+.orvio-btn--ghost-light:hover { background: #fff; color: var(--ink); }
+.orvio-btn--full { width: 100%; }
+.orvio-btn--sm { min-height: 38px; padding: 0 14px; font-size: 13px; }
+.orvio-btn.is-loading { pointer-events: none; opacity: 0.7; }
+.orvio-iconbtn {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  background: transparent;
+  border-radius: 999px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+.orvio-iconbtn svg, .orvio-tool svg, .orvio-search__icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Announce */
+.orvio-announce {
+  background: var(--dark);
+  color: #F4EFE8;
+  font-size: 13px;
+}
+.orvio-announce__inner {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  position: relative;
+}
+.orvio-announce p { padding-inline: 28px; }
+.orvio-announce__x {
+  position: absolute;
+  inset-inline-end: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+}
+
+/* Header */
+.orvio-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(255, 252, 248, 0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid transparent;
+}
+.orvio-header.is-stuck { border-bottom-color: var(--line); box-shadow: 0 8px 24px rgba(28,25,22,0.04); }
+.orvio-header__row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: var(--header-h);
+}
+.orvio-logo { display: flex; align-items: center; gap: 10px; flex: none; }
+.orvio-logo__mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--ink);
+  color: #F4F0EA;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.orvio-logo__mark svg { width: 22px; height: 22px; }
+.orvio-logo__word { display: flex; flex-direction: column; line-height: 1.05; }
+.orvio-logo__word strong {
+  font-family: "Fraunces", "Vazirmatn", serif;
+  font-weight: 620;
+  letter-spacing: 0.14em;
+  font-size: 15px;
+}
+html[dir="rtl"] .orvio-logo__word strong { letter-spacing: 0.08em; font-family: "Instrument Sans", "Vazirmatn", sans-serif; }
+.orvio-logo__word small { color: var(--muted); font-size: 11px; font-weight: 500; margin-top: 3px; }
+
+.orvio-search {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #EFEAE3;
+  border-radius: 999px;
+  padding-block: 4px;
+  padding-inline-start: 14px;
+  padding-inline-end: 4px;
+  position: relative;
+  border: 1px solid transparent;
+}
+.orvio-search:focus-within { background: #fff; border-color: var(--line-strong); }
+.orvio-search input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  border: 0;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+}
+.orvio-search > button {
+  height: 40px;
+  padding-inline: 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #F6F1EA;
+  font-weight: 650;
+  font-size: 13px;
+}
+.orvio-suggest {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(100% + 8px);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 8px;
+  z-index: 35;
+}
+.orvio-suggest a, .orvio-suggest__empty {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.orvio-suggest a:hover { background: var(--bg); }
+.orvio-suggest img { width: 46px; height: 46px; object-fit: cover; border-radius: 8px; flex: none; }
+.orvio-suggest small { display: block; color: var(--muted); }
+
+.orvio-tools { display: flex; align-items: center; gap: 2px; flex: none; }
+.orvio-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 0;
+  background: transparent;
+  border-radius: 12px;
+  position: relative;
+}
+.orvio-tool:hover { background: rgba(28,25,22,0.04); }
+.orvio-tool__icon { position: relative; display: inline-flex; }
+.orvio-tool__meta { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.15; }
+.orvio-tool__label { font-size: 13px; font-weight: 650; }
+.orvio-cartbtn__total { font-size: 11px; color: var(--muted); font-weight: 500; max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+.orvio-count {
+  position: absolute;
+  top: -6px;
+  inset-inline-end: -8px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 99px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+}
+.orvio-count.is-zero { display: none; }
+.orvio-lang { font-size: 12px; font-weight: 750; letter-spacing: 0.04em; min-width: 36px; justify-content: center; }
+
+.orvio-searchpanel {
+  display: none;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  padding: 10px 0 12px;
+}
+.orvio-searchpanel.is-open { display: block; }
+.orvio-searchpanel .orvio-search { width: 100%; }
+
+/* Category bar */
+.orvio-catbar { border-top: 1px solid var(--line); background: rgba(255,252,248,0.96); }
+.orvio-catbar__row { display: flex; align-items: center; gap: 8px; min-height: 48px; }
+.orvio-catall { position: relative; flex: none; }
+.orvio-catall__btn, .orvio-catbar__sale {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 0;
+  background: transparent;
+  font-weight: 700;
+  font-size: 13.5px;
+}
+.orvio-catall__btn { background: var(--ink); color: #F6F1EA; }
+.orvio-catall__btn svg { width: 16px; height: 16px; }
+.orvio-catall__panel {
+  position: absolute;
+  inset-inline-start: 0;
+  top: calc(100% + 8px);
+  width: min(360px, 80vw);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 8px;
+  display: none;
+  z-index: 36;
+}
+.orvio-catall.is-open .orvio-catall__panel, .orvio-catall:hover .orvio-catall__panel { display: block; }
+.orvio-catall__panel a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.orvio-catall__panel a:hover { background: var(--bg); }
+.orvio-catall__panel a span { color: var(--muted); font-size: 12px; font-weight: 500; }
+.orvio-catbar__menu { display: flex; align-items: center; gap: 2px; flex: 1; min-width: 0; }
+.orvio-catbar__menu > li { position: static; }
+.orvio-catbar__menu > li > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.orvio-catbar__menu > li > a:hover, .orvio-catbar__menu > li:focus-within > a { background: rgba(28,25,22,0.05); }
+.orvio-catbar__sale { margin-inline-start: auto; color: var(--sale); }
+.orvio-mega {
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  background: #fff;
+  border-top: 1px solid var(--line);
+  box-shadow: 0 28px 50px rgba(28,25,22,0.08);
+  padding: 28px 0 32px;
+  display: none;
+  z-index: 34;
+}
+.orvio-catbar { position: relative; }
+.orvio-catbar__menu > li:hover .orvio-mega,
+.orvio-catbar__menu > li:focus-within .orvio-mega { display: block; }
+.orvio-mega__grid {
+  width: min(var(--container), calc(100% - 32px));
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 280px;
+  gap: 28px;
+}
+.orvio-mega__col strong { display: block; font-size: 13px; margin-bottom: 8px; }
+.orvio-mega__col a { display: block; padding: 5px 0; color: var(--muted); font-size: 14px; }
+.orvio-mega__col a:hover { color: var(--accent); }
+.orvio-mega__feature {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  min-height: 180px;
+  display: flex;
+  align-items: flex-end;
+  color: #fff;
+}
+.orvio-mega__feature img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.orvio-mega__feature span {
+  position: relative;
+  z-index: 1;
+  padding: 16px;
+  font-weight: 700;
+  background: linear-gradient(transparent, rgba(20,16,12,0.65));
+  width: 100%;
+}
+
+/* Centered header layout */
+.orvio-h-centered .orvio-header__row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+}
+.orvio-h-centered .orvio-logo { grid-column: 2; justify-self: center; }
+.orvio-h-centered .orvio-search { display: none; }
+.orvio-h-centered .orvio-tools { grid-column: 3; justify-self: end; }
+.orvio-h-centered .orvio-burger { grid-column: 1; }
+
+/* Drawers & overlay */
+.orvio-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(22, 18, 14, 0.48);
+  z-index: 60;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s var(--ease);
+}
+.orvio-overlay.is-open { opacity: 1; visibility: visible; }
+.orvio-drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: min(420px, 100%);
+  background: var(--surface);
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.38s var(--ease);
+  box-shadow: var(--shadow);
+}
+.orvio-drawer--menu { inset-inline-start: 0; transform: translateX(-105%); }
+html[dir="rtl"] .orvio-drawer--menu { transform: translateX(105%); }
+.orvio-drawer--cart, .orvio-drawer--wish { inset-inline-end: 0; transform: translateX(105%); }
+html[dir="rtl"] .orvio-drawer--cart, html[dir="rtl"] .orvio-drawer--wish { transform: translateX(-105%); }
+.orvio-drawer.is-open { transform: none; }
+.orvio-drawer__head, .orvio-drawer__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.orvio-drawer__foot { border-bottom: 0; border-top: 1px solid var(--line); flex-direction: column; align-items: stretch; }
+.orvio-drawer__head h2 { font-size: 18px; font-weight: 750; letter-spacing: 0; }
+.orvio-drawer__body { flex: 1; overflow: auto; padding: 8px 18px 18px; }
+.orvio-drawer__x {
+  width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font-size: 20px;
+}
+.orvio-shipbar { padding: 4px 18px 12px; }
+.orvio-shipbar__track { height: 6px; background: var(--bg-2); border-radius: 99px; overflow: hidden; }
+.orvio-shipbar__track span { display: block; height: 100%; width: 0; background: var(--forest); border-radius: inherit; transition: width 0.4s var(--ease); }
+.orvio-shipbar p { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+.orvio-line {
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.orvio-line img { width: 78px; height: 78px; object-fit: cover; border-radius: 12px; background: var(--bg); }
+.orvio-line h3 { font-size: 14px; font-weight: 700; line-height: 1.45; letter-spacing: 0; }
+.orvio-line__meta { color: var(--muted); font-size: 12px; }
+.orvio-line__row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.orvio-line__remove { border: 0; background: transparent; color: var(--muted); font-size: 12px; text-decoration: underline; padding: 0; }
+.orvio-drawer__total { display: flex; justify-content: space-between; font-weight: 700; }
+.orvio-menu-acc details { border-bottom: 1px solid var(--line); }
+.orvio-menu-acc summary {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 48px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.orvio-menu-acc summary::-webkit-details-marker { display: none; }
+.orvio-menu-acc a { display: block; padding: 6px 0 10px; color: var(--muted); }
+.orvio-menu-links a {
+  display: flex;
+  align-items: center;
+  min-height: 46px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 650;
+}
+
+/* Hero */
+.orvio-hero { padding: 28px 0 10px; }
+.orvio-hero__grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 42px;
+  align-items: center;
+}
+.orvio-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent);
+  font-weight: 750;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+.orvio-kicker::before { content: ""; width: 22px; height: 1px; background: currentColor; }
+html[dir="ltr"] .orvio-kicker { letter-spacing: 0.14em; text-transform: uppercase; font-size: 12px; }
+.orvio-hero h1 { font-size: clamp(34px, 4.6vw, 62px); max-width: 14ch; }
+html[dir="rtl"] .orvio-hero h1 { max-width: 12em; }
+.orvio-lead { margin-top: 16px; color: var(--muted); font-size: 16.5px; max-width: 46ch; }
+.orvio-hero__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.orvio-hero__stats {
+  display: flex;
+  gap: 22px;
+  margin-top: 32px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.orvio-hero__stats strong { display: block; font-size: 20px; font-weight: 750; }
+.orvio-hero__stats span { color: var(--muted); font-size: 12.5px; }
+.orvio-hero__media { position: relative; }
+.orvio-hero__media > img {
+  width: 100%;
+  height: min(560px, 68vw);
+  object-fit: cover;
+  border-radius: 22px;
+  background: var(--bg-2);
+}
+.orvio-hero__float {
+  position: absolute;
+  inset-inline-start: 16px;
+  bottom: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: rgba(255,252,248,0.94);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 10px 14px 10px 10px;
+  box-shadow: var(--shadow-sm);
+  max-width: min(320px, calc(100% - 32px));
+}
+.orvio-hero__float img { width: 58px; height: 58px; object-fit: cover; border-radius: 10px; flex: none; }
+.orvio-hero__float small { color: var(--muted); font-size: 12px; }
+.orvio-hero__float strong { display: block; font-size: 14px; line-height: 1.4; }
+.orvio-hero__float em { font-style: normal; color: var(--accent); font-weight: 750; font-size: 13px; }
+
+/* Trust */
+.orvio-trust {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 22px 0 8px;
+}
+.orvio-trust__item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  min-width: 0;
+}
+.orvio-trust__ico {
+  width: 42px; height: 42px; border-radius: 12px; background: var(--accent-soft); color: var(--accent-dark);
+  display: grid; place-items: center; flex: none;
+}
+.orvio-trust__ico svg { width: 20px; height: 20px; }
+.orvio-trust strong { display: block; font-size: 13.5px; line-height: 1.4; }
+.orvio-trust span { color: var(--muted); font-size: 12px; }
+
+/* Sections */
+.orvio-section { padding: 42px 0; }
+.orvio-section__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.orvio-section__head h2 { font-size: clamp(26px, 3vw, 36px); }
+.orvio-section__head p { color: var(--muted); font-size: 14px; }
+.orvio-section__head a { font-weight: 700; font-size: 14px; color: var(--accent-dark); white-space: nowrap; }
+
+/* Categories */
+.orvio-cats {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1fr;
+  grid-auto-rows: 196px;
+  gap: 14px;
+}
+.orvio-catcard { position: relative; border-radius: 18px; overflow: hidden; color: #fff; min-height: 150px; }
+.orvio-catcard--feature { grid-row: span 2; }
+.orvio-catcard img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
+.orvio-catcard:hover img { transform: scale(1.05); }
+.orvio-catcard span {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 28px 16px 14px;
+  background: linear-gradient(transparent, rgba(18,14,10,0.72));
+  font-weight: 750;
+  font-size: 18px;
+}
+
+/* Product grid & cards */
+.orvio-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+  gap: 16px;
+}
+.orvio-grid > * { min-width: 0; }
+.orvio-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  transition: box-shadow 0.25s var(--ease), transform 0.25s var(--ease);
+}
+.orvio-card:hover { box-shadow: var(--shadow-sm); transform: translateY(-2px); }
+.orvio-card__media { position: relative; aspect-ratio: 1; background: #EFEAE3; overflow: hidden; }
+.orvio-card__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.55s var(--ease); }
+.orvio-card:hover .orvio-card__media img { transform: scale(1.04); }
+.orvio-badge {
+  position: absolute;
+  top: 10px;
+  inset-inline-start: 10px;
+  z-index: 2;
+  background: var(--sale);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 750;
+  border-radius: 999px;
+  padding: 4px 8px;
+  line-height: 1.2;
+}
+.orvio-badge--new { background: var(--forest); }
+.orvio-card__wish {
+  position: absolute;
+  top: 8px;
+  inset-inline-end: 8px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 0;
+  background: rgba(255,252,248,0.92);
+  display: grid;
+  place-items: center;
+}
+.orvio-card__wish svg { width: 18px; height: 18px; }
+.orvio-card__wish.is-on { color: var(--sale); }
+.orvio-card__wish.is-on svg { fill: currentColor; }
+.orvio-card__quick {
+  position: absolute;
+  inset-inline: 10px;
+  bottom: 10px;
+  z-index: 2;
+  min-height: 40px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: 0.25s var(--ease);
+}
+.orvio-card:hover .orvio-card__quick, .orvio-card:focus-within .orvio-card__quick { opacity: 1; transform: none; }
+.orvio-card__body { padding: 12px 12px 14px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.orvio-card__cat { color: var(--faint); font-size: 12px; font-weight: 600; }
+.orvio-card__title { font-size: 15px; font-weight: 700; line-height: 1.45; letter-spacing: 0; }
+.orvio-card__title a:hover { color: var(--accent-dark); }
+.orvio-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin-top: auto; padding-top: 6px; }
+.orvio-price ins { text-decoration: none; font-weight: 800; font-size: 14.5px; }
+.orvio-price del { color: var(--faint); font-size: 12.5px; }
+.orvio-price__off { color: var(--sale); font-size: 12px; font-weight: 750; }
+.orvio-stars { position: relative; display: inline-block; font-size: 12px; letter-spacing: 1px; line-height: 1; color: #E3D9CC; direction: ltr; unicode-bidi: isolate; }
+.orvio-stars__fill { position: absolute; inset-inline-start: 0; top: 0; width: calc(var(--v) / 5 * 100%); overflow: hidden; color: var(--star); white-space: nowrap; }
+.orvio-stars + .orvio-reviews { color: var(--faint); font-size: 12px; margin-inline-start: 6px; }
+
+.orvio-grid.is-list { grid-template-columns: 1fr; }
+.orvio-grid.is-list .orvio-card { display: grid; grid-template-columns: 200px 1fr; }
+.orvio-grid.is-list .orvio-card__media { aspect-ratio: 1; }
+.orvio-grid.is-list .orvio-card__quick { opacity: 1; transform: none; position: static; width: fit-content; margin-top: 10px; padding-inline: 16px; }
+.orvio-grid.is-list .orvio-card__body { padding: 16px 18px; }
+
+body.orvio-cards-minimal .orvio-card { background: transparent; border-color: transparent; border-radius: 0; box-shadow: none; }
+body.orvio-cards-minimal .orvio-card__media { border-radius: 14px; }
+body.orvio-cards-overlay .orvio-card__body {
+  position: absolute; inset-inline: 0; bottom: 0; color: #fff;
+  background: linear-gradient(transparent, rgba(18,14,10,0.78));
+  padding-top: 36px;
+}
+body.orvio-cards-overlay .orvio-card { position: relative; }
+body.orvio-cards-overlay .orvio-card__cat, body.orvio-cards-overlay .orvio-price del { color: rgba(255,255,255,0.75); }
+body.orvio-cards-overlay .orvio-card__media { aspect-ratio: 3/4; }
+
+/* Carousel */
+.orvio-carousel { position: relative; }
+.orvio-carousel__view { overflow: hidden; }
+.orvio-carousel__track { display: flex; gap: 16px; transition: transform 0.45s var(--ease); }
+.orvio-carousel__track .orvio-card { flex: 0 0 calc((100% - 48px) / 4); }
+.orvio-carousel__nav { display: flex; gap: 8px; }
+.orvio-carousel__nav button, .orvio-round {
+  width: 40px; height: 40px; border-radius: 999px; border: 1px solid var(--line-strong); background: #fff;
+  display: grid; place-items: center;
+}
+.orvio-carousel__nav svg { width: 18px; height: 18px; }
+
+/* Banners */
+.orvio-banner { border-radius: 22px; overflow: hidden; position: relative; }
+.orvio-banner--split {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  background: var(--dark);
+  color: #F6F1EA;
+  min-height: 420px;
+}
+.orvio-banner--split img { width: 100%; height: 100%; object-fit: cover; min-height: 260px; }
+.orvio-banner__copy { padding: clamp(24px, 4vw, 52px); display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 12px; }
+.orvio-banner__copy h2 { font-size: clamp(28px, 3.4vw, 46px); max-width: 14ch; }
+html[dir="rtl"] .orvio-banner__copy h2 { max-width: 12em; }
+.orvio-banner__copy p { color: rgba(246,241,234,0.78); max-width: 42ch; }
+.orvio-banner--overlay { min-height: 380px; display: flex; align-items: flex-end; color: #fff; }
+.orvio-banner--overlay > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.orvio-banner--overlay .orvio-banner__copy { position: relative; z-index: 1; max-width: 560px; }
+.orvio-banner--overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(18,14,10,0.62), rgba(18,14,10,0.05) 72%);
+}
+html[dir="rtl"] .orvio-banner--overlay::after { background: linear-gradient(270deg, rgba(18,14,10,0.62), rgba(18,14,10,0.05) 72%); }
+.orvio-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.orvio-duo a {
+  position: relative;
+  min-height: 280px;
+  border-radius: 20px;
+  overflow: hidden;
+  color: #fff;
+  display: flex;
+  align-items: flex-end;
+}
+.orvio-duo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
+.orvio-duo a:hover img { transform: scale(1.04); }
+.orvio-duo span, .orvio-duo strong { position: relative; z-index: 1; }
+.orvio-duo .cap {
+  width: 100%;
+  padding: 22px;
+  background: linear-gradient(transparent, rgba(18,14,10,0.7));
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.orvio-banner--card {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  background: #E7D9CC;
+  min-height: 340px;
+}
+.orvio-banner--card img { width: 100%; height: 100%; object-fit: cover; min-height: 240px; }
+.orvio-banner--card .orvio-banner__copy { color: var(--ink); }
+.orvio-banner--card .orvio-banner__copy p { color: var(--muted); }
+.orvio-ribbon {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--forest);
+  color: #F4F0EA;
+  border-radius: 18px;
+  padding: 14px 16px;
+}
+.orvio-ribbon img { width: 72px; height: 72px; object-fit: cover; border-radius: 12px; flex: none; }
+.orvio-ribbon p { flex: 1; min-width: 0; }
+.orvio-ribbon strong { display: block; font-size: 16px; }
+
+/* About teaser & quotes */
+.orvio-about {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 36px;
+  align-items: center;
+}
+.orvio-about img { width: 100%; height: 460px; object-fit: cover; border-radius: 22px; }
+.orvio-about h2 { font-size: clamp(28px, 3vw, 42px); margin: 8px 0 12px; }
+.orvio-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 22px; }
+.orvio-stats div { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+.orvio-stats strong { display: block; font-size: 22px; }
+.orvio-stats span { color: var(--muted); font-size: 12px; }
+.orvio-quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.orvio-quote {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.orvio-quote p { font-size: 15px; line-height: 1.8; }
+.orvio-quote footer { margin-top: auto; color: var(--muted); font-size: 13px; font-weight: 650; }
+
+.orvio-news {
+  background: var(--dark);
+  color: #F6F1EA;
+  border-radius: 22px;
+  padding: clamp(22px, 4vw, 42px);
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 20px;
+  align-items: center;
+}
+.orvio-news h2 { font-size: clamp(26px, 3vw, 38px); margin-bottom: 6px; }
+.orvio-news p { color: rgba(246,241,234,0.72); }
+.orvio-news form { display: flex; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 999px; padding: 5px; }
+.orvio-news input { flex: 1; min-width: 0; height: 44px; border: 0; background: transparent; color: #fff; padding-inline: 14px; outline: none; }
+.orvio-news input::placeholder { color: rgba(255,255,255,0.55); }
+
+/* Footer */
+.orvio-footer { background: var(--dark); color: #E7E0D6; margin-top: 28px; }
+.orvio-footer a:hover { color: #fff; }
+.orvio-footer__grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: 28px;
+  padding: 48px 0 32px;
+}
+.orvio-footer h3 { color: #fff; font-size: 14px; margin-bottom: 12px; letter-spacing: 0; font-weight: 750; }
+.orvio-footer li + li { margin-top: 8px; }
+.orvio-footer__brand p { color: #B7AFA4; margin: 12px 0; max-width: 34ch; font-size: 14px; }
+.orvio-social { display: flex; gap: 8px; }
+.orvio-social a {
+  width: 36px; height: 36px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.16);
+  display: grid; place-items: center; color: #fff;
+}
+.orvio-social svg { width: 16px; height: 16px; }
+.orvio-pay { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.orvio-pay span {
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.orvio-footer__bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 14px 0 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: #A89F94;
+  font-size: 12.5px;
+}
+
+/* Page head */
+.orvio-pagehead { padding: 22px 0 6px; }
+.orvio-pagehead h1 { font-size: clamp(28px, 4vw, 42px); }
+.orvio-crumb { display: flex; flex-wrap: wrap; gap: 6px; color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+.orvio-crumb a:hover { color: var(--accent); }
+.orvio-crumb__sep { opacity: 0.5; }
+
+/* Shop */
+.orvio-shop {
+  display: grid;
+  grid-template-columns: 268px 1fr;
+  gap: 26px;
+  padding-bottom: 40px;
+  align-items: start;
+}
+.orvio-filters {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  position: sticky;
+  top: 96px;
+}
+.orvio-filters h2 { font-size: 16px; margin-bottom: 8px; letter-spacing: 0; }
+.orvio-filter { border-top: 1px solid var(--line); padding: 12px 0; }
+.orvio-filter:first-of-type { border-top: 0; }
+.orvio-filter legend, .orvio-filter > strong { font-size: 13px; font-weight: 750; display: block; margin-bottom: 8px; }
+.orvio-check { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 14px; cursor: pointer; }
+.orvio-check input { accent-color: var(--accent); width: 16px; height: 16px; }
+.orvio-range { display: flex; flex-direction: column; gap: 8px; }
+.orvio-range input[type="range"] { width: 100%; accent-color: var(--accent); }
+.orvio-swatch-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.orvio-swatch {
+  width: 28px; height: 28px; border-radius: 999px; border: 1px solid var(--line-strong); padding: 0;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+.orvio-swatch.is-on, .orvio-size.is-on { outline: 2px solid var(--ink); outline-offset: 2px; }
+.orvio-size {
+  min-width: 42px; height: 40px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--line-strong); background: #fff; font-weight: 700;
+}
+.orvio-size.is-on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.orvio-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.orvio-toolbar .woocommerce-result-count,
+.orvio-toolbar .woocommerce-ordering { margin: 0; float: none; }
+.orvio-toolbar select { min-height: 40px; border-radius: 12px; border: 1px solid var(--line-strong); background: #fff; padding: 0 10px; }
+.orvio-toolbar__tools { display: flex; align-items: center; gap: 8px; }
+.orvio-select, .orvio-field input, .orvio-field select, .orvio-field textarea {
+  width: 100%;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  border-radius: 12px;
+  min-height: 46px;
+  padding: 10px 12px;
+  outline: none;
+}
+.orvio-select { width: auto; min-width: 160px; }
+.orvio-field input:focus, .orvio-field select:focus, .orvio-field textarea:focus, .orvio-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.orvio-viewbtn {
+  width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: #fff; display: grid; place-items: center;
+}
+.orvio-viewbtn.is-on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.orvio-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.orvio-chip {
+  display: inline-flex; align-items: center; gap: 6px; background: var(--accent-soft); color: var(--accent-dark);
+  border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 700; border: 0;
+}
+.orvio-pager { display: flex; justify-content: center; gap: 6px; margin-top: 22px; }
+.orvio-pager button, .orvio-pager span {
+  min-width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: #fff;
+  display: grid; place-items: center; font-weight: 700;
+}
+.orvio-pager .is-on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.orvio-filter-toggle { display: none; }
+
+/* Product */
+.orvio-product {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 36px;
+  padding-bottom: 20px;
+  align-items: start;
+}
+.orvio-gallery__main {
+  background: #EFEAE3;
+  border-radius: 20px;
+  overflow: hidden;
+  aspect-ratio: 1;
+}
+.orvio-gallery__main img { width: 100%; height: 100%; object-fit: cover; }
+.orvio-gallery__thumbs { display: flex; gap: 8px; margin-top: 10px; }
+.orvio-gallery__thumbs button { width: 74px; height: 74px; padding: 0; border-radius: 12px; border: 1px solid var(--line); overflow: hidden; background: #fff; }
+.orvio-gallery__thumbs button.is-on { border-color: var(--ink); }
+.orvio-gallery__thumbs img { width: 100%; height: 100%; object-fit: cover; }
+.orvio-summary { position: sticky; top: 96px; }
+.orvio-summary h1 { font-size: clamp(28px, 3vw, 40px); letter-spacing: 0; }
+.orvio-summary .orvio-price ins { font-size: 24px; }
+.orvio-summary__rate { display: flex; align-items: center; gap: 8px; margin: 8px 0; color: var(--muted); font-size: 13px; }
+.orvio-summary .orvio-lead { font-size: 15px; margin: 8px 0 16px; }
+.orvio-option { margin: 12px 0; }
+.orvio-option > span { display: block; font-size: 13px; font-weight: 750; margin-bottom: 8px; }
+.orvio-buy { display: flex; gap: 10px; align-items: center; margin: 16px 0; flex-wrap: wrap; }
+.orvio-qty { display: inline-flex; align-items: center; border: 1px solid var(--line-strong); border-radius: 999px; background: #fff; height: 46px; }
+.orvio-qty button { width: 40px; height: 46px; border: 0; background: transparent; font-size: 18px; }
+.orvio-qty input { width: 36px; border: 0; text-align: center; background: transparent; font-weight: 750; }
+.orvio-buy .orvio-btn--primary { flex: 1; min-width: 180px; }
+.orvio-micro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+.orvio-micro div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 12.5px; }
+.orvio-micro strong { display: block; font-size: 13px; }
+.orvio-acc { margin-top: 18px; border-top: 1px solid var(--line); }
+.orvio-acc details { border-bottom: 1px solid var(--line); }
+.orvio-acc summary { min-height: 50px; display: flex; align-items: center; justify-content: space-between; font-weight: 750; cursor: pointer; list-style: none; }
+.orvio-acc summary::-webkit-details-marker { display: none; }
+.orvio-acc details p, .orvio-acc details li { color: var(--muted); padding-bottom: 12px; font-size: 14px; }
+.orvio-review { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.orvio-review strong { display: block; }
+.orvio-sticky-atc {
+  display: none;
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 45;
+  background: rgba(255,252,248,0.96);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  gap: 10px;
+  align-items: center;
+}
+.orvio-sticky-atc.is-on { display: flex; }
+.orvio-sticky-atc strong { font-size: 14px; }
+.orvio-sticky-atc .orvio-btn { flex: 1; }
+
+/* Cart page */
+.orvio-cartpage {
+  display: grid;
+  grid-template-columns: 1.4fr 0.7fr;
+  gap: 22px;
+  align-items: start;
+  padding-bottom: 48px;
+}
+.orvio-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+}
+.orvio-cart-item {
+  display: grid;
+  grid-template-columns: 96px 1fr auto;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: center;
+}
+.orvio-cart-item img { width: 96px; height: 96px; object-fit: cover; border-radius: 14px; }
+.orvio-cart-item h3 { font-size: 16px; letter-spacing: 0; font-weight: 750; }
+.orvio-sum-row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; font-size: 14px; }
+.orvio-sum-row--total { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 12px; font-size: 16px; font-weight: 800; }
+.orvio-coupon { display: flex; gap: 8px; margin-top: 8px; }
+.orvio-coupon input { flex: 1; min-width: 0; }
+.orvio-empty { text-align: center; padding: 48px 16px; }
+.orvio-empty h2 { margin-bottom: 8px; }
+
+/* Checkout */
+.orvio-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px 0 18px; }
+.orvio-steps li {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.orvio-steps li.is-on { border-color: var(--ink); color: var(--ink); background: #fff; }
+.orvio-steps li.is-done { background: var(--forest); color: #fff; border-color: var(--forest); }
+.orvio-steps small { display: block; font-weight: 500; opacity: 0.75; }
+.orvio-checkout {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 22px;
+  align-items: start;
+  padding-bottom: 48px;
+}
+.orvio-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.orvio-field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 700; }
+.orvio-field--full { grid-column: 1 / -1; }
+.orvio-field span { font-weight: 700; }
+.orvio-field textarea { min-height: 96px; resize: vertical; }
+.orvio-shipopt, .orvio-payopt {
+  display: flex; gap: 10px; align-items: flex-start;
+  border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-top: 8px; background: #fff; cursor: pointer;
+}
+.orvio-shipopt.is-on, .orvio-payopt.is-on { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.orvio-shipopt input, .orvio-payopt input { margin-top: 4px; accent-color: var(--accent); }
+.orvio-note { font-size: 12.5px; color: var(--muted); font-weight: 500; }
+.orvio-invoice { max-width: 760px; margin: 10px auto 40px; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
+.orvio-invoice__top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 18px; }
+.orvio-invoice table { width: 100%; border-collapse: collapse; }
+.orvio-invoice th, .orvio-invoice td { text-align: start; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.orvio-okbadge { display: inline-flex; align-items: center; gap: 6px; background: #E5F3EB; color: var(--ok); border-radius: 999px; padding: 4px 10px; font-weight: 750; font-size: 13px; }
+
+/* Account */
+.orvio-account {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 22px;
+  align-items: start;
+  padding-bottom: 48px;
+}
+.orvio-account__nav {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 10px;
+  position: sticky;
+  top: 96px;
+}
+.orvio-account__nav a, .orvio-account__nav button {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  min-height: 42px; padding: 0 12px; border-radius: 10px; border: 0; background: transparent;
+  text-align: start; font-weight: 650; font-size: 14px;
+}
+.orvio-account__nav a.is-on, .orvio-account__nav button.is-on { background: var(--ink); color: #fff; }
+.orvio-welcome {
+  background: var(--dark); color: #F6F1EA; border-radius: 18px; padding: 20px;
+  display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 14px;
+}
+.orvio-welcome h2 { font-size: 26px; letter-spacing: 0; }
+.orvio-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
+.orvio-stat { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
+.orvio-stat strong { display: block; font-size: 26px; }
+.orvio-stat span { color: var(--muted); font-size: 13px; }
+.orvio-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.orvio-table th { text-align: start; font-size: 12px; color: var(--muted); font-weight: 700; padding: 8px; border-bottom: 1px solid var(--line); }
+.orvio-table td { padding: 12px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.orvio-status { display: inline-flex; border-radius: 999px; padding: 3px 8px; font-size: 12px; font-weight: 750; }
+.orvio-status--done { background: #E5F3EB; color: var(--ok); }
+.orvio-status--ship { background: #E7F0F6; color: var(--info); }
+.orvio-status--wait { background: #F8F0DC; color: var(--warn); }
+.orvio-status--cancel { background: #F8E6E4; color: var(--sale); }
+.orvio-auth { max-width: 460px; margin: 12px auto 48px; }
+
+/* About & contact pages */
+.orvio-prose { max-width: 68ch; color: var(--muted); }
+.orvio-prose p + p { margin-top: 12px; }
+.orvio-values { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 22px; }
+.orvio-values article { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+.orvio-values h3 { font-size: 16px; margin-bottom: 6px; letter-spacing: 0; }
+.orvio-contact {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 22px;
+  padding-bottom: 48px;
+  align-items: start;
+}
+.orvio-info { display: grid; gap: 10px; }
+.orvio-info article { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
+.orvio-info strong { display: block; }
+.orvio-map {
+  margin-top: 12px;
+  border-radius: 16px;
+  min-height: 180px;
+  background:
+    linear-gradient(180deg, rgba(255,252,248,0.2), rgba(255,252,248,0.55)),
+    url("../images/about.jpg") center/cover;
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: flex-end;
+  padding: 14px;
+  font-weight: 700;
+}
+
+/* Modal, toast, dock */
+.orvio-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+.orvio-modal.is-open { display: flex; }
+.orvio-modal__card {
+  width: min(860px, 100%);
+  max-height: min(88vh, 760px);
+  overflow: auto;
+  background: var(--surface);
+  border-radius: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  z-index: 1;
+}
+.orvio-modal__card img { width: 100%; height: 100%; object-fit: cover; min-height: 280px; background: #EFEAE3; }
+.orvio-modal__body { padding: 22px; }
+.orvio-modal__x { position: absolute; top: 10px; inset-inline-end: 10px; z-index: 2; }
+.orvio-toast {
+  position: fixed;
+  bottom: 18px;
+  inset-inline-start: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: var(--ink);
+  color: #fff;
+  border-radius: 999px;
+  padding: 10px 16px;
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.25s var(--ease);
+  font-size: 13.5px;
+  font-weight: 650;
+  max-width: calc(100% - 24px);
+  text-align: center;
+}
+html[dir="rtl"] .orvio-toast { transform: translateX(50%) translateY(12px); }
+.orvio-toast.is-on { opacity: 1; transform: translateX(-50%); }
+html[dir="rtl"] .orvio-toast.is-on { transform: translateX(50%); }
+.orvio-themebar { background: #171512; color: #F6F1EA; font-size: 14px; }
+.orvio-themebar .orvio-container { display: flex; align-items: center; gap: 12px; min-height: 44px; flex-wrap: wrap; padding-block: 8px; }
+.orvio-themebar p { margin: 0; }
+.orvio-themebar a { color: #fff; border-bottom: 1px solid rgba(255,255,255,.45); font-weight: 700; }
+.orvio-themechip {
+  position: fixed;
+  z-index: 50;
+  bottom: 16px;
+  inset-inline-start: 16px;
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  min-height: 42px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 750;
+  font-size: 13px;
+  box-shadow: var(--shadow);
+  text-decoration: none;
+}
+.orvio-dock {
+  position: fixed;
+  bottom: 16px;
+  inset-inline-end: 16px;
+  z-index: 50;
+  font-size: 13px;
+}
+.orvio-dock__toggle {
+  border: 0;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 999px;
+  min-height: 42px;
+  padding: 0 14px;
+  font-weight: 750;
+  box-shadow: var(--shadow);
+}
+.orvio-dock__panel {
+  display: none;
+  position: absolute;
+  bottom: 50px;
+  inset-inline-end: 0;
+  width: min(280px, calc(100vw - 24px));
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 14px;
+}
+.orvio-dock.is-open .orvio-dock__panel { display: block; }
+.orvio-dock__panel strong { display: block; margin: 8px 0 6px; font-size: 12px; }
+.orvio-swatches-ui, .orvio-seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.orvio-swatches-ui button { width: 28px; height: 28px; border-radius: 999px; border: 1px solid var(--line-strong); }
+.orvio-seg button { border: 1px solid var(--line); background: #fff; border-radius: 999px; min-height: 32px; padding: 0 10px; font-size: 12px; font-weight: 700; }
+.orvio-seg button.is-on { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+/* Blog / 404 / WP content */
+.orvio-posts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.orvio-post {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
+}
+.orvio-post img { width: 100%; height: 180px; object-fit: cover; }
+.orvio-post div { padding: 14px; }
+.orvio-content { max-width: 760px; }
+.orvio-content p { margin: 0 0 12px; }
+.orvio-content h2, .orvio-content h3 { margin: 18px 0 8px; }
+.orvio-404 { text-align: center; padding: 64px 16px 80px; }
+.orvio-404 h1 { font-size: clamp(40px, 8vw, 72px); }
+
+/* WooCommerce skin */
+.woocommerce-message, .woocommerce-info, .woocommerce-error {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-inline-start: 3px solid var(--forest);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 0 0 14px;
+  list-style: none;
+}
+.woocommerce-error { border-inline-start-color: var(--sale); }
+.woocommerce a.button, .woocommerce button.button, .woocommerce input.button,
+.woocommerce #respond input#submit {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+  min-height: 44px;
+  padding: 0 18px;
+  font-weight: 700;
+  border: 0;
+}
+.woocommerce a.button.alt, .woocommerce button.button.alt { background: var(--ink); }
+.woocommerce table.shop_table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 16px; }
+.woocommerce table.shop_table th, .woocommerce table.shop_table td { text-align: start; padding: 12px; border-bottom: 1px solid var(--line); }
+.woocommerce form .form-row { margin-bottom: 12px; }
+.woocommerce form .form-row label { font-weight: 700; font-size: 13px; }
+.woocommerce form .form-row input.input-text, .woocommerce form .form-row textarea, .woocommerce form .form-row select,
+.select2-container .select2-selection--single {
+  border: 1px solid var(--line-strong) !important;
+  border-radius: 12px !important;
+  min-height: 46px;
+  padding: 8px 12px;
+  background: #fff;
+  width: 100%;
+}
+.woocommerce-checkout #payment {
+  background: var(--bg);
+  border-radius: 16px;
+  border: 1px solid var(--line);
+}
+.woocommerce-checkout #payment ul.payment_methods { padding: 12px; border-bottom: 1px solid var(--line); }
+.woocommerce-checkout #payment div.form-row { padding: 12px; }
+ul.products { display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); gap: 16px; list-style: none; padding: 0; margin: 0; }
+ul.products li.product { width: auto !important; float: none !important; margin: 0 !important; }
+.woocommerce-tabs ul.tabs { display: flex; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding: 0; margin: 0 0 16px; }
+.woocommerce-tabs ul.tabs li { background: transparent; border: 0; padding: 0; margin: 0; }
+.woocommerce-tabs ul.tabs li a { display: inline-flex; min-height: 42px; align-items: center; padding: 0 12px; font-weight: 750; border-bottom: 2px solid transparent; }
+.woocommerce-tabs ul.tabs li.active a { border-bottom-color: var(--ink); }
+.woocommerce span.onsale { background: var(--sale); border-radius: 999px; min-height: 0; line-height: 1.4; padding: 4px 8px; }
+.star-rating { color: var(--star); }
+.custom-logo, .orvio-logo img { height: 38px; width: auto; }
+.orvio-filters ul { list-style: none; padding: 0; margin: 0; }
+.orvio-filters .cat-item { padding: 4px 0; }
+.orvio-main { padding: 18px 0 40px; }
+
+/* Elementor harmony */
+.elementor-widget-wrap .orvio-card,
+.elementor-widget-container .orvio-grid { width: 100%; }
+.elementor-widget-orvio-header, .elementor-widget-orvio-footer { width: 100%; }
+
+html[data-accent="forest"] { --accent: #234237; --accent-dark: #183028; --accent-soft: #E3EEE8; }
+html[data-accent="ink"] { --accent: #1C1916; --accent-dark: #000; --accent-soft: #EFEAE3; }
+html[data-accent="navy"] { --accent: #1E3A5F; --accent-dark: #152C49; --accent-soft: #E4EAF1; }
+html[data-accent="wine"] { --accent: #7A2E3A; --accent-dark: #5E2230; --accent-soft: #F6E6E8; }
+body.orvio-cards-overlay .orvio-price ins,
+body.orvio-cards-overlay .orvio-card__title a { color: #fff; }
+.orvio-grid.is-list .orvio-card__body { position: static; color: inherit; background: none; padding-top: 16px; }
+.orvio-grid.is-list .orvio-price ins,
+.orvio-grid.is-list .orvio-card__title a { color: var(--ink); }
+
+/* Radius sharp override */
+html[data-radius="sharp"] {
+  --radius: 4px;
+  --radius-sm: 4px;
+  --radius-xs: 2px;
+}
+html[data-radius="sharp"] .orvio-btn,
+html[data-radius="sharp"] .orvio-search,
+html[data-radius="sharp"] .orvio-search > button,
+html[data-radius="sharp"] .orvio-qty { border-radius: 4px; }
+
+@media (max-width: 1100px) {
+  .orvio-grid, ul.products { --cols: 3; }
+  .orvio-carousel__track .orvio-card { flex-basis: calc((100% - 32px) / 3); }
+  .orvio-mega__grid { grid-template-columns: 1fr 1fr 220px; }
+  .orvio-footer__grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 980px) {
+  .orvio-iconbtn { display: inline-flex; }
+  .orvio-search { display: none; }
+  .orvio-tool__meta, .orvio-logo__word small { display: none; }
+  .orvio-catbar { display: none; }
+  .orvio-header__row { gap: 6px; min-height: 62px; }
+  .orvio-logo { margin-inline-end: auto; }
+  .orvio-h-centered .orvio-header__row { display: flex; }
+  .orvio-h-centered .orvio-logo { grid-column: auto; margin-inline-end: auto; }
+  .orvio-hero__grid, .orvio-banner--split, .orvio-banner--card, .orvio-about, .orvio-news,
+  .orvio-shop, .orvio-product, .orvio-cartpage, .orvio-checkout, .orvio-account, .orvio-contact, .orvio-modal__card {
+    grid-template-columns: 1fr;
+  }
+  .orvio-summary, .orvio-filters, .orvio-account__nav { position: static; }
+  .orvio-hero__media > img, .orvio-about img { height: 320px; }
+  .orvio-filter-toggle { display: inline-flex; }
+  .orvio-filters {
+    position: fixed;
+    inset-inline-start: 0;
+    top: 0;
+    bottom: 0;
+    width: min(360px, 100%);
+    z-index: 75;
+    border-radius: 0;
+    transform: translateX(-105%);
+    overflow: auto;
+    transition: transform 0.35s var(--ease);
+  }
+  html[dir="rtl"] .orvio-filters { transform: translateX(105%); }
+  .orvio-filters.is-open { transform: none; }
+  .orvio-account__nav { display: flex; gap: 6px; overflow-x: auto; padding: 8px; }
+  .orvio-account__nav a, .orvio-account__nav button { width: auto; white-space: nowrap; }
+  .orvio-quotes, .orvio-values, .orvio-posts { grid-template-columns: 1fr; }
+  .orvio-trust { grid-template-columns: 1fr 1fr; }
+  .orvio-cats { grid-template-columns: 1fr 1fr; grid-auto-rows: 150px; }
+  .orvio-duo { grid-template-columns: 1fr; }
+  .orvio-grid.is-list .orvio-card { grid-template-columns: 120px 1fr; }
+}
+@media (max-width: 1180px) {
+  .orvio-tool__label { display: none; }
+}
+@media (max-width: 420px) {
+  .orvio-header .orvio-lang { display: none; }
+  .orvio-logo__word strong { letter-spacing: 0.04em; font-size: 13px; }
+  .orvio-iconbtn { width: 36px; height: 36px; }
+}
+@media (max-width: 720px) {
+  .orvio-table, .orvio-table tbody, .orvio-table tr, .orvio-table td { display: block; width: 100%; }
+  .orvio-table thead { display: none; }
+  .orvio-table tr { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; padding: 8px 10px; background: var(--surface); }
+  .orvio-table td { border: 0; padding: 6px 0; display: flex; justify-content: space-between; gap: 10px; }
+  .orvio-themechip { bottom: 74px; }
+  .orvio-dock { top: auto; bottom: 74px; }
+  .orvio-dock__panel { bottom: 50px; top: auto; }
+  .orvio-container { width: min(var(--container), calc(100% - 20px)); }
+  .orvio-grid, ul.products { --cols: 2; gap: 10px; }
+  .orvio-carousel__track .orvio-card { flex-basis: calc((100% - 10px) / 2); }
+  .orvio-card__quick { opacity: 1; transform: none; inset-inline: 8px; font-size: 12px; min-height: 34px; }
+  .orvio-card__title { font-size: 13.5px; }
+  .orvio-price ins { font-size: 13px; }
+  .orvio-section { padding: 28px 0; }
+  .orvio-fields, .orvio-stats-row, .orvio-micro, .orvio-footer__grid { grid-template-columns: 1fr; }
+  .orvio-cart-item { grid-template-columns: 76px 1fr; }
+  .orvio-cart-item .orvio-price { grid-column: 2; }
+  .orvio-hero__stats { gap: 12px; }
+  .orvio-hero__float { display: none; }
+  .orvio-ribbon { flex-wrap: wrap; }
+  .orvio-news form { flex-direction: column; border-radius: 16px; }
+  .orvio-announce { font-size: 12px; }
+  .orvio-steps li small { display: none; }
+}
+@media (hover: none) {
+  .orvio-card__quick { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media print {
+  .orvio-header, .orvio-announce, .orvio-footer, .orvio-dock, .orvio-themechip, .orvio-themebar, .orvio-drawer, .orvio-overlay, .orvio-catbar { display: none !important; }
+  body { background: #fff; }
+}
