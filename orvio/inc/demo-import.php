@@ -121,7 +121,7 @@ function orvio_sideload_theme_image( $relative ) {
 
 function orvio_ensure_pages( $fa ) {
 	$pages = array(
-		'home'    => $fa ? 'خانه' : 'Home',
+		'home'    => $fa ? 'صفحه اصلی' : 'Home',
 		'about'   => $fa ? 'درباره ما' : 'About',
 		'contact' => $fa ? 'ارتباط با ما' : 'Contact',
 	);
@@ -130,6 +130,9 @@ function orvio_ensure_pages( $fa ) {
 		$found = get_page_by_path( $slug );
 		if ( $found ) {
 			$ids[ $slug ] = $found->ID;
+			if ( 'home' === $slug && in_array( $found->post_title, array( 'خانه', 'Home' ), true ) ) {
+				wp_update_post( array( 'ID' => $found->ID, 'post_title' => $title ) );
+			}
 			continue;
 		}
 		$ids[ $slug ] = wp_insert_post( array(
@@ -238,6 +241,25 @@ function orvio_handle_build_front() {
 	$flag   = is_wp_error( $result ) ? 'orvio-front-error' : 'orvio-front';
 	wp_safe_redirect( admin_url( 'admin.php?page=orvio-settings&' . $flag . '=1' ) );
 	exit;
+}
+
+add_action( 'after_switch_theme', 'orvio_assign_front_page' );
+add_action( 'admin_init', 'orvio_assign_front_page' );
+function orvio_assign_front_page() {
+	if ( ! is_admin() || ! current_user_can( 'edit_pages' ) || wp_doing_ajax() ) {
+		return;
+	}
+	$front   = (int) get_option( 'page_on_front' );
+	$is_page = $front && 'page' === get_post_type( $front ) && 'publish' === get_post_status( $front );
+	if ( 'page' === get_option( 'show_on_front' ) && $is_page ) {
+		$title = get_the_title( $front );
+		if ( in_array( $title, array( 'خانه', 'Home' ), true ) && 'home' === get_post_field( 'post_name', $front ) ) {
+			wp_update_post( array( 'ID' => $front, 'post_title' => is_rtl() ? 'صفحه اصلی' : 'Home' ) );
+		}
+		return;
+	}
+	$fa = is_rtl() || 0 === strpos( (string) get_locale(), 'fa' );
+	orvio_ensure_pages( $fa );
 }
 
 add_action( 'admin_init', 'orvio_maybe_build_front' );

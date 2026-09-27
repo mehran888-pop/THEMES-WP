@@ -1353,16 +1353,82 @@ html[dir="rtl"] .orvio-toast.is-on { transform: translateX(50%); }
 }
 .woocommerce-error { border-inline-start-color: var(--sale); }
 .woocommerce a.button, .woocommerce button.button, .woocommerce input.button,
-.woocommerce #respond input#submit {
-  background: var(--accent);
+.woocommerce #respond input#submit,
+.woocommerce a.button.alt, .woocommerce button.button.alt,
+.woocommerce .single_add_to_cart_button,
+.wp-element-button.single_add_to_cart_button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
   color: #fff;
   border-radius: 999px;
-  min-height: 44px;
-  padding: 0 18px;
+  min-height: 46px;
+  padding: 0 22px;
   font-weight: 700;
+  font-size: 14px;
+  line-height: 1;
   border: 0;
+  box-shadow: none;
+  text-shadow: none;
+  float: none;
+  width: auto;
+  cursor: pointer;
 }
-.woocommerce a.button.alt, .woocommerce button.button.alt { background: var(--ink); }
+.woocommerce div.product form.cart {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+}
+.woocommerce div.product form.cart .variations,
+.woocommerce div.product form.cart .single_variation_wrap,
+.woocommerce div.product form.cart table.variations {
+  flex: 1 1 100%;
+  width: 100%;
+  margin: 0 0 8px;
+}
+.woocommerce div.product form.cart .woocommerce-variation-add-to-cart,
+.woocommerce div.product form.cart .orvio-buy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0;
+}
+.woocommerce div.product form.cart .quantity,
+.woocommerce div.product form.cart .orvio-qty {
+  float: none;
+  margin: 0;
+}
+.woocommerce div.product form.cart .single_add_to_cart_button,
+.woocommerce div.product form.cart button.button,
+.woocommerce div.product form.cart .orvio-btn--primary {
+  flex: 1 1 180px;
+  background: var(--accent);
+  color: #fff;
+  min-height: 46px;
+}
+.woocommerce div.product form.cart .single_add_to_cart_button:hover,
+.woocommerce div.product form.cart .orvio-btn--primary:hover {
+  background: var(--ink);
+  color: #fff;
+}
+.woocommerce div.product form.cart .single_add_to_cart_button.disabled,
+.woocommerce div.product form.cart .single_add_to_cart_button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+.woocommerce a.added_to_cart {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-start: 8px;
+  font-weight: 700;
+  font-size: 13px;
+}
 .woocommerce table.shop_table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 16px; }
 .woocommerce table.shop_table th, .woocommerce table.shop_table td { text-align: start; padding: 12px; border-bottom: 1px solid var(--line); }
 .woocommerce form .form-row { margin-bottom: 12px; }

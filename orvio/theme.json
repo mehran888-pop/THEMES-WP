@@ -20,5 +20,15 @@
         { "fontFamily": "Vazirmatn, system-ui, sans-serif", "slug": "vazirmatn", "name": "Vazirmatn" }
       ]
     }
+  },
+  "styles": {
+    "elements": {
+      "button": {
+        "color": { "background": "#1C1916", "text": "#ffffff" },
+        "border": { "radius": "999px", "width": "0" },
+        "typography": { "fontSize": "14px", "fontWeight": "700" },
+        ":hover": { "color": { "background": "#A34B2B", "text": "#ffffff" } }
+      }
+    }
   }
 }

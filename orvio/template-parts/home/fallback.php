@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once ORVIO_DIR . '/inc/sample-catalog.php';
 $hero = ORVIO_URI . '/assets/images/hero.jpg';
 ?>
-<main id="main">
 	<section class="orvio-hero"><div class="orvio-container orvio-hero__grid">
 		<div class="orvio-hero__copy">
 			<p class="orvio-kicker"><?php echo esc_html( orvio_t( 'Autumn edit', 'مجموعه پاییز' ) ); ?></p>
@@ -50,4 +49,3 @@ $hero = ORVIO_URI . '/assets/images/hero.jpg';
 			?>
 		</div>
 	</div></section>
-</main>

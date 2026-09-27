@@ -295,8 +295,8 @@ function orvio_render_settings_page() {
 			</form>
 			<section data-panel="home" class="orvio-panel">
 				<div class="orvio-card" style="padding:18px 20px">
-					<h2><?php echo esc_html( orvio_t( 'Elementor homepage', 'صفحه اول المنتور' ) ); ?></h2>
-					<p class="orvio-home-copy"><?php echo esc_html( orvio_t( 'The storefront is an Elementor page: hero, categories, product grids, banners, about and newsletter. Open it in Elementor to change layout, type, color and spacing of every element.', 'ویترین یک برگه المنتور است: هیرو، دسته‌ها، شبکه کالا، بنر، درباره و خبرنامه. در المنتور چیدمان، فونت، رنگ و فاصله هر المان را عوض کنید.' ) ); ?></p>
+					<h2><?php echo esc_html( orvio_t( 'Homepage page', 'برگه صفحه اصلی' ) ); ?></h2>
+					<p class="orvio-home-copy"><?php echo esc_html( orvio_t( 'The homepage is a normal page in Pages, set as the static front page. Edit that page with Elementor: hero, categories, products, banners, about and newsletter.', 'صفحه اصلی یک برگه معمولی در بخش برگه‌هاست و به‌عنوان برگه یکتا تنظیم می‌شود. همان برگه را با المنتور ویرایش کنید: هیرو، دسته‌ها، کالا، بنر، درباره و خبرنامه.' ) ); ?></p>
 					<p><span class="orvio-status <?php echo $is_el ? 'is-ok' : ''; ?>"><?php echo esc_html( $is_el ? orvio_t( 'Built with Elementor', 'ساخته‌شده با المنتور' ) : orvio_t( 'Not built yet', 'هنوز ساخته نشده' ) ); ?></span></p>
 					<div class="orvio-actions">
 						<?php if ( class_exists( '\Elementor\Plugin' ) ) : ?>
@@ -307,6 +307,9 @@ function orvio_render_settings_page() {
 							</form>
 							<?php if ( $edit_url ) : ?>
 								<a class="button" href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html( orvio_t( 'Edit in Elementor', 'ویرایش در المنتور' ) ); ?></a>
+							<?php endif; ?>
+							<?php if ( $front_id ) : ?>
+								<a class="button" href="<?php echo esc_url( get_edit_post_link( $front_id ) ); ?>"><?php echo esc_html( orvio_t( 'Open in Pages', 'ویرایش در برگه‌ها' ) ); ?></a>
 							<?php endif; ?>
 						<?php else : ?>
 							<p><?php echo esc_html( orvio_t( 'Install and activate Elementor, then come back.', 'المنتور را نصب و فعال کنید، بعد برگردید.' ) ); ?></p>
