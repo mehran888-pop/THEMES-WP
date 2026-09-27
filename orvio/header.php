@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 <a class="orvio-skip" href="#main"><?php echo esc_html( orvio_t( 'Skip to content', 'پرش به محتوا' ) ); ?></a>
+<div class="orvio-frame">
 <?php
 if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_location( 'header' ) ) {
 	// Elementor Pro header location.

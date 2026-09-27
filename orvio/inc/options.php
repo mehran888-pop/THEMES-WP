@@ -33,6 +33,8 @@ function orvio_defaults() {
 		'dark'               => '#171512',
 		'radius'             => 16,
 		'container'          => 1220,
+		'site_layout'        => 'wide',
+		'atc_style'          => 'pill',
 		'body_font'          => 'vazirmatn',
 		'heading_font'       => 'vazirmatn',
 		'font_size'          => 15,
@@ -94,13 +96,15 @@ function orvio_sanitize_settings( $input ) {
 		$clean[ $key ] = sanitize_hex_color( $input[ $key ] ?? '' ) ?: $defaults[ $key ];
 	}
 	$clean['radius']            = max( 0, min( 28, absint( $input['radius'] ?? $defaults['radius'] ) ) );
-	$clean['container']         = max( 960, min( 1600, absint( $input['container'] ?? $defaults['container'] ) ) );
+	$clean['container']         = max( 960, min( 1680, absint( $input['container'] ?? $defaults['container'] ) ) );
 	$clean['font_size']         = max( 13, min( 20, absint( $input['font_size'] ?? $defaults['font_size'] ) ) );
 	$clean['menu_size']         = max( 12, min( 20, absint( $input['menu_size'] ?? $defaults['menu_size'] ) ) );
 	$fonts                      = array( 'vazirmatn', 'instrument', 'fraunces', 'system' );
 	$clean['body_font']         = in_array( $input['body_font'] ?? '', $fonts, true ) ? $input['body_font'] : 'vazirmatn';
 	$clean['heading_font']      = in_array( $input['heading_font'] ?? '', $fonts, true ) ? $input['heading_font'] : 'vazirmatn';
 	$clean['header_layout']     = in_array( $input['header_layout'] ?? '', array( 'classic', 'centered' ), true ) ? $input['header_layout'] : 'classic';
+	$clean['site_layout']       = in_array( $input['site_layout'] ?? '', array( 'wide', 'boxed', 'content-wide' ), true ) ? $input['site_layout'] : 'wide';
+	$clean['atc_style']         = in_array( $input['atc_style'] ?? '', array( 'pill', 'block', 'outline', 'soft' ), true ) ? $input['atc_style'] : 'pill';
 	$clean['cart_type']         = in_array( $input['cart_type'] ?? '', array( 'drawer', 'page' ), true ) ? $input['cart_type'] : 'drawer';
 	$clean['card_style']        = in_array( $input['card_style'] ?? '', array( 'classic', 'minimal', 'overlay' ), true ) ? $input['card_style'] : 'classic';
 	$clean['shop_columns']      = max( 2, min( 5, absint( $input['shop_columns'] ?? 3 ) ) );
@@ -206,7 +210,12 @@ function orvio_render_settings_page() {
 						orvio_field_select( 'heading_font', orvio_t( 'Heading font', 'فونت عنوان' ), $o, orvio_font_choices() );
 						orvio_field_number( 'font_size', orvio_t( 'Base size', 'اندازه پایه' ), $o, 13, 20 );
 						orvio_field_number( 'radius', orvio_t( 'Corner radius', 'گردی گوشه‌ها' ), $o, 0, 28 );
-						orvio_field_number( 'container', orvio_t( 'Content width', 'عرض محتوا' ), $o, 960, 1600 );
+						orvio_field_select( 'site_layout', orvio_t( 'Site width', 'عرض سایت' ), $o, array(
+							'wide'         => orvio_t( 'Wide', 'عریض' ),
+							'boxed'        => orvio_t( 'Boxed', 'جعبه‌ای' ),
+							'content-wide' => orvio_t( 'Wide content', 'محتوای عریض' ),
+						) );
+						orvio_field_number( 'container', orvio_t( 'Box / content width', 'عرض جعبه یا محتوا' ), $o, 960, 1680 );
 						?>
 					</div>
 				</section>
@@ -265,6 +274,12 @@ function orvio_render_settings_page() {
 				<section data-panel="product" class="orvio-panel">
 					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Product', 'محصول' ) ); ?></h2>
 						<?php
+						orvio_field_select( 'atc_style', orvio_t( 'Add to cart button', 'دکمه افزودن به سبد' ), $o, array(
+							'pill'    => orvio_t( 'Pill', 'گرد' ),
+							'block'   => orvio_t( 'Full width', 'تمام‌عرض' ),
+							'outline' => orvio_t( 'Outline', 'خطی' ),
+							'soft'    => orvio_t( 'Soft', 'نرم' ),
+						) );
 						orvio_field_check( 'sticky_summary', orvio_t( 'Sticky summary', 'خلاصه چسبان' ), $o );
 						orvio_field_number( 'related_count', orvio_t( 'Related products', 'کالاهای مرتبط' ), $o, 2, 8 );
 						?>
@@ -388,5 +403,9 @@ function orvio_body_classes( $classes ) {
 	if ( empty( $o['sticky_header'] ) ) {
 		$classes[] = 'orvio-header-static';
 	}
+	$layout = in_array( $o['site_layout'], array( 'wide', 'boxed', 'content-wide' ), true ) ? $o['site_layout'] : 'wide';
+	$atc    = in_array( $o['atc_style'], array( 'pill', 'block', 'outline', 'soft' ), true ) ? $o['atc_style'] : 'pill';
+	$classes[] = 'orvio-layout-' . $layout;
+	$classes[] = 'orvio-atc-' . $atc;
 	return $classes;
 }

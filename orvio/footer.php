@@ -12,6 +12,8 @@ if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_loca
 } else {
 	get_template_part( 'template-parts/footer/site-footer' );
 }
+</div>
+<?php
 get_template_part( 'template-parts/header/drawers' );
 wp_footer();
 ?>
