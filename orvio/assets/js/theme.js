@@ -160,10 +160,6 @@
     if (e.target.closest("[data-close]") || e.target.closest("[data-overlay]")) {
       closeDrawers();
     }
-    var catall = e.target.closest("[data-catall]");
-    if (catall && window.matchMedia("(hover: none)").matches) {
-      catall.parentElement.classList.toggle("is-open");
-    }
   });
 
   document.addEventListener("keydown", function (e) {
@@ -270,12 +266,91 @@
     toast: toast
   };
 
+  function initCatMenu() {
+    var openEl = null;
+    function items() {
+      return document.querySelectorAll(".orvio-catbar__menu > li, .orvio-catall");
+    }
+    function place(el) {
+      var bar = el.closest(".orvio-catbar");
+      var mega = el.querySelector(":scope > .orvio-mega");
+      if (mega && bar) {
+        var rect = bar.getBoundingClientRect();
+        mega.style.top = Math.max(rect.bottom, 0) + "px";
+      }
+      var panel = el.querySelector(":scope > .orvio-catall__panel");
+      var btn = el.querySelector("[data-catall]");
+      if (panel && btn) {
+        var box = btn.getBoundingClientRect();
+        panel.style.position = "fixed";
+        panel.style.top = box.bottom + "px";
+        panel.style.zIndex = "81";
+        panel.style.insetInlineStart = "auto";
+        if (document.documentElement.dir === "rtl") {
+          panel.style.left = "auto";
+          panel.style.right = (window.innerWidth - box.right) + "px";
+        } else {
+          panel.style.right = "auto";
+          panel.style.left = box.left + "px";
+        }
+      }
+    }
+    function closeAll() {
+      openEl = null;
+      items().forEach(function (item) { item.classList.remove("is-open"); });
+    }
+    function openItem(el) {
+      items().forEach(function (item) {
+        item.classList.toggle("is-open", item === el);
+      });
+      openEl = el;
+      place(el);
+    }
+    document.querySelectorAll(".orvio-catbar__menu > li").forEach(function (li) {
+      if (!li.querySelector(".orvio-mega")) return;
+      li.addEventListener("mouseenter", function () { openItem(li); });
+      var link = li.querySelector(":scope > a");
+      if (!link) return;
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        openItem(li);
+      });
+    });
+    document.querySelectorAll(".orvio-mega a, .orvio-catall__panel a").forEach(function (link) {
+      link.addEventListener("click", function () { closeAll(); });
+    });
+    document.querySelectorAll(".orvio-catall").forEach(function (box) {
+      var btn = box.querySelector("[data-catall]");
+      if (!btn) return;
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (openEl === box) closeAll();
+        else openItem(box);
+      });
+    });
+    document.addEventListener("click", function (e) {
+      if (e.target.closest(".orvio-catbar, .orvio-mega, .orvio-catall__panel")) return;
+      closeAll();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeAll();
+    });
+    window.addEventListener("scroll", function () {
+      if (openEl) place(openEl);
+    }, { passive: true });
+    window.addEventListener("resize", function () {
+      if (openEl) place(openEl);
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initSticky();
     initAnnounce();
     initQty();
     initCarousel();
     initGallery();
+    initCatMenu();
     if (!window.ORVIO_CATALOG && typeof renderWish === "function") renderWish();
     document.addEventListener("click", function (e) {
     if (!e.target.closest("[data-sticky-submit]")) return;

@@ -267,10 +267,13 @@ def header():
     for cid, fa, en, img, _feat in CATS:
         cat_links += f'<li><a href="shop.html?cat={cid}" data-fa="{e(fa)}" data-en="{e(en)}">{e(fa)}</a>{mega(cid)}</li>'
         all_links += f'<a href="shop.html?cat={cid}"><span data-fa="{e(fa)}" data-en="{e(en)}">{e(fa)}</span><span>{count(cid)}</span></a>'
-    menu_acc = "".join(
-        f'<details><summary data-fa="{e(fa)}" data-en="{e(en)}">{e(fa)}</summary><a href="shop.html?cat={cid}" data-i18n="shop">فروشگاه</a></details>'
-        for cid, fa, en, img, _ in CATS
-    )
+    menu_acc = ""
+    for cid, fa, en, img, _ in CATS:
+        sub = f'<a href="shop.html?cat={cid}" data-fa="مشاهده همه" data-en="View all">مشاهده همه</a>'
+        for _cfa, _cen, links in MEGA.get(cid, []):
+            for i in range(0, len(links), 2):
+                sub += f'<a href="shop.html?cat={cid}" data-fa="{e(links[i])}" data-en="{e(links[i + 1])}">{e(links[i])}</a>'
+        menu_acc += f'<details><summary data-fa="{e(fa)}" data-en="{e(en)}">{e(fa)}</summary>{sub}</details>'
     return f'''<a class="orvio-skip" href="#main" data-i18n="skip">پرش به محتوا</a>
 <div class="orvio-announce" data-announce>
   <div class="orvio-container orvio-announce__inner">
@@ -442,7 +445,7 @@ def shell(page, title, body, extra=""):
   <title>{e(title)}</title>
   <meta name="description" content="Orvio — قالب فروشگاهی ووکامرس با پشتیبانی المنتور">
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/main.css?v=4">
 </head>
 <body class="orvio-body" data-page="{page}">
 <div class="orvio-themebar"><div class="orvio-container">
@@ -454,7 +457,7 @@ def shell(page, title, body, extra=""):
 <main id="main">{body}</main>
 {footer()}
 <script src="catalog.js"></script>
-<script src="assets/js/theme.js" defer></script>
+<script src="assets/js/theme.js?v=4" defer></script>
 <script src="demo.js" defer></script>
 {extra}
 </body>

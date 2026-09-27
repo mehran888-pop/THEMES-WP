@@ -90,7 +90,6 @@ body {
   font-size: 15px;
   line-height: 1.7;
   text-rendering: optimizeLegibility;
-  overflow-x: clip;
 }
 .orvio-summary-static .orvio-summary { position: static; }
 .orvio-carousel__nav [data-prev] svg { transform: rotate(90deg); }
@@ -214,9 +213,9 @@ html[dir="rtl"] .orvio-display {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(255, 252, 248, 0.92);
-  backdrop-filter: blur(16px);
+  background: #fffcf8;
   border-bottom: 1px solid transparent;
+  overflow: visible;
 }
 .orvio-header.is-stuck { border-bottom-color: var(--line); box-shadow: 0 8px 24px rgba(28,25,22,0.04); }
 .orvio-header__row {
@@ -349,9 +348,17 @@ html[dir="rtl"] .orvio-logo__word strong { letter-spacing: 0.08em; font-family: 
 .orvio-searchpanel .orvio-search { width: 100%; }
 
 /* Category bar */
-.orvio-catbar { border-top: 1px solid var(--line); background: rgba(255,252,248,0.96); }
-.orvio-catbar__row { display: flex; align-items: center; gap: 8px; min-height: 48px; }
-.orvio-catall { position: relative; flex: none; }
+.orvio-catbar { position: relative; border-top: 1px solid var(--line); background: rgba(255,252,248,0.96); overflow: visible; }
+.orvio-header { overflow: visible; }
+.orvio-catbar__row { display: flex; align-items: stretch; gap: 8px; min-height: 48px; }
+.orvio-catall { position: relative; flex: none; display: flex; align-items: center; }
+.orvio-catall::after {
+  content: "";
+  position: absolute;
+  inset-inline: -6px;
+  top: 100%;
+  height: 18px;
+}
 .orvio-catall__btn, .orvio-catbar__sale {
   display: inline-flex;
   align-items: center;
@@ -369,7 +376,7 @@ html[dir="rtl"] .orvio-logo__word strong { letter-spacing: 0.08em; font-family: 
 .orvio-catall__panel {
   position: absolute;
   inset-inline-start: 0;
-  top: calc(100% + 8px);
+  top: 100%;
   width: min(360px, 80vw);
   background: #fff;
   border: 1px solid var(--line);
@@ -379,7 +386,8 @@ html[dir="rtl"] .orvio-logo__word strong { letter-spacing: 0.08em; font-family: 
   display: none;
   z-index: 36;
 }
-.orvio-catall.is-open .orvio-catall__panel, .orvio-catall:hover .orvio-catall__panel { display: block; }
+.orvio-catall.is-open .orvio-catall__panel,
+.orvio-catall:focus-within .orvio-catall__panel { display: block; }
 .orvio-catall__panel a {
   display: flex;
   align-items: center;
@@ -391,12 +399,13 @@ html[dir="rtl"] .orvio-logo__word strong { letter-spacing: 0.08em; font-family: 
 }
 .orvio-catall__panel a:hover { background: var(--bg); }
 .orvio-catall__panel a span { color: var(--muted); font-size: 12px; font-weight: 500; }
-.orvio-catbar__menu { display: flex; align-items: center; gap: 2px; flex: 1; min-width: 0; }
-.orvio-catbar__menu > li { position: static; }
+.orvio-catbar__menu { display: flex; align-items: stretch; gap: 2px; flex: 1; min-width: 0; }
+.orvio-catbar__menu > li { position: static; display: flex; align-items: center; }
 .orvio-catbar__menu > li > a {
   display: inline-flex;
   align-items: center;
-  min-height: 36px;
+  height: 100%;
+  min-height: 48px;
   padding: 0 12px;
   border-radius: 10px;
   font-weight: 600;
@@ -406,19 +415,21 @@ html[dir="rtl"] .orvio-logo__word strong { letter-spacing: 0.08em; font-family: 
 .orvio-catbar__menu > li > a:hover, .orvio-catbar__menu > li:focus-within > a { background: rgba(28,25,22,0.05); }
 .orvio-catbar__sale { margin-inline-start: auto; color: var(--sale); }
 .orvio-mega {
-  position: absolute;
+  position: fixed;
   inset-inline: 0;
-  top: 100%;
+  top: 0;
   background: #fff;
   border-top: 1px solid var(--line);
-  box-shadow: 0 28px 50px rgba(28,25,22,0.08);
-  padding: 28px 0 32px;
+  box-shadow: 0 28px 50px rgba(28,25,22,0.12);
+  padding: 22px 0 32px;
   display: none;
-  z-index: 34;
+  z-index: 80;
+  pointer-events: auto;
 }
-.orvio-catbar { position: relative; }
-.orvio-catbar__menu > li:hover .orvio-mega,
-.orvio-catbar__menu > li:focus-within .orvio-mega { display: block; }
+.orvio-catbar__menu > li.is-open > .orvio-mega,
+.orvio-catall.is-open .orvio-catall__panel { pointer-events: auto; }
+.orvio-catbar__menu > li.is-open > .orvio-mega,
+.orvio-catbar__menu > li:focus-within > .orvio-mega { display: block; }
 .orvio-mega__grid {
   width: min(var(--container), calc(100% - 32px));
   margin-inline: auto;
@@ -426,9 +437,18 @@ html[dir="rtl"] .orvio-logo__word strong { letter-spacing: 0.08em; font-family: 
   grid-template-columns: 1fr 1fr 1fr 280px;
   gap: 28px;
 }
+.orvio-mega__col { position: relative; z-index: 1; }
 .orvio-mega__col strong { display: block; font-size: 13px; margin-bottom: 8px; }
-.orvio-mega__col a { display: block; padding: 5px 0; color: var(--muted); font-size: 14px; }
-.orvio-mega__col a:hover { color: var(--accent); }
+.orvio-mega__col a {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 14px;
+}
+.orvio-mega__col a:hover { color: var(--accent); background: var(--bg); }
 .orvio-mega__feature {
   position: relative;
   border-radius: 16px;
@@ -528,7 +548,7 @@ html[dir="rtl"] .orvio-drawer--cart, html[dir="rtl"] .orvio-drawer--wish { trans
   cursor: pointer;
 }
 .orvio-menu-acc summary::-webkit-details-marker { display: none; }
-.orvio-menu-acc a { display: block; padding: 6px 0 10px; color: var(--muted); }
+.orvio-menu-acc a { display: flex; align-items: center; min-height: 40px; padding: 6px 4px; color: var(--ink); }
 .orvio-menu-links a {
   display: flex;
   align-items: center;
