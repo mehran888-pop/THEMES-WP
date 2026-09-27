@@ -177,7 +177,7 @@ function orvio_render_settings_page() {
 			<div class="orvio-top">
 				<div>
 					<h1><?php echo esc_html( orvio_t( 'Theme settings', 'تنظیمات قالب' ) ); ?></h1>
-					<p><?php echo esc_html( orvio_t( 'A quiet control room for color, type, header and shop. The homepage itself is an Elementor page.', 'اتاق فرمان رنگ، فونت، هدر و فروشگاه. خود صفحه اول یک برگه المنتور است.' ) ); ?></p>
+					<p><?php echo esc_html( orvio_t( 'A quiet control room for color, type, header and shop. The homepage is whichever page you choose in WordPress.', 'اتاق فرمان رنگ، فونت، هدر و فروشگاه. صفحه اصلی همان برگه‌ای است که در وردپرس انتخاب می‌کنید.' ) ); ?></p>
 				</div>
 			</div>
 			<?php if ( isset( $_GET['orvio-imported'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
@@ -295,24 +295,16 @@ function orvio_render_settings_page() {
 			</form>
 			<section data-panel="home" class="orvio-panel">
 				<div class="orvio-card" style="padding:18px 20px">
-					<h2><?php echo esc_html( orvio_t( 'Homepage page', 'برگه صفحه اصلی' ) ); ?></h2>
-					<p class="orvio-home-copy"><?php echo esc_html( orvio_t( 'The homepage is a normal page in Pages, set as the static front page. Edit that page with Elementor: hero, categories, products, banners, about and newsletter.', 'صفحه اصلی یک برگه معمولی در بخش برگه‌هاست و به‌عنوان برگه یکتا تنظیم می‌شود. همان برگه را با المنتور ویرایش کنید: هیرو، دسته‌ها، کالا، بنر، درباره و خبرنامه.' ) ); ?></p>
-					<p><span class="orvio-status <?php echo $is_el ? 'is-ok' : ''; ?>"><?php echo esc_html( $is_el ? orvio_t( 'Built with Elementor', 'ساخته‌شده با المنتور' ) : orvio_t( 'Not built yet', 'هنوز ساخته نشده' ) ); ?></span></p>
+					<h2><?php echo esc_html( orvio_t( 'Homepage', 'صفحه اصلی' ) ); ?></h2>
+					<p class="orvio-home-copy"><?php echo esc_html( orvio_t( 'This theme does not create a homepage. The site front is the page you select in Settings → Reading.', 'قالب صفحه اصلی جدا نمی‌سازد. صفحه اول سایت همان برگه‌ای است که در تنظیمات ← خواندن وردپرس انتخاب می‌کنید.' ) ); ?></p>
+					<p><span class="orvio-status <?php echo $front_id ? 'is-ok' : ''; ?>"><?php echo esc_html( $front_id ? get_the_title( $front_id ) : orvio_t( 'No static page selected', 'برگه‌ای انتخاب نشده' ) ); ?></span></p>
 					<div class="orvio-actions">
-						<?php if ( class_exists( '\Elementor\Plugin' ) ) : ?>
-							<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-								<?php wp_nonce_field( 'orvio_build_front' ); ?>
-								<input type="hidden" name="action" value="orvio_build_front">
-								<button class="button button-primary" type="submit" <?php echo $is_el ? 'onclick="return confirm(\'' . esc_attr( orvio_t( 'Rebuild the Elementor homepage? Your current homepage layout will be replaced.', 'صفحه اول المنتور از نو ساخته شود؟ چیدمان فعلی جایگزین می‌شود.' ) ) . '\')"' : ''; ?>><?php echo esc_html( $is_el ? orvio_t( 'Rebuild homepage', 'ساخت دوباره صفحه اول' ) : orvio_t( 'Build homepage with Elementor', 'ساخت صفحه اول با المنتور' ) ); ?></button>
-							</form>
-							<?php if ( $edit_url ) : ?>
-								<a class="button" href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html( orvio_t( 'Edit in Elementor', 'ویرایش در المنتور' ) ); ?></a>
-							<?php endif; ?>
-							<?php if ( $front_id ) : ?>
-								<a class="button" href="<?php echo esc_url( get_edit_post_link( $front_id ) ); ?>"><?php echo esc_html( orvio_t( 'Open in Pages', 'ویرایش در برگه‌ها' ) ); ?></a>
-							<?php endif; ?>
-						<?php else : ?>
-							<p><?php echo esc_html( orvio_t( 'Install and activate Elementor, then come back.', 'المنتور را نصب و فعال کنید، بعد برگردید.' ) ); ?></p>
+						<a class="button button-primary" href="<?php echo esc_url( admin_url( 'options-reading.php' ) ); ?>"><?php echo esc_html( orvio_t( 'Choose the page in WordPress', 'انتخاب برگه در وردپرس' ) ); ?></a>
+						<?php if ( $front_id ) : ?>
+							<a class="button" href="<?php echo esc_url( get_edit_post_link( $front_id ) ); ?>"><?php echo esc_html( orvio_t( 'Edit that page', 'ویرایش همان برگه' ) ); ?></a>
+						<?php endif; ?>
+						<?php if ( $edit_url ) : ?>
+							<a class="button" href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html( orvio_t( 'Edit in Elementor', 'ویرایش در المنتور' ) ); ?></a>
 						<?php endif; ?>
 						<?php if ( class_exists( 'WooCommerce' ) ) : ?>
 							<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">

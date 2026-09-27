@@ -19,21 +19,17 @@ if ( $is_builder ) {
 }
 ?>
 <main id="main" class="orvio-main">
-	<?php if ( ! $wc_screen && ! is_front_page() ) : ?>
+	<?php if ( ! $wc_screen ) : ?>
 		<div class="orvio-container orvio-pagehead">
 			<?php orvio_breadcrumb(); ?>
 			<h1><?php the_title(); ?></h1>
 		</div>
 	<?php endif; ?>
-	<div class="<?php echo $wc_screen || is_front_page() ? 'orvio-page' : 'orvio-container orvio-content'; ?>">
+	<div class="<?php echo $wc_screen ? 'orvio-page' : 'orvio-container orvio-content'; ?>">
 		<?php
 		while ( have_posts() ) :
 			the_post();
-			if ( is_front_page() && ! trim( wp_strip_all_tags( get_the_content() ) ) ) {
-				get_template_part( 'template-parts/home/fallback' );
-			} else {
-				the_content();
-			}
+			the_content();
 		endwhile;
 		?>
 	</div>

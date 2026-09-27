@@ -744,7 +744,7 @@ def theme_page():
   <ul class="orvio-prose" style="margin-top:12px">
     <li data-fa="هدر، جستجو، دکمهٔ سبد، منوی دسته و کشوی سبد" data-en="Header, search, cart button, category menu and cart drawer">هدر، جستجو، دکمهٔ سبد، منوی دسته و کشوی سبد</li>
     <li data-fa="پنل تنظیمات پیشخوان با نوار کناری: رنگ، فونت، هدر، فوتر، فروشگاه و تماس" data-en="Sidebar settings dashboard: color, type, header, footer, shop and contact"><a href="settings.html">پنل تنظیمات پیشخوان</a> با نوار کناری: رنگ، فونت، هدر، فوتر، فروشگاه و تماس</li>
-    <li data-fa="صفحه اول یک برگه المنتور است: هیرو، دسته‌ها، کالا، بنر، درباره و خبرنامه" data-en="The homepage is an Elementor page: hero, categories, products, banners, about and newsletter">صفحه اول یک برگه المنتور است: هیرو، دسته‌ها، کالا، بنر، درباره و خبرنامه</li>
+    <li data-fa="صفحه اصلی همان برگه‌ای است که در تنظیمات خواندن وردپرس انتخاب می‌کنید" data-en="The homepage is the page you select in WordPress Reading settings">صفحه اصلی همان برگه‌ای است که در تنظیمات خواندن وردپرس انتخاب می‌کنید</li>
     <li data-fa="هر ویجت تب استایل پیشرفته دارد: تایپوگرافی، پس‌زمینه، حاشیه، سایه، فاصله، هاور، عنوان و دکمه" data-en="Every widget has an advanced Style tab: typography, background, border, shadow, spacing, hover, title and button">هر ویجت تب استایل پیشرفته دارد: تایپوگرافی، پس‌زمینه، حاشیه، سایه، فاصله، هاور، عنوان و دکمه</li>
     <li data-fa="نصب کاتالوگ دمو از همان منوی تنظیمات، بعد از فعال کردن ووکامرس" data-en="Demo catalog import from the same settings menu, after WooCommerce is active">نصب کاتالوگ دمو از همان منوی تنظیمات، بعد از فعال کردن ووکامرس</li>
   </ul>
