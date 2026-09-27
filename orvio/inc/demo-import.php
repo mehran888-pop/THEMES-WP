@@ -121,17 +121,27 @@ function orvio_sideload_theme_image( $relative ) {
 
 function orvio_ensure_pages( $fa ) {
 	$pages = array(
-		'home'    => $fa ? 'صفحه اصلی' : 'Home',
-		'about'   => $fa ? 'درباره ما' : 'About',
-		'contact' => $fa ? 'ارتباط با ما' : 'Contact',
+		'frontpage' => $fa ? 'صفحه اصلی' : 'Home',
+		'about'     => $fa ? 'درباره ما' : 'About',
+		'contact'   => $fa ? 'ارتباط با ما' : 'Contact',
 	);
 	$ids = array();
 	foreach ( $pages as $slug => $title ) {
 		$found = get_page_by_path( $slug );
+		if ( ! $found && 'frontpage' === $slug ) {
+			$found = get_page_by_path( 'home' );
+		}
 		if ( $found ) {
 			$ids[ $slug ] = $found->ID;
-			if ( 'home' === $slug && in_array( $found->post_title, array( 'خانه', 'Home' ), true ) ) {
-				wp_update_post( array( 'ID' => $found->ID, 'post_title' => $title ) );
+			$update = array( 'ID' => $found->ID );
+			if ( 'frontpage' === $slug && 'home' === $found->post_name ) {
+				$update['post_name'] = 'frontpage';
+			}
+			if ( 'frontpage' === $slug && in_array( $found->post_title, array( 'خانه', 'Home' ), true ) ) {
+				$update['post_title'] = $title;
+			}
+			if ( count( $update ) > 1 ) {
+				wp_update_post( $update );
 			}
 			continue;
 		}
@@ -142,11 +152,11 @@ function orvio_ensure_pages( $fa ) {
 			'post_type'   => 'page',
 		) );
 	}
-	if ( ! empty( $ids['home'] ) ) {
+	if ( ! empty( $ids['frontpage'] ) ) {
 		update_option( 'show_on_front', 'page' );
-		update_option( 'page_on_front', $ids['home'] );
-		if ( did_action( 'elementor/loaded' ) && 'builder' !== get_post_meta( $ids['home'], '_elementor_edit_mode', true ) ) {
-			orvio_seed_elementor_home( (int) $ids['home'] );
+		update_option( 'page_on_front', $ids['frontpage'] );
+		if ( did_action( 'elementor/loaded' ) && 'builder' !== get_post_meta( $ids['frontpage'], '_elementor_edit_mode', true ) ) {
+			orvio_seed_elementor_home( (int) $ids['frontpage'] );
 		}
 	}
 	$menu = wp_get_nav_menu_object( 'Orvio' );
@@ -243,6 +253,22 @@ function orvio_handle_build_front() {
 	exit;
 }
 
+add_action( 'template_redirect', 'orvio_redirect_home_slug' );
+function orvio_redirect_home_slug() {
+	if ( is_admin() || wp_doing_ajax() ) {
+		return;
+	}
+	$path = trim( (string) wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ), '/' );
+	$base = trim( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ), '/' );
+	if ( $base && 0 === strpos( $path, $base ) ) {
+		$path = trim( substr( $path, strlen( $base ) ), '/' );
+	}
+	if ( in_array( $path, array( 'home', 'frontpage' ), true ) ) {
+		wp_safe_redirect( home_url( '/' ), 301 );
+		exit;
+	}
+}
+
 add_action( 'after_switch_theme', 'orvio_assign_front_page' );
 add_action( 'admin_init', 'orvio_assign_front_page' );
 function orvio_assign_front_page() {
@@ -252,9 +278,8 @@ function orvio_assign_front_page() {
 	$front   = (int) get_option( 'page_on_front' );
 	$is_page = $front && 'page' === get_post_type( $front ) && 'publish' === get_post_status( $front );
 	if ( 'page' === get_option( 'show_on_front' ) && $is_page ) {
-		$title = get_the_title( $front );
-		if ( in_array( $title, array( 'خانه', 'Home' ), true ) && 'home' === get_post_field( 'post_name', $front ) ) {
-			wp_update_post( array( 'ID' => $front, 'post_title' => is_rtl() ? 'صفحه اصلی' : 'Home' ) );
+		if ( 'home' === get_post_field( 'post_name', $front ) ) {
+			wp_update_post( array( 'ID' => $front, 'post_name' => 'frontpage' ) );
 		}
 		return;
 	}
@@ -276,7 +301,7 @@ function orvio_maybe_build_front() {
 		return;
 	}
 	$content = $front ? trim( wp_strip_all_tags( (string) get_post_field( 'post_content', $front ) ) ) : '';
-	$ours    = $front && 'home' === get_post_field( 'post_name', $front );
+	$ours    = $front && in_array( get_post_field( 'post_name', $front ), array( 'home', 'frontpage' ), true );
 	if ( $front && $content && ! $ours ) {
 		update_option( 'orvio_elementor_front_checked', 1 );
 		return;
