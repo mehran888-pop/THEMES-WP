@@ -14,7 +14,7 @@ do_action( 'woocommerce_before_main_content' );
 	<?php orvio_breadcrumb(); ?>
 	<h1><?php woocommerce_page_title(); ?></h1>
 </div>
-<div class="orvio-shop">
+<div class="orvio-shop<?php echo orvio_opt( 'shop_sidebar' ) ? '' : ' orvio-shop--no-sidebar'; ?>">
 	<?php if ( orvio_opt( 'shop_sidebar' ) ) : ?>
 		<aside class="orvio-filters" data-filters>
 			<div style="display:flex;justify-content:space-between;align-items:center">

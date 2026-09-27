@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ORVIO_VERSION', '1.1.0' );
+define( 'ORVIO_VERSION', '1.2.0' );
 define( 'ORVIO_DIR', get_template_directory() );
 define( 'ORVIO_URI', get_template_directory_uri() );
 

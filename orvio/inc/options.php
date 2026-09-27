@@ -56,10 +56,27 @@ function orvio_defaults() {
 		'cart_type'          => 'drawer',
 		'shop_columns'       => 3,
 		'products_per_page'  => 12,
+		'shop_layout'        => 'sidebar-grid',
 		'card_style'         => 'classic',
 		'shop_sidebar'       => 1,
+		'product_layout'     => 'classic',
 		'related_count'      => 4,
 		'sticky_summary'     => 1,
+		'cart_layout'        => 'split',
+		'checkout_layout'    => 'split',
+		'billing_fields'     => array(
+			'billing_first_name' => 'required',
+			'billing_last_name'  => 'required',
+			'billing_company'    => 'optional',
+			'billing_country'    => 'required',
+			'billing_address_1'  => 'required',
+			'billing_address_2'  => 'optional',
+			'billing_city'       => 'required',
+			'billing_state'      => 'optional',
+			'billing_postcode'   => 'optional',
+			'billing_phone'      => 'optional',
+			'billing_email'      => 'required',
+		),
 		'phone'              => '021-91000042',
 		'email'              => 'hello@orvio.shop',
 		'address'            => 'تهران، خیابان طراحی، پلاک ۱۲',
@@ -111,12 +128,26 @@ function orvio_sanitize_settings( $input ) {
 	$clean['site_layout']          = in_array( $input['site_layout'] ?? '', array( 'wide', 'boxed', 'content-wide' ), true ) ? $input['site_layout'] : 'wide';
 	$clean['atc_style']            = in_array( $input['atc_style'] ?? '', array( 'pill', 'block', 'outline', 'soft' ), true ) ? $input['atc_style'] : 'pill';
 	$clean['cart_type']            = in_array( $input['cart_type'] ?? '', array( 'drawer', 'page' ), true ) ? $input['cart_type'] : 'drawer';
+	$shop_layouts                 = array( 'sidebar-grid', 'wide-grid', 'list', 'masonry', 'minimal' );
+	$product_layouts              = array( 'classic', 'gallery-right', 'stacked', 'immersive' );
+	$page_layouts                 = array( 'split', 'classic', 'compact', 'focus', 'minimal' );
+	$clean['shop_layout']         = in_array( $input['shop_layout'] ?? '', $shop_layouts, true ) ? $input['shop_layout'] : 'sidebar-grid';
+	$clean['product_layout']      = in_array( $input['product_layout'] ?? '', $product_layouts, true ) ? $input['product_layout'] : 'classic';
+	$clean['cart_layout']         = in_array( $input['cart_layout'] ?? '', $page_layouts, true ) ? $input['cart_layout'] : 'split';
+	$clean['checkout_layout']     = in_array( $input['checkout_layout'] ?? '', $page_layouts, true ) ? $input['checkout_layout'] : 'split';
 	$card_styles                  = array( 'classic', 'minimal', 'overlay', 'editorial', 'deal', 'polaroid', 'magazine' );
 	$clean['card_style']           = in_array( $input['card_style'] ?? '', $card_styles, true ) ? $input['card_style'] : 'classic';
 	$clean['shop_columns']      = max( 2, min( 5, absint( $input['shop_columns'] ?? 3 ) ) );
 	$clean['products_per_page'] = max( 4, min( 48, absint( $input['products_per_page'] ?? 12 ) ) );
 	$clean['related_count']     = max( 2, min( 8, absint( $input['related_count'] ?? 4 ) ) );
 	$clean['free_shipping']     = max( 0, absint( $input['free_shipping'] ?? 0 ) );
+	$billing_defaults             = orvio_defaults()['billing_fields'];
+	$clean['billing_fields']      = array();
+	$billing_modes                = array( 'required', 'optional', 'hidden' );
+	foreach ( $billing_defaults as $field => $default_mode ) {
+		$mode = $input['billing_fields'][ $field ] ?? $default_mode;
+		$clean['billing_fields'][ $field ] = in_array( $mode, $billing_modes, true ) ? $mode : $default_mode;
+	}
 	$toggles                    = array( 'sticky_header', 'show_announcement', 'shop_sidebar', 'sticky_summary', 'enable_wishlist', 'enable_quick_view', 'show_search', 'show_account', 'show_cart', 'show_catbar' );
 	foreach ( $toggles as $key ) {
 		$clean[ $key ] = empty( $input[ $key ] ) ? 0 : 1;
@@ -280,6 +311,13 @@ function orvio_render_settings_page() {
 						<?php
 						orvio_field_number( 'shop_columns', orvio_t( 'Columns', 'ستون‌ها' ), $o, 2, 5 );
 						orvio_field_number( 'products_per_page', orvio_t( 'Per page', 'تعداد در صفحه' ), $o, 4, 48 );
+						orvio_field_select( 'shop_layout', orvio_t( 'Shop layout', 'چیدمان فروشگاه' ), $o, array(
+							'sidebar-grid' => orvio_t( 'Sidebar + grid', 'سایدبار و شبکه' ),
+							'wide-grid'    => orvio_t( 'Wide grid', 'شبکه عریض' ),
+							'list'         => orvio_t( 'List', 'فهرست' ),
+							'masonry'      => orvio_t( 'Masonry cards', 'کارت‌های نامنظم' ),
+							'minimal'      => orvio_t( 'Minimal', 'مینیمال' ),
+						) );
 						orvio_field_select( 'card_style', orvio_t( 'Card', 'کارت کالا' ), $o, array(
 							'classic'   => orvio_t( 'Classic', 'کلاسیک' ),
 							'minimal'   => orvio_t( 'Minimal', 'مینیمال' ),
@@ -304,6 +342,12 @@ function orvio_render_settings_page() {
 							'outline' => orvio_t( 'Outline', 'خطی' ),
 							'soft'    => orvio_t( 'Soft', 'نرم' ),
 						) );
+						orvio_field_select( 'product_layout', orvio_t( 'Single product layout', 'چیدمان صفحه محصول' ), $o, array(
+							'classic'       => orvio_t( 'Classic gallery', 'گالری کلاسیک' ),
+							'gallery-right' => orvio_t( 'Gallery right', 'گالری سمت راست' ),
+							'stacked'       => orvio_t( 'Stacked', 'ستونی' ),
+							'immersive'     => orvio_t( 'Immersive', 'غوطه‌ور' ),
+						) );
 						orvio_field_check( 'sticky_summary', orvio_t( 'Sticky summary', 'خلاصه چسبان' ), $o );
 						orvio_field_number( 'related_count', orvio_t( 'Related products', 'کالاهای مرتبط' ), $o, 2, 8 );
 						?>
@@ -316,6 +360,12 @@ function orvio_render_settings_page() {
 							'drawer' => orvio_t( 'Drawer', 'کشو' ),
 							'page'   => orvio_t( 'Cart page', 'صفحه سبد' ),
 						) );
+						orvio_field_select( 'cart_layout', orvio_t( 'Cart layout', 'چیدمان سبد خرید' ), $o, orvio_page_layout_choices() );
+						orvio_field_select( 'checkout_layout', orvio_t( 'Checkout layout', 'چیدمان صورتحساب' ), $o, orvio_page_layout_choices() );
+						echo '<h3 style="margin-top:18px">' . esc_html( orvio_t( 'Billing fields', 'فیلدهای صورتحساب' ) ) . '</h3>';
+						foreach ( orvio_billing_labels() as $field => $label ) {
+							orvio_field_billing_mode( $field, $label, $o );
+						}
 						orvio_field_number( 'free_shipping', orvio_t( 'Free shipping from', 'ارسال رایگان از' ), $o, 0, 999999999 );
 						?>
 					</div>
@@ -391,6 +441,46 @@ function orvio_field_number( $key, $label, $o, $min, $max ) {
 function orvio_field_check( $key, $label, $o ) {
 	echo '<label class="orvio-admin__check"><input type="checkbox" name="orvio_settings[' . esc_attr( $key ) . ']" value="1" ' . checked( ! empty( $o[ $key ] ), true, false ) . '> ' . esc_html( $label ) . '</label>';
 }
+function orvio_page_layout_choices() {
+	return array(
+		'split'   => orvio_t( 'Split', 'دو ستونه' ),
+		'classic' => orvio_t( 'Classic', 'کلاسیک' ),
+		'compact' => orvio_t( 'Compact', 'فشرده' ),
+		'focus'   => orvio_t( 'Focus mode', 'حالت تمرکز' ),
+		'minimal' => orvio_t( 'Minimal', 'مینیمال' ),
+	);
+}
+
+function orvio_billing_labels() {
+	return array(
+		'billing_first_name' => orvio_t( 'First name', 'نام' ),
+		'billing_last_name'  => orvio_t( 'Last name', 'نام خانوادگی' ),
+		'billing_company'    => orvio_t( 'Company', 'شرکت' ),
+		'billing_country'    => orvio_t( 'Country', 'کشور' ),
+		'billing_address_1'  => orvio_t( 'Address', 'آدرس' ),
+		'billing_address_2'  => orvio_t( 'Address 2', 'آدرس تکمیلی' ),
+		'billing_city'       => orvio_t( 'City', 'شهر' ),
+		'billing_state'      => orvio_t( 'State', 'استان' ),
+		'billing_postcode'   => orvio_t( 'Postcode', 'کد پستی' ),
+		'billing_phone'      => orvio_t( 'Phone', 'تلفن' ),
+		'billing_email'      => orvio_t( 'Email', 'ایمیل' ),
+	);
+}
+
+function orvio_field_billing_mode( $key, $label, $o ) {
+	$choices = array(
+		'required' => orvio_t( 'Required', 'ضروری' ),
+		'optional' => orvio_t( 'Optional', 'اختیاری' ),
+		'hidden'   => orvio_t( 'Hidden', 'مخفی' ),
+	);
+	$value = $o['billing_fields'][ $key ] ?? 'optional';
+	echo '<label class="orvio-admin__field"><span>' . esc_html( $label ) . '</span><select name="orvio_settings[billing_fields][' . esc_attr( $key ) . ']">';
+	foreach ( $choices as $choice => $text ) {
+		echo '<option value="' . esc_attr( $choice ) . '" ' . selected( $value, $choice, false ) . '>' . esc_html( $text ) . '</option>';
+	}
+	echo '</select></label>';
+}
+
 function orvio_field_select( $key, $label, $o, $choices ) {
 	echo '<label class="orvio-admin__field"><span>' . esc_html( $label ) . '</span><select name="orvio_settings[' . esc_attr( $key ) . ']">';
 	foreach ( $choices as $value => $text ) {
@@ -430,6 +520,22 @@ function orvio_body_classes( $classes ) {
 	$header_styles = array( 'minimal', 'pill', 'solid', 'outline', 'soft' );
 	$classes[] = 'orvio-header-account-' . ( in_array( $o['header_account_style'], $header_styles, true ) ? $o['header_account_style'] : 'minimal' );
 	$classes[] = 'orvio-header-cart-' . ( in_array( $o['header_cart_style'], $header_styles, true ) ? $o['header_cart_style'] : 'pill' );
+	if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() || is_product_category() || is_product_tag() ) ) {
+		$shop_layouts = array( 'sidebar-grid', 'wide-grid', 'list', 'masonry', 'minimal' );
+		$classes[] = 'orvio-shop-layout-' . ( in_array( $o['shop_layout'], $shop_layouts, true ) ? $o['shop_layout'] : 'sidebar-grid' );
+	}
+	if ( function_exists( 'is_product' ) && is_product() ) {
+		$product_layouts = array( 'classic', 'gallery-right', 'stacked', 'immersive' );
+		$classes[] = 'orvio-product-layout-' . ( in_array( $o['product_layout'], $product_layouts, true ) ? $o['product_layout'] : 'classic' );
+	}
+	if ( function_exists( 'is_cart' ) && is_cart() ) {
+		$page_layouts = array( 'split', 'classic', 'compact', 'focus', 'minimal' );
+		$classes[] = 'orvio-cart-layout-' . ( in_array( $o['cart_layout'], $page_layouts, true ) ? $o['cart_layout'] : 'split' );
+	}
+	if ( function_exists( 'is_checkout' ) && is_checkout() && ( ! function_exists( 'is_order_received_page' ) || ! is_order_received_page() ) ) {
+		$page_layouts = array( 'split', 'classic', 'compact', 'focus', 'minimal' );
+		$classes[] = 'orvio-checkout-layout-' . ( in_array( $o['checkout_layout'], $page_layouts, true ) ? $o['checkout_layout'] : 'split' );
+	}
 	$layout = in_array( $o['site_layout'], array( 'wide', 'boxed', 'content-wide' ), true ) ? $o['site_layout'] : 'wide';
 	$atc    = in_array( $o['atc_style'], array( 'pill', 'block', 'outline', 'soft' ), true ) ? $o['atc_style'] : 'pill';
 	$classes[] = 'orvio-layout-' . $layout;

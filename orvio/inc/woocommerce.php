@@ -35,6 +35,31 @@ function orvio_wc_hooks() {
 	add_filter( 'woocommerce_product_related_products_heading', function () {
 		return orvio_t( 'You may also like', 'کالاهای مرتبط' );
 	} );
+	add_filter( 'woocommerce_checkout_fields', 'orvio_checkout_field_settings', 20 );
+}
+
+/**
+ * Apply the billing field policy from Theme settings without replacing WooCommerce
+ * validation. Required flags are consumed by WooCommerce's native validator;
+ * hidden fields are removed from the checkout field array.
+ */
+function orvio_checkout_field_settings( $fields ) {
+	$settings = orvio_settings();
+	$modes    = $settings['billing_fields'] ?? array();
+	if ( empty( $fields['billing'] ) || ! is_array( $modes ) ) {
+		return $fields;
+	}
+	foreach ( $modes as $field => $mode ) {
+		if ( ! isset( $fields['billing'][ $field ] ) ) {
+			continue;
+		}
+		if ( 'hidden' === $mode ) {
+			unset( $fields['billing'][ $field ] );
+			continue;
+		}
+		$fields['billing'][ $field ]['required'] = 'required' === $mode;
+	}
+	return $fields;
 }
 
 function orvio_wc_wrapper_start() {

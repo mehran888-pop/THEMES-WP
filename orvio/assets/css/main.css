@@ -1640,6 +1640,57 @@ html[data-radius="sharp"] .orvio-search,
 html[data-radius="sharp"] .orvio-search > button,
 html[data-radius="sharp"] .orvio-qty { border-radius: 4px; }
 
+/* WooCommerce page layout presets. These are driven by the advanced theme settings. */
+.orvio-shop.orvio-shop--no-sidebar { grid-template-columns: 1fr; }
+body.orvio-shop-layout-wide-grid .orvio-grid { --cols: 4; gap: 18px; }
+body.orvio-shop-layout-list .orvio-grid { grid-template-columns: 1fr; gap: 12px; }
+body.orvio-shop-layout-list .orvio-grid .orvio-card {
+  display: grid;
+  grid-template-columns: minmax(150px, 240px) 1fr;
+  min-height: 220px;
+}
+body.orvio-shop-layout-list .orvio-grid .orvio-card__media { height: 100%; aspect-ratio: auto; }
+body.orvio-shop-layout-list .orvio-grid .orvio-card__body { justify-content: center; padding: 24px; }
+body.orvio-shop-layout-list .orvio-grid .orvio-card__quick { position: static; display: inline-flex; width: fit-content; padding-inline: 18px; margin-top: 10px; opacity: 1; transform: none; }
+body.orvio-shop-layout-masonry .orvio-grid { display: block; column-count: var(--cols, 3); column-gap: 16px; }
+body.orvio-shop-layout-masonry .orvio-grid .orvio-card { display: inline-flex; width: 100%; margin: 0 0 16px; break-inside: avoid; }
+body.orvio-shop-layout-masonry .orvio-grid .orvio-card__media { aspect-ratio: auto; min-height: 240px; }
+body.orvio-shop-layout-masonry .orvio-grid .orvio-card__media img { position: absolute; inset: 0; }
+body.orvio-shop-layout-minimal .orvio-grid { gap: 24px 16px; }
+body.orvio-shop-layout-minimal .orvio-grid .orvio-card { border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+body.orvio-shop-layout-minimal .orvio-grid .orvio-card__media { border-radius: var(--radius); }
+body.orvio-shop-layout-minimal .orvio-grid .orvio-card__body { padding-inline: 2px; }
+
+body.orvio-product-layout-gallery-right .orvio-product { grid-template-columns: .95fr 1.05fr; }
+body.orvio-product-layout-gallery-right .orvio-product .orvio-gallery { order: 2; }
+body.orvio-product-layout-gallery-right .orvio-product .orvio-summary { order: 1; }
+body.orvio-product-layout-stacked .orvio-product { grid-template-columns: 1fr; max-width: 980px; margin-inline: auto; }
+body.orvio-product-layout-stacked .orvio-summary { position: static; display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; }
+body.orvio-product-layout-stacked .orvio-summary > * { grid-column: 1 / -1; }
+body.orvio-product-layout-stacked .orvio-summary > .orvio-micro { grid-column: 1 / -1; }
+body.orvio-product-layout-immersive .orvio-product { grid-template-columns: minmax(0, 1.35fr) minmax(320px, .65fr); gap: 52px; }
+body.orvio-product-layout-immersive .orvio-gallery__main { border-radius: 0; aspect-ratio: 4 / 5; }
+body.orvio-product-layout-immersive .orvio-summary { padding-top: 28px; }
+body.orvio-summary-static .orvio-product-layout-stacked .orvio-summary { position: static; }
+
+body.orvio-cart-layout-classic .orvio-cartpage { grid-template-columns: 1fr .55fr; }
+body.orvio-cart-layout-compact .orvio-cartpage { grid-template-columns: 1fr .65fr; gap: 12px; }
+body.orvio-cart-layout-compact .orvio-panel { border-radius: 12px; padding: 10px; }
+body.orvio-cart-layout-compact .orvio-cart-item { grid-template-columns: 64px 1fr auto; gap: 10px; padding: 9px 0; }
+body.orvio-cart-layout-compact .orvio-cart-item img { width: 64px; height: 64px; border-radius: 10px; }
+body.orvio-cart-layout-focus .orvio-cartpage { grid-template-columns: 1fr; max-width: 900px; margin-inline: auto; }
+body.orvio-cart-layout-focus .orvio-cartpage .cart-collaterals { max-width: 460px; width: 100%; margin-inline-start: auto; }
+body.orvio-cart-layout-minimal .orvio-cartpage { grid-template-columns: 1fr .7fr; gap: 36px; }
+body.orvio-cart-layout-minimal .orvio-panel { background: transparent; border: 0; padding-inline: 0; }
+
+body.orvio-checkout-layout-classic .orvio-checkout { grid-template-columns: 1fr .65fr; }
+body.orvio-checkout-layout-compact .orvio-checkout { grid-template-columns: 1fr .7fr; gap: 12px; }
+body.orvio-checkout-layout-compact .orvio-panel { padding: 12px; border-radius: 12px; }
+body.orvio-checkout-layout-focus .orvio-checkout { grid-template-columns: 1fr; max-width: 900px; margin-inline: auto; }
+body.orvio-checkout-layout-focus .orvio-checkout__side { max-width: 480px; width: 100%; margin-inline-start: auto; }
+body.orvio-checkout-layout-minimal .orvio-checkout { grid-template-columns: 1fr .72fr; gap: 34px; }
+body.orvio-checkout-layout-minimal .orvio-checkout .orvio-panel { background: transparent; border: 0; padding-inline: 0; }
+
 @media (max-width: 1100px) {
   .orvio-grid, ul.products { --cols: 3; }
   .orvio-carousel__track .orvio-card { flex-basis: calc((100% - 32px) / 3); }
