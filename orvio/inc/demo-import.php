@@ -142,7 +142,7 @@ function orvio_ensure_pages( $fa ) {
 	if ( ! empty( $ids['home'] ) ) {
 		update_option( 'show_on_front', 'page' );
 		update_option( 'page_on_front', $ids['home'] );
-		if ( did_action( 'elementor/loaded' ) ) {
+		if ( did_action( 'elementor/loaded' ) && 'builder' !== get_post_meta( $ids['home'], '_elementor_edit_mode', true ) ) {
 			orvio_seed_elementor_home( (int) $ids['home'] );
 		}
 	}
@@ -174,11 +174,16 @@ function orvio_seed_elementor_home( $page_id ) {
 			'elements'   => array(),
 		);
 	};
-	$section = function ( $widgets ) {
+	$section = function ( $widgets, $full = false ) {
 		return array(
 			'id'       => orvio_el_id(),
 			'elType'   => 'section',
-			'settings' => array(),
+			'settings' => array(
+				'layout'        => $full ? 'full_width' : 'boxed',
+				'content_width' => array( 'unit' => 'px', 'size' => 1240, 'sizes' => array() ),
+				'gap'           => 'no',
+				'padding'       => array( 'unit' => 'px', 'top' => '0', 'right' => '0', 'bottom' => '0', 'left' => '0', 'isLinked' => true ),
+			),
 			'elements' => array(
 				array(
 					'id'       => orvio_el_id(),
@@ -190,7 +195,14 @@ function orvio_seed_elementor_home( $page_id ) {
 		);
 	};
 	$data = array(
+		$section( array( $widget( 'orvio-hero', array(
+			'kicker' => orvio_t( 'Autumn edit', 'مجموعه پاییز' ),
+			'title'  => orvio_t( 'Objects for a quieter house', 'اشیائی برای خانه‌ای که آرام است' ),
+			'lead'   => orvio_t( 'A considered shop of ceramic, leather, wool and light.', 'ویترینی از سرامیک، چرم، پشم و نور.' ),
+			'button' => orvio_t( 'Enter the shop', 'ورود به فروشگاه' ),
+		) ) ), true ),
 		$section( array( $widget( 'orvio-features', array() ) ) ),
+		$section( array( $widget( 'orvio-categories', array( 'heading' => orvio_t( 'Shop by room', 'خرید بر اساس فضا' ), 'limit' => 5 ) ) ) ),
 		$section( array( $widget( 'orvio-products', array( 'heading' => orvio_t( 'Just added', 'تازه‌ها' ), 'source' => 'latest', 'limit' => 8, 'columns' => '4', 'layout' => 'grid' ) ) ) ),
 		$section( array( $widget( 'orvio-product-banner', array( 'model' => 'split', 'title' => orvio_t( 'Light, oak, and a quiet evening', 'نور، چوب، و یک عصر آرام' ), 'button' => orvio_t( 'Shop home', 'خانه و دکور' ) ) ) ) ),
 		$section( array( $widget( 'orvio-products', array( 'heading' => orvio_t( 'Bestsellers', 'پرفروش‌ها' ), 'source' => 'featured', 'layout' => 'carousel', 'limit' => 8, 'columns' => '4' ) ) ) ),
@@ -203,4 +215,70 @@ function orvio_seed_elementor_home( $page_id ) {
 	update_post_meta( $page_id, '_elementor_version', defined( 'ELEMENTOR_VERSION' ) ? ELEMENTOR_VERSION : '3.24.0' );
 	update_post_meta( $page_id, '_elementor_data', wp_slash( wp_json_encode( $data ) ) );
 	update_post_meta( $page_id, '_wp_page_template', 'elementor_header_footer' );
+	try {
+		if ( class_exists( '\Elementor\Core\Files\CSS\Post' ) ) {
+			$css = new \Elementor\Core\Files\CSS\Post( $page_id );
+			$css->update();
+		}
+		if ( class_exists( '\Elementor\Plugin' ) && isset( \Elementor\Plugin::$instance->files_manager ) ) {
+			\Elementor\Plugin::$instance->files_manager->clear_cache();
+		}
+	} catch ( \Throwable $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+		unset( $e );
+	}
+}
+
+add_action( 'admin_post_orvio_build_front', 'orvio_handle_build_front' );
+function orvio_handle_build_front() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( esc_html( orvio_t( 'Not allowed.', 'مجاز نیست.' ) ) );
+	}
+	check_admin_referer( 'orvio_build_front' );
+	$result = orvio_build_elementor_front( true );
+	$flag   = is_wp_error( $result ) ? 'orvio-front-error' : 'orvio-front';
+	wp_safe_redirect( admin_url( 'admin.php?page=orvio-settings&' . $flag . '=1' ) );
+	exit;
+}
+
+add_action( 'admin_init', 'orvio_maybe_build_front' );
+function orvio_maybe_build_front() {
+	if ( ! current_user_can( 'edit_pages' ) || wp_doing_ajax() || ! class_exists( '\Elementor\Plugin' ) ) {
+		return;
+	}
+	if ( get_option( 'orvio_elementor_front_checked' ) ) {
+		return;
+	}
+	$front = (int) get_option( 'page_on_front' );
+	if ( $front && 'builder' === get_post_meta( $front, '_elementor_edit_mode', true ) ) {
+		update_option( 'orvio_elementor_front_checked', 1 );
+		return;
+	}
+	$content = $front ? trim( wp_strip_all_tags( (string) get_post_field( 'post_content', $front ) ) ) : '';
+	$ours    = $front && 'home' === get_post_field( 'post_name', $front );
+	if ( $front && $content && ! $ours ) {
+		update_option( 'orvio_elementor_front_checked', 1 );
+		return;
+	}
+	$result = orvio_build_elementor_front( (bool) $ours );
+	if ( ! is_wp_error( $result ) ) {
+		update_option( 'orvio_elementor_front_checked', 1 );
+	}
+}
+
+function orvio_build_elementor_front( $force = false ) {
+	if ( ! class_exists( '\Elementor\Plugin' ) ) {
+		return new WP_Error( 'orvio-no-elementor', 'Elementor is not active.' );
+	}
+	$fa = is_rtl() || 0 === strpos( (string) get_locale(), 'fa' );
+	orvio_ensure_pages( $fa );
+	$id = (int) get_option( 'page_on_front' );
+	if ( ! $id ) {
+		return new WP_Error( 'orvio-no-front', 'Front page missing.' );
+	}
+	$built = 'builder' === get_post_meta( $id, '_elementor_edit_mode', true );
+	if ( $built && ! $force ) {
+		return $id;
+	}
+	orvio_seed_elementor_home( $id );
+	return $id;
 }

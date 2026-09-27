@@ -150,149 +150,178 @@ function orvio_render_settings_page() {
 	}
 	$o = orvio_settings();
 	$tabs = array(
-		'general'  => orvio_t( 'General', 'عمومی' ),
+		'general'  => orvio_t( 'Design', 'طراحی' ),
 		'header'   => orvio_t( 'Header', 'هدر' ),
 		'footer'   => orvio_t( 'Footer', 'فوتر' ),
 		'shop'     => orvio_t( 'Shop', 'فروشگاه' ),
 		'product'  => orvio_t( 'Product', 'محصول' ),
 		'checkout' => orvio_t( 'Cart & checkout', 'سبد و صورتحساب' ),
 		'contact'  => orvio_t( 'Contact', 'ارتباط' ),
+		'home'     => orvio_t( 'Homepage', 'صفحه اول' ),
 	);
+	$front_id = (int) get_option( 'page_on_front' );
+	$is_el    = $front_id && function_exists( 'orvio_is_elementor' ) && orvio_is_elementor( $front_id );
+	$edit_url = ( $is_el && class_exists( '\Elementor\Plugin' ) ) ? admin_url( 'post.php?post=' . $front_id . '&action=elementor' ) : '';
 	?>
-	<div class="wrap orvio-admin">
-		<div class="orvio-admin__hero">
-			<div>
-				<p class="orvio-admin__kicker">ORVIO</p>
-				<h1><?php echo esc_html( orvio_t( 'Theme settings', 'تنظیمات قالب' ) ); ?></h1>
-				<p><?php echo esc_html( orvio_t( 'Colors, header, shop, cart and contact — applied as CSS variables, without breaking mobile.', 'رنگ، هدر، فروشگاه، سبد و تماس. به‌صورت متغیر CSS اعمال می‌شود و چیدمان موبایل را به‌هم نمی‌ریزد.' ) ); ?></p>
+	<div id="orvio-app">
+		<aside class="orvio-side">
+			<div class="orvio-brand"><strong>ORVIO</strong><span><?php echo esc_html( orvio_t( 'Theme settings', 'تنظیمات قالب' ) ); ?></span></div>
+			<nav class="orvio-nav">
+				<?php foreach ( $tabs as $id => $label ) : ?>
+					<button type="button" data-tab="<?php echo esc_attr( $id ); ?>" class="<?php echo 'general' === $id ? 'is-on' : ''; ?>"><?php echo esc_html( $label ); ?></button>
+				<?php endforeach; ?>
+			</nav>
+			<p class="orvio-side__note"><?php echo esc_html( orvio_t( 'Changes apply as CSS variables. Elementor widgets keep their own style tab.', 'تغییرها به‌صورت متغیر CSS اعمال می‌شود. استایل هر المان در تب استایل المنتور است.' ) ); ?></p>
+		</aside>
+		<div class="orvio-main">
+			<div class="orvio-top">
+				<div>
+					<h1><?php echo esc_html( orvio_t( 'Theme settings', 'تنظیمات قالب' ) ); ?></h1>
+					<p><?php echo esc_html( orvio_t( 'A quiet control room for color, type, header and shop. The homepage itself is an Elementor page.', 'اتاق فرمان رنگ، فونت، هدر و فروشگاه. خود صفحه اول یک برگه المنتور است.' ) ); ?></p>
+				</div>
 			</div>
-			<?php if ( class_exists( 'WooCommerce' ) ) : ?>
-				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-					<?php wp_nonce_field( 'orvio_import_demo' ); ?>
-					<input type="hidden" name="action" value="orvio_import_demo">
-					<button class="button button-primary button-hero" type="submit"><?php echo esc_html( orvio_t( 'Install demo catalog', 'نصب کاتالوگ دمو' ) ); ?></button>
-				</form>
-			<?php else : ?>
-				<p class="orvio-admin__warn"><?php echo esc_html( orvio_t( 'Install WooCommerce to import the demo catalog and unlock shop templates.', 'برای واردات کاتالوگ دمو و قالب‌های فروشگاه، ووکامرس را نصب کنید.' ) ); ?></p>
+			<?php if ( isset( $_GET['orvio-imported'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+				<div class="notice notice-success" style="margin:0 28px"><p><?php echo esc_html( orvio_t( 'Demo catalog installed.', 'کاتالوگ دمو نصب شد.' ) ); ?></p></div>
 			<?php endif; ?>
+			<?php if ( isset( $_GET['orvio-front'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+				<div class="notice notice-success" style="margin:0 28px"><p><?php echo esc_html( orvio_t( 'Homepage built with Elementor.', 'صفحه اول با المنتور ساخته شد.' ) ); ?></p></div>
+			<?php endif; ?>
+			<?php if ( isset( $_GET['orvio-front-error'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+				<div class="notice notice-error" style="margin:0 28px"><p><?php echo esc_html( orvio_t( 'Elementor is not active, so the homepage could not be built.', 'المنتور فعال نیست و صفحه اول ساخته نشد.' ) ); ?></p></div>
+			<?php endif; ?>
+			<form method="post" action="options.php">
+				<?php settings_fields( 'orvio_settings_group' ); ?>
+				<section data-panel="general" class="orvio-panel is-on">
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Color', 'رنگ' ) ); ?></h2>
+						<?php
+						orvio_field_color( 'accent', orvio_t( 'Accent', 'رنگ تأکید' ), $o );
+						orvio_field_color( 'bg', orvio_t( 'Background', 'پس‌زمینه' ), $o );
+						orvio_field_color( 'ink', orvio_t( 'Text', 'متن' ), $o );
+						orvio_field_color( 'dark', orvio_t( 'Dark sections', 'بخش‌های تیره' ), $o );
+						?>
+					</div>
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Type', 'فونت' ) ); ?></h2>
+						<?php
+						orvio_field_select( 'body_font', orvio_t( 'Body font', 'فونت متن' ), $o, orvio_font_choices() );
+						orvio_field_select( 'heading_font', orvio_t( 'Heading font', 'فونت عنوان' ), $o, orvio_font_choices() );
+						orvio_field_number( 'font_size', orvio_t( 'Base size', 'اندازه پایه' ), $o, 13, 20 );
+						orvio_field_number( 'radius', orvio_t( 'Corner radius', 'گردی گوشه‌ها' ), $o, 0, 28 );
+						orvio_field_number( 'container', orvio_t( 'Content width', 'عرض محتوا' ), $o, 960, 1600 );
+						?>
+					</div>
+				</section>
+				<section data-panel="header" class="orvio-panel">
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Layout', 'چیدمان' ) ); ?></h2>
+						<?php
+						orvio_field_select( 'header_layout', orvio_t( 'Header layout', 'چیدمان هدر' ), $o, array(
+							'classic'  => orvio_t( 'Standard', 'استاندارد' ),
+							'centered' => orvio_t( 'Centered logo', 'لوگوی وسط' ),
+						) );
+						orvio_field_check( 'sticky_header', orvio_t( 'Sticky header', 'هدر چسبان' ), $o );
+						orvio_field_color( 'header_bg', orvio_t( 'Background', 'پس‌زمینه' ), $o );
+						orvio_field_color( 'header_ink', orvio_t( 'Text', 'متن' ), $o );
+						orvio_field_number( 'menu_size', orvio_t( 'Menu size', 'اندازه منو' ), $o, 12, 20 );
+						?>
+					</div>
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Elements', 'المان‌ها' ) ); ?></h2>
+						<?php
+						orvio_field_check( 'show_search', orvio_t( 'Search', 'جستجو' ), $o );
+						orvio_field_check( 'show_account', orvio_t( 'Account', 'حساب' ), $o );
+						orvio_field_check( 'show_cart', orvio_t( 'Cart', 'سبد' ), $o );
+						orvio_field_check( 'show_catbar', orvio_t( 'Category menu', 'منوی دسته‌ها' ), $o );
+						orvio_field_check( 'show_announcement', orvio_t( 'Announcement', 'نوار اعلان' ), $o );
+						orvio_field_text( 'announcement', orvio_t( 'Announcement text', 'متن اعلان' ), $o );
+						orvio_field_text( 'announcement_en', orvio_t( 'English announcement', 'متن انگلیسی' ), $o );
+						?>
+					</div>
+				</section>
+				<section data-panel="footer" class="orvio-panel">
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Footer', 'فوتر' ) ); ?></h2>
+						<?php
+						orvio_field_text( 'footer_about', orvio_t( 'About text', 'متن معرفی' ), $o );
+						orvio_field_text( 'copyright', orvio_t( 'Copyright', 'کپی‌رایت' ), $o );
+						orvio_field_text( 'instagram', 'Instagram', $o );
+						orvio_field_text( 'telegram', 'Telegram', $o );
+						orvio_field_text( 'whatsapp', 'WhatsApp', $o );
+						?>
+					</div>
+				</section>
+				<section data-panel="shop" class="orvio-panel">
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Shop', 'فروشگاه' ) ); ?></h2>
+						<?php
+						orvio_field_number( 'shop_columns', orvio_t( 'Columns', 'ستون‌ها' ), $o, 2, 5 );
+						orvio_field_number( 'products_per_page', orvio_t( 'Per page', 'تعداد در صفحه' ), $o, 4, 48 );
+						orvio_field_select( 'card_style', orvio_t( 'Card', 'کارت کالا' ), $o, array(
+							'classic' => orvio_t( 'Classic', 'کلاسیک' ),
+							'minimal' => orvio_t( 'Minimal', 'مینیمال' ),
+							'overlay' => orvio_t( 'Overlay', 'روی تصویر' ),
+						) );
+						orvio_field_check( 'shop_sidebar', orvio_t( 'Filters', 'فیلترها' ), $o );
+						orvio_field_check( 'enable_wishlist', orvio_t( 'Wishlist', 'علاقه‌مندی' ), $o );
+						orvio_field_check( 'enable_quick_view', orvio_t( 'Quick add', 'افزودن سریع' ), $o );
+						?>
+					</div>
+				</section>
+				<section data-panel="product" class="orvio-panel">
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Product', 'محصول' ) ); ?></h2>
+						<?php
+						orvio_field_check( 'sticky_summary', orvio_t( 'Sticky summary', 'خلاصه چسبان' ), $o );
+						orvio_field_number( 'related_count', orvio_t( 'Related products', 'کالاهای مرتبط' ), $o, 2, 8 );
+						?>
+					</div>
+				</section>
+				<section data-panel="checkout" class="orvio-panel">
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Cart', 'سبد' ) ); ?></h2>
+						<?php
+						orvio_field_select( 'cart_type', orvio_t( 'Cart button', 'دکمه سبد' ), $o, array(
+							'drawer' => orvio_t( 'Drawer', 'کشو' ),
+							'page'   => orvio_t( 'Cart page', 'صفحه سبد' ),
+						) );
+						orvio_field_number( 'free_shipping', orvio_t( 'Free shipping from', 'ارسال رایگان از' ), $o, 0, 999999999 );
+						?>
+					</div>
+				</section>
+				<section data-panel="contact" class="orvio-panel">
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Studio', 'استودیو' ) ); ?></h2>
+						<?php
+						orvio_field_text( 'phone', orvio_t( 'Phone', 'تلفن' ), $o );
+						orvio_field_text( 'email', orvio_t( 'Email', 'ایمیل' ), $o );
+						orvio_field_text( 'address', orvio_t( 'Address', 'آدرس' ), $o );
+						orvio_field_text( 'hours', orvio_t( 'Hours', 'ساعت کاری' ), $o );
+						?>
+					</div>
+				</section>
+				<div class="orvio-save"><?php submit_button( orvio_t( 'Save settings', 'ذخیره تنظیمات' ), 'primary', 'submit', false ); ?></div>
+			</form>
+			<section data-panel="home" class="orvio-panel">
+				<div class="orvio-card" style="padding:18px 20px">
+					<h2><?php echo esc_html( orvio_t( 'Elementor homepage', 'صفحه اول المنتور' ) ); ?></h2>
+					<p class="orvio-home-copy"><?php echo esc_html( orvio_t( 'The storefront is an Elementor page: hero, categories, product grids, banners, about and newsletter. Open it in Elementor to change layout, type, color and spacing of every element.', 'ویترین یک برگه المنتور است: هیرو، دسته‌ها، شبکه کالا، بنر، درباره و خبرنامه. در المنتور چیدمان، فونت، رنگ و فاصله هر المان را عوض کنید.' ) ); ?></p>
+					<p><span class="orvio-status <?php echo $is_el ? 'is-ok' : ''; ?>"><?php echo esc_html( $is_el ? orvio_t( 'Built with Elementor', 'ساخته‌شده با المنتور' ) : orvio_t( 'Not built yet', 'هنوز ساخته نشده' ) ); ?></span></p>
+					<div class="orvio-actions">
+						<?php if ( class_exists( '\Elementor\Plugin' ) ) : ?>
+							<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+								<?php wp_nonce_field( 'orvio_build_front' ); ?>
+								<input type="hidden" name="action" value="orvio_build_front">
+								<button class="button button-primary" type="submit" <?php echo $is_el ? 'onclick="return confirm(\'' . esc_attr( orvio_t( 'Rebuild the Elementor homepage? Your current homepage layout will be replaced.', 'صفحه اول المنتور از نو ساخته شود؟ چیدمان فعلی جایگزین می‌شود.' ) ) . '\')"' : ''; ?>><?php echo esc_html( $is_el ? orvio_t( 'Rebuild homepage', 'ساخت دوباره صفحه اول' ) : orvio_t( 'Build homepage with Elementor', 'ساخت صفحه اول با المنتور' ) ); ?></button>
+							</form>
+							<?php if ( $edit_url ) : ?>
+								<a class="button" href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html( orvio_t( 'Edit in Elementor', 'ویرایش در المنتور' ) ); ?></a>
+							<?php endif; ?>
+						<?php else : ?>
+							<p><?php echo esc_html( orvio_t( 'Install and activate Elementor, then come back.', 'المنتور را نصب و فعال کنید، بعد برگردید.' ) ); ?></p>
+						<?php endif; ?>
+						<?php if ( class_exists( 'WooCommerce' ) ) : ?>
+							<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+								<?php wp_nonce_field( 'orvio_import_demo' ); ?>
+								<input type="hidden" name="action" value="orvio_import_demo">
+								<button class="button" type="submit"><?php echo esc_html( orvio_t( 'Install demo catalog', 'نصب کاتالوگ دمو' ) ); ?></button>
+							</form>
+						<?php endif; ?>
+					</div>
+				</div>
+			</section>
 		</div>
-		<?php if ( isset( $_GET['orvio-imported'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
-			<div class="notice notice-success"><p><?php echo esc_html( orvio_t( 'Demo catalog installed.', 'کاتالوگ دمو نصب شد.' ) ); ?></p></div>
-		<?php endif; ?>
-		<style>
-		.orvio-admin__panel{display:none!important}
-		.orvio-admin__panel.is-on,.orvio-admin__shell:has(#orvio-tab-header:checked) [data-panel="header"],.orvio-admin__shell:has(#orvio-tab-general:checked) [data-panel="general"],.orvio-admin__shell:has(#orvio-tab-footer:checked) [data-panel="footer"],.orvio-admin__shell:has(#orvio-tab-shop:checked) [data-panel="shop"],.orvio-admin__shell:has(#orvio-tab-product:checked) [data-panel="product"],.orvio-admin__shell:has(#orvio-tab-checkout:checked) [data-panel="checkout"],.orvio-admin__shell:has(#orvio-tab-contact:checked) [data-panel="contact"]{display:grid!important}
-		</style>
-		<div class="orvio-admin__shell">
-		<?php foreach ( $tabs as $id => $label ) : ?>
-			<input class="orvio-admin__radio" type="radio" name="orvio_tab_ui" id="orvio-tab-<?php echo esc_attr( $id ); ?>" <?php checked( 'general', $id ); ?>>
-		<?php endforeach; ?>
-		<nav class="orvio-admin__tabs" role="tablist">
-			<?php foreach ( $tabs as $id => $label ) : ?>
-				<label for="orvio-tab-<?php echo esc_attr( $id ); ?>" class="<?php echo 'general' === $id ? 'is-on' : ''; ?>"><?php echo esc_html( $label ); ?></label>
-			<?php endforeach; ?>
-		</nav>
-		<form method="post" action="options.php" class="orvio-admin__form">
-			<?php settings_fields( 'orvio_settings_group' ); ?>
-			<section data-panel="general" class="orvio-admin__panel">
-				<?php
-				orvio_field_color( 'accent', orvio_t( 'Accent', 'رنگ تأکید' ), $o );
-				orvio_field_color( 'bg', orvio_t( 'Background', 'پس‌زمینه' ), $o );
-				orvio_field_color( 'ink', orvio_t( 'Ink', 'متن' ), $o );
-				orvio_field_color( 'dark', orvio_t( 'Dark sections', 'بخش‌های تیره' ), $o );
-				orvio_field_number( 'radius', orvio_t( 'Corner radius', 'گردی گوشه‌ها' ), $o, 0, 28 );
-				orvio_field_number( 'container', orvio_t( 'Container width', 'عرض محتوا' ), $o, 960, 1600 );
-				orvio_field_select( 'body_font', orvio_t( 'Body font', 'فونت متن' ), $o, orvio_font_choices() );
-				orvio_field_select( 'heading_font', orvio_t( 'Heading font', 'فونت عنوان' ), $o, orvio_font_choices() );
-				orvio_field_number( 'font_size', orvio_t( 'Base font size', 'اندازه فونت' ), $o, 13, 20 );
-				?>
-			</section>
-			<section data-panel="header" class="orvio-admin__panel">
-				<?php
-				orvio_field_select( 'header_layout', orvio_t( 'Header layout', 'چیدمان هدر' ), $o, array(
-					'classic'  => orvio_t( 'Standard', 'استاندارد' ),
-					'centered' => orvio_t( 'Centered logo', 'لوگوی وسط' ),
-				) );
-				orvio_field_check( 'sticky_header', orvio_t( 'Sticky header', 'هدر چسبان' ), $o );
-				orvio_field_check( 'show_announcement', orvio_t( 'Announcement bar', 'نوار اعلان' ), $o );
-				orvio_field_text( 'announcement', orvio_t( 'Announcement (primary)', 'متن اعلان' ), $o );
-				orvio_field_text( 'announcement_en', orvio_t( 'Announcement (English)', 'متن اعلان انگلیسی' ), $o );
-				orvio_field_color( 'header_bg', orvio_t( 'Header background', 'پس‌زمینه هدر' ), $o );
-				orvio_field_color( 'header_ink', orvio_t( 'Header text', 'رنگ متن هدر' ), $o );
-				orvio_field_number( 'menu_size', orvio_t( 'Menu font size', 'اندازه فونت منو' ), $o, 12, 20 );
-				orvio_field_check( 'show_search', orvio_t( 'Search', 'جستجو' ), $o );
-				orvio_field_check( 'show_account', orvio_t( 'Account', 'حساب' ), $o );
-				orvio_field_check( 'show_cart', orvio_t( 'Cart button', 'دکمه سبد' ), $o );
-				orvio_field_check( 'show_catbar', orvio_t( 'Category menu', 'منوی دسته‌ها' ), $o );
-				?>
-			</section>
-			<section data-panel="footer" class="orvio-admin__panel">
-				<?php
-				orvio_field_text( 'footer_about', orvio_t( 'Footer about', 'معرفی فوتر' ), $o );
-				orvio_field_text( 'copyright', orvio_t( 'Copyright', 'کپی‌رایت' ), $o );
-				orvio_field_text( 'instagram', 'Instagram', $o );
-				orvio_field_text( 'telegram', 'Telegram', $o );
-				orvio_field_text( 'whatsapp', 'WhatsApp', $o );
-				?>
-			</section>
-			<section data-panel="shop" class="orvio-admin__panel">
-				<?php
-				orvio_field_number( 'shop_columns', orvio_t( 'Shop columns', 'ستون‌های فروشگاه' ), $o, 2, 5 );
-				orvio_field_number( 'products_per_page', orvio_t( 'Products per page', 'تعداد در هر صفحه' ), $o, 4, 48 );
-				orvio_field_select( 'card_style', orvio_t( 'Product card', 'کارت کالا' ), $o, array(
-					'classic' => orvio_t( 'Classic', 'کلاسیک' ),
-					'minimal' => orvio_t( 'Minimal', 'مینیمال' ),
-					'overlay' => orvio_t( 'Overlay', 'روی تصویر' ),
-				) );
-				orvio_field_check( 'shop_sidebar', orvio_t( 'Filter sidebar', 'سایدبار فیلتر' ), $o );
-				orvio_field_check( 'enable_wishlist', orvio_t( 'Wishlist', 'علاقه‌مندی' ), $o );
-				orvio_field_check( 'enable_quick_view', orvio_t( 'Quick view', 'نگاه سریع' ), $o );
-				?>
-			</section>
-			<section data-panel="product" class="orvio-admin__panel">
-				<?php
-				orvio_field_check( 'sticky_summary', orvio_t( 'Sticky product summary', 'خلاصه چسبان محصول' ), $o );
-				orvio_field_number( 'related_count', orvio_t( 'Related products', 'کالاهای مرتبط' ), $o, 2, 8 );
-				?>
-			</section>
-			<section data-panel="checkout" class="orvio-admin__panel">
-				<?php
-				orvio_field_select( 'cart_type', orvio_t( 'Cart button behaviour', 'رفتار دکمه سبد' ), $o, array(
-					'drawer' => orvio_t( 'Slide-over drawer', 'کشو' ),
-					'page'   => orvio_t( 'Go to cart page', 'رفتن به صفحه سبد' ),
-				) );
-				orvio_field_number( 'free_shipping', orvio_t( 'Free-shipping threshold', 'آستانه ارسال رایگان' ), $o, 0, 999999999 );
-				?>
-			</section>
-			<section data-panel="contact" class="orvio-admin__panel">
-				<?php
-				orvio_field_text( 'phone', orvio_t( 'Phone', 'تلفن' ), $o );
-				orvio_field_text( 'email', orvio_t( 'Email', 'ایمیل' ), $o );
-				orvio_field_text( 'address', orvio_t( 'Address', 'آدرس' ), $o );
-				orvio_field_text( 'hours', orvio_t( 'Hours', 'ساعت کاری' ), $o );
-				?>
-			</section>
-			<?php submit_button( orvio_t( 'Save settings', 'ذخیره تنظیمات' ) ); ?>
-		</form>
-		</div>
-		<script>
-		(function () {
-			var root = document.querySelector(".orvio-admin__shell");
-			if (!root) return;
-			function show() {
-				var on = root.querySelector(".orvio-admin__radio:checked");
-				var id = on ? on.id.replace("orvio-tab-", "") : "general";
-				root.querySelectorAll("[data-panel]").forEach(function (panel) {
-					panel.classList.toggle("is-on", panel.getAttribute("data-panel") === id);
-				});
-				root.querySelectorAll(".orvio-admin__tabs label").forEach(function (label) {
-					label.classList.toggle("is-on", label.getAttribute("for") === "orvio-tab-" + id);
-				});
-			}
-			root.addEventListener("change", show);
-			show();
-		})();
-		</script>
 	</div>
 	<?php
 }
