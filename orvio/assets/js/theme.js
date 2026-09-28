@@ -456,6 +456,31 @@
     toast: toast
   };
 
+  function initProfileAvatar() {
+    document.querySelectorAll("[data-avatar-input]").forEach(function (input) {
+      input.addEventListener("change", function () {
+        var file = input.files && input.files[0];
+        var form = input.closest("form");
+        var wrap = document.querySelector("[data-avatar-preview-wrap]");
+        if (!file || !wrap) return;
+        var label = form && form.querySelector("[data-avatar-name]");
+        if (label) label.textContent = file.name;
+        if (!window.URL || !URL.createObjectURL) return;
+        var image = wrap.querySelector("img");
+        if (!image) {
+          image = document.createElement("img");
+          image.className = "orvio-profile-avatar__image";
+          image.alt = "";
+          wrap.querySelectorAll(".orvio-profile-avatar__initials").forEach(function (fallback) { fallback.remove(); });
+          wrap.insertBefore(image, wrap.firstChild);
+        }
+        if (input._orvioObjectUrl) URL.revokeObjectURL(input._orvioObjectUrl);
+        input._orvioObjectUrl = URL.createObjectURL(file);
+        image.src = input._orvioObjectUrl;
+      });
+    });
+  }
+
   function initCatMenu() {
     document.querySelectorAll(".orvio-catbar__menu > li > a, .orvio-catall__btn").forEach(function (el) {
       el.addEventListener("click", function (e) {
@@ -484,6 +509,7 @@
     initCarousel();
     initTimers();
     initGallery();
+    initProfileAvatar();
     initCardAddToCart();
     initSingleAddToCart();
     initCatMenu();

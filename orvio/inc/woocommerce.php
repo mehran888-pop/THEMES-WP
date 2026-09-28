@@ -62,6 +62,88 @@ function orvio_checkout_field_settings( $fields ) {
 	return $fields;
 }
 
+
+/**
+ * Handle the account avatar without replacing WooCommerce's native account
+ * details endpoint. The upload is a regular multipart POST, so it also works
+ * when JavaScript is disabled.
+ */
+add_action( 'init', 'orvio_handle_avatar_upload', 20 );
+function orvio_handle_avatar_upload() {
+	if ( ! is_user_logged_in() || empty( $_POST['orvio_avatar_action'] ) ) {
+		return;
+	}
+	$action = sanitize_key( wp_unslash( $_POST['orvio_avatar_action'] ) );
+	if ( ! empty( $_POST['orvio_avatar_remove'] ) ) {
+		$action = 'remove';
+	}
+	if ( ! in_array( $action, array( 'upload', 'remove' ), true ) ) {
+		return;
+	}
+	if ( empty( $_POST['orvio_avatar_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['orvio_avatar_nonce'] ) ), 'orvio_avatar' ) ) {
+		wp_die( esc_html( orvio_t( 'This profile request could not be verified.', 'درخواست پروفایل قابل تأیید نیست.' ) ), '', array( 'response' => 403 ) );
+	}
+	$user_id = get_current_user_id();
+	$redirect = wp_get_referer() ?: orvio_account_url();
+	$redirect = remove_query_arg( 'orvio_avatar', $redirect );
+	if ( 'remove' === $action ) {
+		delete_user_meta( $user_id, 'orvio_avatar_id' );
+		wp_safe_redirect( add_query_arg( 'orvio_avatar', 'removed', $redirect ) );
+		exit;
+	}
+	if ( empty( $_FILES['orvio_avatar']['name'] ) || ! empty( $_FILES['orvio_avatar']['error'] ) ) {
+		wp_safe_redirect( add_query_arg( 'orvio_avatar', 'error', $redirect ) );
+		exit;
+	}
+	$file = $_FILES['orvio_avatar']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputData
+	if ( ! is_array( $file ) || empty( $file['tmp_name'] ) || (int) ( $file['size'] ?? 0 ) > 5 * MB_IN_BYTES ) {
+		wp_safe_redirect( add_query_arg( 'orvio_avatar', 'error', $redirect ) );
+		exit;
+	}
+	$image_info = @getimagesize( $file['tmp_name'] ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+	$allowed_mimes = array( 'image/jpeg', 'image/png', 'image/webp', 'image/gif' );
+	if ( ! $image_info || empty( $image_info['mime'] ) || ! in_array( $image_info['mime'], $allowed_mimes, true ) ) {
+		wp_safe_redirect( add_query_arg( 'orvio_avatar', 'error', $redirect ) );
+		exit;
+	}
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+	require_once ABSPATH . 'wp-admin/includes/image.php';
+	require_once ABSPATH . 'wp-admin/includes/media.php';
+	$upload = wp_handle_upload( $file, array(
+		'test_form' => false,
+		'mimes'    => array(
+			'jpg|jpeg|jpe' => 'image/jpeg',
+			'png'          => 'image/png',
+			'webp'         => 'image/webp',
+			'gif'          => 'image/gif',
+		),
+	) );
+	if ( ! empty( $upload['error'] ) || empty( $upload['file'] ) ) {
+		wp_safe_redirect( add_query_arg( 'orvio_avatar', 'error', $redirect ) );
+		exit;
+	}
+	$filetype   = wp_check_filetype( basename( $upload['file'] ), null );
+	$attachment = array(
+		'post_mime_type' => $filetype['type'] ?? $image_info['mime'],
+		'post_title'     => sanitize_text_field( pathinfo( basename( $upload['file'] ), PATHINFO_FILENAME ) ),
+		'post_content'   => '',
+		'post_status'    => 'inherit',
+		'post_author'    => $user_id,
+	);
+	$attachment_id = wp_insert_attachment( $attachment, $upload['file'], 0 );
+	if ( is_wp_error( $attachment_id ) || ! $attachment_id ) {
+		wp_safe_redirect( add_query_arg( 'orvio_avatar', 'error', $redirect ) );
+		exit;
+	}
+	$metadata = wp_generate_attachment_metadata( $attachment_id, $upload['file'] );
+	if ( $metadata ) {
+		wp_update_attachment_metadata( $attachment_id, $metadata );
+	}
+	update_user_meta( $user_id, 'orvio_avatar_id', (int) $attachment_id );
+	wp_safe_redirect( add_query_arg( 'orvio_avatar', 'updated', $redirect ) );
+	exit;
+}
+
 function orvio_wc_wrapper_start() {
 	echo '<main id="main" class="orvio-main"><div class="orvio-container orvio-wc">';
 }
