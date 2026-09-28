@@ -51,7 +51,7 @@ $display_name = $current_user->display_name ?: $current_user->user_login;
 		<div class="orvio-account-nav__links">
 			<?php foreach ( $account_items as $endpoint => $label ) : $icon = $account_icons[ $endpoint ] ?? 'grid'; ?>
 				<a class="<?php echo esc_attr( wc_get_account_menu_item_classes( $endpoint ) ); ?><?php echo wc_is_current_account_menu_item( $endpoint ) ? ' is-on' : ''; ?>" href="<?php echo esc_url( wc_get_account_endpoint_url( $endpoint ) ); ?>"<?php echo wc_is_current_account_menu_item( $endpoint ) ? ' aria-current="page"' : ''; ?>>
-					<span class="orvio-account-nav__icon"><?php echo orvio_icon( $icon ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span><span><?php echo esc_html( $label ); ?></span>
+					<span class="orvio-account-nav__icon"><?php echo orvio_icon( $icon ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span><span class="orvio-account-nav__label"><?php echo esc_html( $label ); ?></span>
 				</a>
 			<?php endforeach; ?>
 		</div>

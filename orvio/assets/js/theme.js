@@ -31,7 +31,7 @@
     });
     document.querySelectorAll("[data-account-nav].is-open").forEach(function (el) {
       el.classList.remove("is-open");
-      el.setAttribute("aria-hidden", "true");
+      el.setAttribute("aria-hidden", "false");
     });
     setTriggerState("account-nav", false);
     var modal = document.querySelector("[data-modal]");
@@ -64,7 +64,7 @@
     var accountNav = document.querySelector("[data-account-nav].is-open");
     if (accountNav) {
       accountNav.classList.remove("is-open");
-      accountNav.setAttribute("aria-hidden", "true");
+      accountNav.setAttribute("aria-hidden", "false");
       setTriggerState("account-nav", false);
     }
     lastDrawerTrigger = trigger || document.activeElement;
@@ -496,7 +496,7 @@
     if (!nav) return;
     var sync = function () {
       if (!nav.classList.contains("is-open")) {
-        nav.setAttribute("aria-hidden", window.innerWidth <= 980 ? "true" : "false");
+        nav.setAttribute("aria-hidden", "false");
       }
     };
     sync();
