@@ -2310,6 +2310,102 @@ body.orvio-checkout-layout-minimal .orvio-checkout .orvio-panel { background: tr
   .orvio-dashboard__layout .orvio-profile-details div:last-child { grid-column: 1 / -1; }
 }
 
+/* SaaS account workspace preset */
+body.orvio-account-style-saas,
+.orvio-account--style-saas { --account-saas-primary: #4f6fe3; --account-saas-primary-dark: #3857c5; --account-saas-bg: #f5f7fb; --account-saas-line: #e4e9f2; --account-saas-text: #172033; --account-saas-muted: #758197; }
+body.orvio-account-style-saas { background: var(--account-saas-bg); }
+body.orvio-account-style-saas .orvio-pagehead { padding-bottom: 20px; }
+body.orvio-account-style-saas .orvio-pagehead h1 { color: var(--account-saas-text); font-size: clamp(25px, 3vw, 34px); }
+body.orvio-account-style-saas .orvio-account { color: var(--account-saas-text); }
+body.orvio-account-style-saas .orvio-account__nav,
+.orvio-account--style-saas .orvio-account__nav { background: #fff; border-color: var(--account-saas-line); border-radius: 18px; box-shadow: 0 8px 24px rgba(35, 52, 86, .05); }
+body.orvio-account-style-saas .orvio-account__nav a,
+.orvio-account--style-saas .orvio-account__nav a { color: #5d6a80; }
+body.orvio-account-style-saas .orvio-account__nav a::before,
+.orvio-account--style-saas .orvio-account__nav a::before { content: ""; width: 5px; height: 5px; flex: 0 0 auto; border-radius: 50%; background: #cbd3e2; }
+body.orvio-account-style-saas .orvio-account__nav a.is-on,
+.orvio-account--style-saas .orvio-account__nav a.is-on { background: #eef2ff; color: var(--account-saas-primary-dark); }
+body.orvio-account-style-saas .orvio-account__nav a.is-on::before,
+.orvio-account--style-saas .orvio-account__nav a.is-on::before { background: var(--account-saas-primary); }
+body.orvio-account-style-saas .orvio-account-nav__profile,
+.orvio-account--style-saas .orvio-account-nav__profile { border-color: var(--account-saas-line); }
+body.orvio-account-style-saas .orvio-account-nav__profile strong,
+.orvio-account--style-saas .orvio-account-nav__profile strong { color: var(--account-saas-text); }
+body.orvio-account-style-saas .orvio-account-nav__profile span,
+.orvio-account--style-saas .orvio-account-nav__profile span { color: var(--account-saas-muted); }
+body.orvio-account-style-saas .orvio-profile-card,
+.orvio-account--style-saas .orvio-profile-card { color: var(--account-saas-text); border-color: var(--account-saas-line); border-radius: 18px; background: #fff; box-shadow: 0 12px 32px rgba(35, 52, 86, .07); }
+body.orvio-account-style-saas .orvio-profile-card__wash,
+.orvio-account--style-saas .orvio-profile-card__wash { display: none; }
+body.orvio-account-style-saas .orvio-profile-card .orvio-eyebrow,
+.orvio-account--style-saas .orvio-profile-card .orvio-eyebrow { color: var(--account-saas-primary); }
+body.orvio-account-style-saas .orvio-profile-identity__copy h2,
+.orvio-account--style-saas .orvio-profile-identity__copy h2 { color: var(--account-saas-text); }
+body.orvio-account-style-saas .orvio-profile-identity__copy > p:not(.orvio-eyebrow),
+.orvio-account--style-saas .orvio-profile-identity__copy > p:not(.orvio-eyebrow) { color: var(--account-saas-muted); }
+body.orvio-account-style-saas .orvio-profile-avatar,
+.orvio-account--style-saas .orvio-profile-avatar { border-color: #dce5ff; background: linear-gradient(145deg, #eef2ff, #b8c8ff); box-shadow: none; }
+body.orvio-account-style-saas .orvio-profile-avatar__initials,
+.orvio-account--style-saas .orvio-profile-avatar__initials { color: var(--account-saas-primary-dark); }
+body.orvio-account-style-saas .orvio-profile-avatar__status,
+.orvio-account--style-saas .orvio-profile-avatar__status { border-color: #fff; }
+body.orvio-account-style-saas .orvio-profile-chips span,
+.orvio-account--style-saas .orvio-profile-chips span { border-color: #dce5ff; color: var(--account-saas-primary-dark); background: #f5f7ff; }
+body.orvio-account-style-saas .orvio-profile-card__bottom,
+.orvio-account--style-saas .orvio-profile-card__bottom { border-color: var(--account-saas-line); }
+body.orvio-account-style-saas .orvio-profile-details span,
+.orvio-account--style-saas .orvio-profile-details span { color: var(--account-saas-muted); }
+body.orvio-account-style-saas .orvio-profile-details strong,
+.orvio-account--style-saas .orvio-profile-details strong { color: var(--account-saas-text); }
+body.orvio-account-style-saas .orvio-avatar-editor,
+.orvio-account--style-saas .orvio-avatar-editor { border-color: var(--account-saas-line); background: #f8faff; }
+body.orvio-account-style-saas .orvio-upload-drop,
+.orvio-account--style-saas .orvio-upload-drop { border-color: #cbd7ff; }
+body.orvio-account-style-saas .orvio-upload-drop strong,
+.orvio-account--style-saas .orvio-upload-drop strong { color: var(--account-saas-text); }
+body.orvio-account-style-saas .orvio-upload-drop small,
+.orvio-account--style-saas .orvio-upload-drop small { color: var(--account-saas-muted); }
+body.orvio-account-style-saas .orvio-upload-drop__icon,
+.orvio-account--style-saas .orvio-upload-drop__icon { background: #e8edff; color: var(--account-saas-primary); }
+body.orvio-account-style-saas .orvio-avatar-remove,
+.orvio-account--style-saas .orvio-avatar-remove { color: var(--account-saas-muted); }
+body.orvio-account-style-saas .orvio-profile-actions .orvio-btn--light,
+.orvio-account--style-saas .orvio-profile-actions .orvio-btn--light { border-color: var(--account-saas-primary); background: var(--account-saas-primary); color: #fff; }
+body.orvio-account-style-saas .orvio-profile-actions .orvio-btn--light:hover,
+.orvio-account--style-saas .orvio-profile-actions .orvio-btn--light:hover { background: var(--account-saas-primary-dark); }
+body.orvio-account-style-saas .orvio-profile-actions .orvio-btn--ghost-light,
+.orvio-account--style-saas .orvio-profile-actions .orvio-btn--ghost-light { border-color: var(--account-saas-line); color: var(--account-saas-muted); }
+body.orvio-account-style-saas .orvio-dashboard__section-head .orvio-eyebrow,
+.orvio-account--style-saas .orvio-dashboard__section-head .orvio-eyebrow,
+body.orvio-account-style-saas .orvio-panel__head .orvio-eyebrow,
+.orvio-account--style-saas .orvio-panel__head .orvio-eyebrow { color: var(--account-saas-primary); }
+body.orvio-account-style-saas .orvio-text-link,
+.orvio-account--style-saas .orvio-text-link { color: var(--account-saas-primary-dark); }
+body.orvio-account-style-saas .orvio-dashboard__stats .orvio-stat,
+.orvio-account--style-saas .orvio-dashboard__stats .orvio-stat,
+body.orvio-account-style-saas .orvio-orders-panel,
+.orvio-account--style-saas .orvio-orders-panel { border-color: var(--account-saas-line); background: #fff; box-shadow: 0 8px 24px rgba(35, 52, 86, .04); }
+body.orvio-account-style-saas .orvio-dashboard__stats .orvio-stat__icon,
+.orvio-account--style-saas .orvio-dashboard__stats .orvio-stat__icon { background: #eef2ff; color: var(--account-saas-primary); }
+body.orvio-account-style-saas .orvio-dashboard__stats .orvio-stat span:last-child,
+.orvio-account--style-saas .orvio-dashboard__stats .orvio-stat span:last-child { color: var(--account-saas-muted); }
+body.orvio-account-style-saas .orvio-panel__count,
+.orvio-account--style-saas .orvio-panel__count { background: #eef2ff; color: var(--account-saas-primary-dark); }
+body.orvio-account-style-saas .orvio-profile-form,
+.orvio-account--style-saas .orvio-profile-form { border-color: var(--account-saas-line); background: #fff; box-shadow: 0 10px 28px rgba(35,52,86,.05); }
+body.orvio-account-style-saas .orvio-profile-form__footer,
+.orvio-account--style-saas .orvio-profile-form__footer { background: #f8faff; }
+body.orvio-account-style-saas .orvio-profile-form input.input-text,
+.orvio-account--style-saas .orvio-profile-form input.input-text { border-color: #dce3ee; background: #fff; }
+body.orvio-account-style-saas .orvio-profile-form input.input-text:focus,
+.orvio-account--style-saas .orvio-profile-form input.input-text:focus { border-color: var(--account-saas-primary); box-shadow: 0 0 0 3px rgba(79,111,227,.12); }
+body.orvio-account-style-saas .orvio-form-section,
+.orvio-account--style-saas .orvio-form-section { border-color: var(--account-saas-line); }
+body.orvio-account-style-saas .orvio-form-section__head > span,
+.orvio-account--style-saas .orvio-form-section__head > span { color: var(--account-saas-primary); }
+body.orvio-account-style-saas .orvio-profile-form__footer .orvio-btn,
+.orvio-account--style-saas .orvio-profile-form__footer .orvio-btn { background: var(--account-saas-primary); border-color: var(--account-saas-primary); color: #fff; }
+
 @media print {
   .orvio-header, .orvio-mobile-nav, .orvio-announce, .orvio-footer, .orvio-themechip, .orvio-themebar, .orvio-drawer, .orvio-overlay, .orvio-catbar { display: none !important; }
   body { background: #fff; }

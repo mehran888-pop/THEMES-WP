@@ -13,11 +13,11 @@ defined( 'ABSPATH' ) || exit;
 </div>
 <?php
 $account_layouts = array( 'sidebar', 'topbar', 'split', 'cards' );
-$account_styles  = array( 'classic', 'soft', 'editorial', 'minimal' );
+$account_styles  = array( 'saas', 'classic', 'soft', 'editorial', 'minimal' );
 $layout_setting  = orvio_opt( 'account_layout', 'sidebar' );
-$style_setting   = orvio_opt( 'account_style', 'classic' );
+$style_setting   = orvio_opt( 'account_style', 'saas' );
 $account_layout  = in_array( $layout_setting, $account_layouts, true ) ? $layout_setting : 'sidebar';
-$account_style   = in_array( $style_setting, $account_styles, true ) ? $style_setting : 'classic';
+$account_style   = in_array( $style_setting, $account_styles, true ) ? $style_setting : 'saas';
 ?>
 <div class="orvio-account orvio-account--layout-<?php echo esc_attr( $account_layout ); ?> orvio-account--style-<?php echo esc_attr( $account_style ); ?>">
 	<?php do_action( 'woocommerce_account_navigation' ); ?>
