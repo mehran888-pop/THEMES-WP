@@ -92,6 +92,8 @@ function orvio_defaults() {
 		'sticky_summary'     => 1,
 		'cart_layout'        => 'split',
 		'checkout_layout'    => 'split',
+		'account_layout'     => 'sidebar',
+		'account_style'      => 'classic',
 		'billing_fields'     => array(
 			'billing_first_name' => 'required',
 			'billing_last_name'  => 'required',
@@ -203,6 +205,10 @@ function orvio_sanitize_settings( $input ) {
 	$clean['product_layout']      = in_array( $input['product_layout'] ?? '', $product_layouts, true ) ? $input['product_layout'] : 'classic';
 	$clean['cart_layout']         = in_array( $input['cart_layout'] ?? '', $page_layouts, true ) ? $input['cart_layout'] : 'split';
 	$clean['checkout_layout']     = in_array( $input['checkout_layout'] ?? '', $page_layouts, true ) ? $input['checkout_layout'] : 'split';
+	$account_layouts              = array( 'sidebar', 'topbar', 'split', 'cards' );
+	$clean['account_layout']      = in_array( $input['account_layout'] ?? '', $account_layouts, true ) ? $input['account_layout'] : 'sidebar';
+	$account_styles               = array( 'classic', 'soft', 'editorial', 'minimal' );
+	$clean['account_style']       = in_array( $input['account_style'] ?? '', $account_styles, true ) ? $input['account_style'] : 'classic';
 	$card_styles                  = array( 'classic', 'minimal', 'overlay', 'editorial', 'deal', 'polaroid', 'magazine' );
 	$clean['card_style']           = in_array( $input['card_style'] ?? '', $card_styles, true ) ? $input['card_style'] : 'classic';
 	$card_contents                = array( 'below', 'tile', 'hover-info', 'hover-overlay' );
@@ -267,6 +273,7 @@ function orvio_render_settings_page() {
 		'shop'     => orvio_t( 'Shop', 'فروشگاه' ),
 		'product'  => orvio_t( 'Product', 'محصول' ),
 		'checkout' => orvio_t( 'Cart & checkout', 'سبد و صورتحساب' ),
+		'account'  => orvio_t( 'Account', 'حساب کاربری' ),
 		'contact'  => orvio_t( 'Contact', 'ارتباط' ),
 		'home'     => orvio_t( 'Homepage', 'صفحه اول' ),
 	);
@@ -469,6 +476,14 @@ function orvio_render_settings_page() {
 							orvio_field_billing_mode( $field, $label, $o );
 						}
 						orvio_field_number( 'free_shipping', orvio_t( 'Free shipping from', 'ارسال رایگان از' ), $o, 0, 999999999 );
+						?>
+					</div>
+				</section>
+				<section data-panel="account" class="orvio-panel">
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Account layout', 'چیدمان ناحیه کاربری' ) ); ?></h2>
+						<?php
+						orvio_field_select( 'account_layout', orvio_t( 'Layout', 'چیدمان' ), $o, array( 'sidebar' => orvio_t( 'Sidebar dashboard', 'داشبورد سایدبار' ), 'topbar' => orvio_t( 'Top navigation', 'ناوبری بالا' ), 'split' => orvio_t( 'Split workspace', 'فضای دو بخشی' ), 'cards' => orvio_t( 'Cards dashboard', 'داشبورد کارتی' ) ) );
+						orvio_field_select( 'account_style', orvio_t( 'Style', 'استایل' ), $o, array( 'classic' => orvio_t( 'Classic', 'کلاسیک' ), 'soft' => orvio_t( 'Soft', 'نرم' ), 'editorial' => orvio_t( 'Dark / editorial', 'تیره / ادیتوریال' ), 'minimal' => orvio_t( 'Minimal', 'مینیمال' ) ) );
 						?>
 					</div>
 				</section>
@@ -714,6 +729,12 @@ function orvio_body_classes( $classes ) {
 		if ( ! empty( $o['mobile_nav_spacing'] ) && (int) $o['mobile_nav_spacing'] >= 12 ) {
 			$classes[] = 'orvio-mobile-nav-roomy';
 		}
+	}
+	if ( function_exists( 'is_account_page' ) && is_account_page() ) {
+		$account_layouts = array( 'sidebar', 'topbar', 'split', 'cards' );
+		$account_styles  = array( 'classic', 'soft', 'editorial', 'minimal' );
+		$classes[] = 'orvio-account-layout-' . ( in_array( $o['account_layout'], $account_layouts, true ) ? $o['account_layout'] : 'sidebar' );
+		$classes[] = 'orvio-account-style-' . ( in_array( $o['account_style'], $account_styles, true ) ? $o['account_style'] : 'classic' );
 	}
 	$layout = in_array( $o['site_layout'], array( 'wide', 'boxed', 'content-wide' ), true ) ? $o['site_layout'] : 'wide';
 	$atc    = in_array( $o['atc_style'], array( 'pill', 'block', 'outline', 'soft' ), true ) ? $o['atc_style'] : 'pill';

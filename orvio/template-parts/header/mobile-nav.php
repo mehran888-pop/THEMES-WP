@@ -82,7 +82,7 @@ foreach ( $numeric_map as $setting => $variable ) {
 				break;
 			case 'categories':
 				$tag    = 'button';
-				$attrs  = ' type="button" data-open="menu"';
+				$attrs  = ' type="button" data-open="menu" aria-controls="orvio-menu-drawer" aria-expanded="false"';
 				$active = function_exists( 'is_product_category' ) && is_product_category();
 				break;
 			case 'shop':
@@ -94,7 +94,7 @@ foreach ( $numeric_map as $setting => $variable ) {
 					$url = function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '#';
 				} else {
 					$tag   = 'button';
-					$attrs = ' type="button" data-open="cart"';
+					$attrs = ' type="button" data-open="cart" aria-controls="orvio-cart-drawer" aria-expanded="false"';
 				}
 				$active = function_exists( 'is_cart' ) && is_cart();
 				break;
@@ -104,11 +104,11 @@ foreach ( $numeric_map as $setting => $variable ) {
 				break;
 			case 'wishlist':
 				$tag   = 'button';
-				$attrs = ' type="button" data-open="wish"';
+				$attrs = ' type="button" data-open="wish" aria-controls="orvio-wish-drawer" aria-expanded="false"';
 				break;
 			case 'search':
 				$tag    = 'button';
-				$attrs  = ' type="button" data-open="search"';
+				$attrs  = ' type="button" data-open="search" aria-controls="orvio-search-panel" aria-expanded="false"';
 				$active = is_search();
 				break;
 			case 'custom':

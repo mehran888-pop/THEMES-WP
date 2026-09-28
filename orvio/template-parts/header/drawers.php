@@ -8,11 +8,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 $terms = orvio_product_cats();
+$render_category_children = function ( $parent_id ) use ( &$render_category_children ) {
+	$children = get_terms( array( 'taxonomy' => 'product_cat', 'parent' => (int) $parent_id, 'hide_empty' => true ) );
+	if ( is_wp_error( $children ) || ! $children ) {
+		return;
+	}
+	echo '<div class="orvio-menu-children">';
+	foreach ( $children as $child ) {
+		echo '<a href="' . esc_url( get_term_link( $child ) ) . '">' . esc_html( $child->name ) . '</a>';
+		$render_category_children( $child->term_id );
+	}
+	echo '</div>';
+};
 ?>
-<div class="orvio-overlay" data-overlay></div>
-<aside class="orvio-drawer orvio-drawer--menu" data-drawer="menu" aria-hidden="true">
+<div class="orvio-overlay" data-overlay role="presentation" aria-hidden="true"></div>
+<aside class="orvio-drawer orvio-drawer--menu" id="orvio-menu-drawer" data-drawer="menu" role="dialog" aria-modal="true" aria-labelledby="orvio-menu-title" aria-hidden="true">
 	<div class="orvio-drawer__head">
-		<h2><?php echo esc_html( orvio_t( 'Menu', 'منو' ) ); ?></h2>
+		<h2 id="orvio-menu-title"><?php echo esc_html( orvio_t( 'Menu', 'منو' ) ); ?></h2>
 		<button type="button" class="orvio-drawer__x" data-close aria-label="<?php echo esc_attr( orvio_t( 'Close', 'بستن' ) ); ?>">×</button>
 	</div>
 	<div class="orvio-drawer__body">
@@ -25,15 +37,8 @@ $terms = orvio_product_cats();
 			<?php if ( $terms ) : foreach ( $terms as $term ) : ?>
 				<details>
 					<summary><?php echo esc_html( $term->name ); ?></summary>
-					<a href="<?php echo esc_url( get_term_link( $term ) ); ?>"><?php echo esc_html( orvio_t( 'View all', 'مشاهده همه' ) ); ?></a>
-					<?php
-					$children = get_terms( array( 'taxonomy' => 'product_cat', 'parent' => $term->term_id, 'hide_empty' => true ) );
-					if ( ! is_wp_error( $children ) ) {
-						foreach ( $children as $child ) {
-							echo '<a href="' . esc_url( get_term_link( $child ) ) . '">' . esc_html( $child->name ) . '</a>';
-						}
-					}
-					?>
+					<a class="orvio-menu-all" href="<?php echo esc_url( get_term_link( $term ) ); ?>"><?php echo esc_html( orvio_t( 'View all', 'مشاهده همه' ) ); ?></a>
+					<?php $render_category_children( $term->term_id ); ?>
 				</details>
 			<?php endforeach; endif; ?>
 		</div>
@@ -53,10 +58,10 @@ $terms = orvio_product_cats();
 		</div>
 	</div>
 </aside>
-<aside class="orvio-drawer orvio-drawer--cart" data-drawer="cart" aria-hidden="true">
+<aside class="orvio-drawer orvio-drawer--cart" id="orvio-cart-drawer" data-drawer="cart" role="dialog" aria-modal="true" aria-labelledby="orvio-cart-title" aria-hidden="true">
 	<div class="orvio-drawer__head">
-		<h2><?php echo esc_html( orvio_t( 'Bag', 'سبد' ) ); ?></h2>
-		<button type="button" class="orvio-drawer__x" data-close>×</button>
+		<h2 id="orvio-cart-title"><?php echo esc_html( orvio_t( 'Bag', 'سبد' ) ); ?></h2>
+		<button type="button" class="orvio-drawer__x" data-close aria-label="<?php echo esc_attr( orvio_t( 'Close', 'بستن' ) ); ?>">×</button>
 	</div>
 	<div class="orvio-shipbar">
 		<div class="orvio-shipbar__track"><span data-ship-fill style="width:0"></span></div>
@@ -79,10 +84,10 @@ $terms = orvio_product_cats();
 		<?php endif; ?>
 	</div>
 </aside>
-<aside class="orvio-drawer orvio-drawer--wish" data-drawer="wish" aria-hidden="true">
+<aside class="orvio-drawer orvio-drawer--wish" id="orvio-wish-drawer" data-drawer="wish" role="dialog" aria-modal="true" aria-labelledby="orvio-wish-title" aria-hidden="true">
 	<div class="orvio-drawer__head">
-		<h2><?php echo esc_html( orvio_t( 'Saved', 'علاقه‌مندی' ) ); ?></h2>
-		<button type="button" class="orvio-drawer__x" data-close>×</button>
+		<h2 id="orvio-wish-title"><?php echo esc_html( orvio_t( 'Saved', 'علاقه‌مندی' ) ); ?></h2>
+		<button type="button" class="orvio-drawer__x" data-close aria-label="<?php echo esc_attr( orvio_t( 'Close', 'بستن' ) ); ?>">×</button>
 	</div>
 	<div class="orvio-drawer__body" data-wish-items></div>
 </aside>

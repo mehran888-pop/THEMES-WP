@@ -653,9 +653,10 @@ body.orvio-header-layout-minimal .orvio-announce,
   z-index: 60;
   opacity: 0;
   visibility: hidden;
-  transition: 0.3s var(--ease);
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease), visibility 0s linear 0.3s;
 }
-.orvio-overlay.is-open { opacity: 1; visibility: visible; }
+.orvio-overlay.is-open { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
 .orvio-drawer {
   position: fixed;
   top: 0;
@@ -665,14 +666,17 @@ body.orvio-header-layout-minimal .orvio-announce,
   z-index: 70;
   display: flex;
   flex-direction: column;
-  transition: transform 0.38s var(--ease);
+  visibility: hidden;
+  pointer-events: none;
+  overscroll-behavior: contain;
+  transition: transform 0.38s var(--ease), visibility 0s linear 0.38s;
   box-shadow: var(--shadow);
 }
 .orvio-drawer--menu { inset-inline-start: 0; transform: translateX(-105%); }
 html[dir="rtl"] .orvio-drawer--menu { transform: translateX(105%); }
 .orvio-drawer--cart, .orvio-drawer--wish { inset-inline-end: 0; transform: translateX(105%); }
 html[dir="rtl"] .orvio-drawer--cart, html[dir="rtl"] .orvio-drawer--wish { transform: translateX(-105%); }
-.orvio-drawer.is-open { transform: none; }
+.orvio-drawer.is-open { transform: none; visibility: visible; pointer-events: auto; transition-delay: 0s; }
 .orvio-drawer__head, .orvio-drawer__foot {
   display: flex;
   align-items: center;
@@ -683,7 +687,7 @@ html[dir="rtl"] .orvio-drawer--cart, html[dir="rtl"] .orvio-drawer--wish { trans
 }
 .orvio-drawer__foot { border-bottom: 0; border-top: 1px solid var(--line); flex-direction: column; align-items: stretch; }
 .orvio-drawer__head h2 { font-size: 18px; font-weight: 750; letter-spacing: 0; }
-.orvio-drawer__body { flex: 1; overflow: auto; padding: 8px 18px 18px; }
+.orvio-drawer__body { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 8px 18px 18px; }
 .orvio-drawer__x {
   width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font-size: 20px;
 }
@@ -716,6 +720,9 @@ html[dir="rtl"] .orvio-drawer--cart, html[dir="rtl"] .orvio-drawer--wish { trans
 }
 .orvio-menu-acc summary::-webkit-details-marker { display: none; }
 .orvio-menu-acc a { display: flex; align-items: center; min-height: 40px; padding: 6px 4px; color: var(--ink); }
+.orvio-menu-acc .orvio-menu-all { font-weight: 750; color: var(--accent-dark); }
+.orvio-menu-children { margin-inline-start: 10px; padding-inline-start: 10px; border-inline-start: 1px solid var(--line); }
+.orvio-menu-children .orvio-menu-children { margin-inline-start: 6px; }
 .orvio-menu-links a {
   display: flex;
   align-items: center;
@@ -1496,6 +1503,27 @@ html[dir="rtl"] .orvio-banner--overlay::after { background: linear-gradient(270d
 .orvio-invoice th, .orvio-invoice td { text-align: start; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
 .orvio-okbadge { display: inline-flex; align-items: center; gap: 6px; background: #E5F3EB; color: var(--ok); border-radius: 999px; padding: 4px 10px; font-weight: 750; font-size: 13px; }
 
+/* WooCommerce account endpoints */
+.woocommerce-MyAccount-content { min-width: 0; }
+.woocommerce-MyAccount-content .woocommerce-Addresses,
+.woocommerce-MyAccount-content .woocommerce-MyAccount-orders { display: grid; gap: 14px; }
+.woocommerce-MyAccount-content .woocommerce-Addresses { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.woocommerce-MyAccount-content .woocommerce-Address,
+.woocommerce-MyAccount-content .woocommerce-MyAccount-paymentMethods,
+.woocommerce-MyAccount-content .woocommerce-MyAccount-downloads { min-width: 0; }
+.woocommerce-MyAccount-content .woocommerce-Address { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+.woocommerce-MyAccount-content .woocommerce-Address-title { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+.woocommerce-MyAccount-content .woocommerce-Address-title h3 { font-size: 16px; }
+.woocommerce-MyAccount-content .woocommerce-Address address { color: var(--muted); font-style: normal; line-height: 1.8; }
+.woocommerce-MyAccount-content form .form-row,
+.woocommerce-MyAccount-content form .woocommerce-form-row { float: none; width: 100%; margin-inline: 0; }
+.woocommerce-MyAccount-content .woocommerce-EditAccountForm,
+.woocommerce-MyAccount-content .woocommerce-address-fields { max-width: 760px; }
+.woocommerce-MyAccount-content .woocommerce-orders-table,
+.woocommerce-MyAccount-content .woocommerce-table--order-details { width: 100%; min-width: 580px; }
+.woocommerce-MyAccount-content .woocommerce-orders-table__cell-order-actions a,
+.woocommerce-MyAccount-content .woocommerce-MyAccount-paymentMethods .button { min-height: 38px; padding-inline: 12px; }
+
 /* Account */
 .orvio-account {
   display: grid;
@@ -1523,6 +1551,7 @@ html[dir="rtl"] .orvio-banner--overlay::after { background: linear-gradient(270d
   display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 14px;
 }
 .orvio-welcome h2 { font-size: 26px; letter-spacing: 0; }
+.orvio-welcome__actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
 .orvio-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
 .orvio-stat { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
 .orvio-stat strong { display: block; font-size: 26px; }
@@ -1536,6 +1565,101 @@ html[dir="rtl"] .orvio-banner--overlay::after { background: linear-gradient(270d
 .orvio-status--wait { background: #F8F0DC; color: var(--warn); }
 .orvio-status--cancel { background: #F8E6E4; color: var(--sale); }
 .orvio-auth { max-width: 460px; margin: 12px auto 48px; }
+
+/* Account presets: the preset classes are scoped to the account component so WooCommerce endpoint markup stays native. */
+.orvio-account__content { min-width: 0; }
+.orvio-table-wrap { max-width: 100%; overflow-x: auto; border-radius: 12px; }
+.orvio-table-wrap:focus-visible { outline-offset: 4px; }
+.orvio-account__nav a:focus-visible,
+.orvio-account__nav button:focus-visible,
+.orvio-account__content a:focus-visible,
+.orvio-account__content button:focus-visible,
+.orvio-account__content input:focus-visible,
+.orvio-account__content select:focus-visible,
+.orvio-account__content textarea:focus-visible { outline-offset: 3px; }
+
+/* Desktop presets */
+.orvio-account--layout-topbar,
+body.orvio-account-layout-topbar .orvio-account { display: block; }
+.orvio-account--layout-topbar .orvio-account__nav,
+body.orvio-account-layout-topbar .orvio-account__nav {
+  position: static; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px;
+}
+.orvio-account--layout-topbar .orvio-account__nav a,
+body.orvio-account-layout-topbar .orvio-account__nav a { width: auto; }
+.orvio-account--layout-split,
+body.orvio-account-layout-split .orvio-account { grid-template-columns: minmax(280px, .82fr) minmax(0, 1.7fr); gap: 30px; }
+.orvio-account--layout-cards,
+body.orvio-account-layout-cards .orvio-account { grid-template-columns: 1fr; gap: 18px; }
+.orvio-account--layout-cards .orvio-account__nav,
+body.orvio-account-layout-cards .orvio-account__nav { position: static; display: flex; flex-wrap: wrap; gap: 6px; }
+.orvio-account--layout-cards .orvio-account__nav a,
+body.orvio-account-layout-cards .orvio-account__nav a { width: auto; }
+.orvio-account--layout-cards .orvio-stats-row,
+body.orvio-account-layout-cards .orvio-stats-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* Account visual presets */
+.orvio-account--style-soft .orvio-account__nav,
+body.orvio-account-style-soft .orvio-account__nav,
+.orvio-account--style-soft .orvio-stat,
+.orvio-account--style-soft .orvio-panel,
+body.orvio-account-style-soft .orvio-stat,
+body.orvio-account-style-soft .orvio-panel { background: #fffaf6; border-color: #eadbd0; box-shadow: 0 12px 30px rgba(93, 53, 35, .06); }
+.orvio-account--style-soft .orvio-welcome,
+body.orvio-account-style-soft .orvio-welcome { background: linear-gradient(135deg, #6f3524, #a34b2b); }
+.orvio-account--style-minimal .orvio-account__nav,
+body.orvio-account-style-minimal .orvio-account__nav,
+.orvio-account--style-minimal .orvio-panel,
+body.orvio-account-style-minimal .orvio-panel,
+.orvio-account--style-minimal .orvio-stat,
+body.orvio-account-style-minimal .orvio-stat { background: transparent; border-color: transparent; box-shadow: none; }
+.orvio-account--style-minimal .orvio-account__nav,
+body.orvio-account-style-minimal .orvio-account__nav { padding-inline: 0; }
+.orvio-account--style-minimal .orvio-welcome,
+body.orvio-account-style-minimal .orvio-welcome { border-radius: 0; border-block: 1px solid rgba(255,255,255,.18); }
+.orvio-account--style-editorial,
+body.orvio-account-style-editorial .orvio-account { color: #f7f0e8; }
+.orvio-account--style-editorial .orvio-account__nav,
+body.orvio-account-style-editorial .orvio-account__nav,
+.orvio-account--style-editorial .orvio-stat,
+.orvio-account--style-editorial .orvio-panel,
+body.orvio-account-style-editorial .orvio-stat,
+body.orvio-account-style-editorial .orvio-panel { background: #25211e; border-color: #4a4039; }
+.orvio-account--style-editorial .orvio-account__nav a,
+body.orvio-account-style-editorial .orvio-account__nav a { color: #f7f0e8; }
+.orvio-account--style-editorial .orvio-account__nav a.is-on,
+body.orvio-account-style-editorial .orvio-account__nav a.is-on { background: #f7f0e8; color: #25211e; }
+.orvio-account--style-editorial .orvio-stat span,
+body.orvio-account-style-editorial .orvio-stat span,
+.orvio-account--style-editorial .orvio-table th,
+body.orvio-account-style-editorial .orvio-table th,
+.orvio-account--style-editorial .orvio-note,
+body.orvio-account-style-editorial .orvio-note { color: #c9bbb0; }
+.orvio-account--style-editorial .orvio-table td,
+.orvio-account--style-editorial .orvio-table th,
+body.orvio-account-style-editorial .orvio-table td,
+body.orvio-account-style-editorial .orvio-table th { border-color: #4a4039; }
+.orvio-account--style-editorial .orvio-status--ship,
+body.orvio-account-style-editorial .orvio-status--ship { background: #293e4a; color: #b9d8e8; }
+body.orvio-account-style-editorial .woocommerce-MyAccount-content .woocommerce-Address,
+body.orvio-account-style-editorial .orvio-auth { background: #25211e; border-color: #4a4039; }
+body.orvio-account-style-editorial .woocommerce-MyAccount-content input.input-text,
+body.orvio-account-style-editorial .woocommerce-MyAccount-content select,
+body.orvio-account-style-editorial .woocommerce-MyAccount-content textarea,
+body.orvio-account-style-editorial .orvio-auth input { background: #302a26; border-color: #4a4039; color: #f7f0e8; }
+
+@media (max-width: 980px) {
+  .orvio-account--layout-split,
+  body.orvio-account-layout-split .orvio-account { gap: 16px; }
+  .orvio-account--layout-topbar .orvio-account__nav,
+  body.orvio-account-layout-topbar .orvio-account__nav,
+  .orvio-account--layout-cards .orvio-account__nav,
+  body.orvio-account-layout-cards .orvio-account__nav { flex-wrap: nowrap; overflow-x: auto; }
+  .orvio-account--layout-topbar .orvio-account__nav a,
+  body.orvio-account-layout-topbar .orvio-account__nav a,
+  .orvio-account--layout-cards .orvio-account__nav a,
+  body.orvio-account-layout-cards .orvio-account__nav a { flex: 0 0 auto; }
+}
 
 /* About & contact pages */
 .orvio-prose { max-width: 68ch; color: var(--muted); }
@@ -1928,8 +2052,13 @@ body.orvio-checkout-layout-minimal .orvio-checkout .orvio-panel { background: tr
   }
   html[dir="rtl"] .orvio-filters { transform: translateX(105%); }
   .orvio-filters.is-open { transform: none; }
-  .orvio-account__nav { display: flex; gap: 6px; overflow-x: auto; padding: 8px; }
-  .orvio-account__nav a, .orvio-account__nav button { width: auto; white-space: nowrap; }
+  .orvio-account__nav { display: flex; gap: 6px; overflow-x: auto; padding: 8px; scrollbar-width: thin; }
+  .orvio-account__nav a, .orvio-account__nav button { width: auto; min-height: 44px; white-space: nowrap; flex: 0 0 auto; }
+  .orvio-account__content { min-width: 0; }
+  .orvio-account--layout-cards .orvio-stats-row,
+  body.orvio-account-layout-cards .orvio-stats-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .orvio-account--style-editorial .orvio-table tr,
+  body.orvio-account-style-editorial .orvio-table tr { background: #25211e; border-color: #4a4039; }
   .orvio-quotes, .orvio-values, .orvio-posts { grid-template-columns: 1fr; }
   .orvio-trust { grid-template-columns: 1fr 1fr; }
   .orvio-cats { grid-template-columns: 1fr 1fr; grid-auto-rows: 150px; }
@@ -1945,6 +2074,11 @@ body.orvio-checkout-layout-minimal .orvio-checkout .orvio-panel { background: tr
   .orvio-iconbtn { width: 36px; height: 36px; }
 }
 @media (max-width: 720px) {
+  .woocommerce-MyAccount-content .woocommerce-Addresses { grid-template-columns: 1fr; }
+  .woocommerce-MyAccount-content .woocommerce-orders-table,
+  .woocommerce-MyAccount-content .woocommerce-table--order-details { min-width: 520px; }
+  .orvio-welcome { align-items: flex-start; flex-direction: column; }
+  .orvio-welcome__actions { width: 100%; justify-content: flex-start; }
   .orvio-table, .orvio-table tbody, .orvio-table tr, .orvio-table td { display: block; width: 100%; }
   .orvio-table thead { display: none; }
   .orvio-table tr { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; padding: 8px 10px; background: var(--surface); }

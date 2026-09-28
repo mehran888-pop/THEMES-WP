@@ -2,41 +2,73 @@
   "use strict";
 
   var overlay = function () { return document.querySelector("[data-overlay]"); };
+  var activeDrawer = null;
+  var lastDrawerTrigger = null;
 
   function lock(on) {
     document.body.classList.toggle("is-locked", !!on);
+  }
+
+  function drawerFocusable(el) {
+    if (!el) return [];
+    return Array.prototype.slice.call(el.querySelectorAll("a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex=\"-1\"])"));
+  }
+
+  function setTriggerState(name, expanded) {
+    document.querySelectorAll('[data-open="' + name + '"]').forEach(function (trigger) {
+      trigger.setAttribute("aria-expanded", expanded ? "true" : "false");
+    });
   }
 
   function closeDrawers() {
     document.querySelectorAll("[data-drawer]").forEach(function (el) {
       el.classList.remove("is-open");
       el.setAttribute("aria-hidden", "true");
+      setTriggerState(el.getAttribute("data-drawer"), false);
     });
     document.querySelectorAll(".orvio-filters.is-open").forEach(function (el) {
       el.classList.remove("is-open");
     });
     var modal = document.querySelector("[data-modal]");
     if (modal) modal.classList.remove("is-open");
-    var ov = overlay();
-    if (ov) ov.classList.remove("is-open");
     var search = document.querySelector("[data-searchpanel]");
     if (search) search.classList.remove("is-open");
+    document.querySelectorAll('[data-open="search"]').forEach(function (trigger) {
+      trigger.setAttribute("aria-expanded", "false");
+    });
+    var ov = overlay();
+    if (ov) {
+      ov.classList.remove("is-open");
+      ov.setAttribute("aria-hidden", "true");
+    }
     lock(false);
+    var restore = lastDrawerTrigger;
+    activeDrawer = null;
+    lastDrawerTrigger = null;
+    if (restore && document.contains(restore)) restore.focus();
   }
 
-  function openDrawer(name) {
+  function openDrawer(name, trigger) {
     var el = document.querySelector('[data-drawer="' + name + '"]');
     if (!el) return;
     document.querySelectorAll("[data-drawer]").forEach(function (d) {
       d.classList.remove("is-open");
+      d.setAttribute("aria-hidden", "true");
+      setTriggerState(d.getAttribute("data-drawer"), false);
     });
+    lastDrawerTrigger = trigger || document.activeElement;
+    activeDrawer = el;
     el.classList.add("is-open");
     el.setAttribute("aria-hidden", "false");
+    setTriggerState(name, true);
     var ov = overlay();
-    if (ov) ov.classList.add("is-open");
+    if (ov) {
+      ov.classList.add("is-open");
+      ov.setAttribute("aria-hidden", "false");
+    }
     lock(true);
-    var focusable = el.querySelector("button, a, input");
-    if (focusable) focusable.focus();
+    var focusable = drawerFocusable(el);
+    if (focusable.length) focusable[0].focus();
   }
 
   function toast(message) {
@@ -274,6 +306,7 @@
         var panel = document.querySelector("[data-searchpanel]");
         if (panel) {
           panel.classList.toggle("is-open");
+          open.setAttribute("aria-expanded", panel.classList.contains("is-open") ? "true" : "false");
           var input = panel.querySelector("input");
           if (panel.classList.contains("is-open") && input) input.focus();
         }
@@ -289,7 +322,7 @@
         }
         return;
       }
-      openDrawer(name);
+      openDrawer(name, open);
       document.dispatchEvent(new CustomEvent("orvio:open", { detail: name }));
       return;
     }
@@ -299,7 +332,27 @@
   });
 
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") closeDrawers();
+    if (e.key === "Escape") {
+      closeDrawers();
+      return;
+    }
+    if (e.key !== "Tab" || !activeDrawer || !activeDrawer.classList.contains("is-open")) return;
+    var focusable = drawerFocusable(activeDrawer);
+    if (!focusable.length) {
+      e.preventDefault();
+      var closeButton = activeDrawer.querySelector(".orvio-drawer__x");
+      if (closeButton) closeButton.focus();
+      return;
+    }
+    var first = focusable[0];
+    var last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   });
 
   if (window.jQuery) {
