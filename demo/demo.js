@@ -723,6 +723,16 @@
       addItem(id, qty, colorBtn && add.closest(".orvio-summary, .orvio-sticky-atc") ? colorBtn.dataset.color : "", sizeBtn && add.closest(".orvio-summary, .orvio-sticky-atc") ? sizeBtn.dataset.size : "");
       return;
     }
+    var lineQty = e.target.closest("[data-qty][data-line]");
+    if (lineQty) {
+      var line = lineQty.getAttribute("data-line");
+      var lineItem = cart().find(function (item) { return lineKey(item) === line; });
+      if (lineItem) {
+        var delta = lineQty.getAttribute("data-qty") === "minus" ? -1 : 1;
+        setQty(line, Math.max(1, (parseInt(lineItem.qty, 10) || 1) + delta));
+      }
+      return;
+    }
     var wishBtn = e.target.closest("[data-wish]");
     if (wishBtn) { toggleWish(wishBtn.getAttribute("data-wish")); return; }
     var rem = e.target.closest("[data-remove]");

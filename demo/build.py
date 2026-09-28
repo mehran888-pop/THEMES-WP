@@ -457,8 +457,8 @@ def shell(page, title, body, extra=""):
 <main id="main">{body}</main>
 {footer()}
 <script src="catalog.js"></script>
-<script src="assets/js/theme.js?v=5" defer></script>
-<script src="demo.js" defer></script>
+<script src="assets/js/theme.js?v=6" defer></script>
+<script src="demo.js?v=6" defer></script>
 {extra}
 </body>
 </html>
