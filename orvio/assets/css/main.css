@@ -2969,3 +2969,35 @@ body.orvio-cart-layout-saas-compact .orvio-cart-item__remove {
   visibility: visible;
   opacity: 1;
 }
+
+/* Fallback for a cached or third-party WooCommerce mini-cart template. */
+.orvio-drawer--cart .mini_cart_item > a.remove,
+.orvio-drawer--cart .woocommerce-mini-cart-item > a.remove {
+  display: inline-grid;
+  width: 28px;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0;
+  line-height: 1;
+  text-decoration: none;
+}
+.orvio-drawer--cart .mini_cart_item > a.remove::before,
+.orvio-drawer--cart .woocommerce-mini-cart-item > a.remove::before {
+  content: "×";
+  font-size: 21px;
+}
+.orvio-drawer--cart .mini_cart_item > a.remove:hover,
+.orvio-drawer--cart .woocommerce-mini-cart-item > a.remove:hover { color: var(--ink); }
+.orvio-drawer--cart .mini_cart_item .orvio-line__actions,
+.orvio-drawer--cart .woocommerce-mini-cart-item .orvio-line__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 6px;
+}

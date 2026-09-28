@@ -140,6 +140,7 @@
         if (fresh) oldNode.replaceWith(fresh);
       });
     });
+    enhanceNativeMiniCart();
   }
 
   function afterCartAdd(button) {
@@ -512,6 +513,30 @@
     toast: toast
   };
 
+  function enhanceNativeMiniCart() {
+    document.querySelectorAll(".orvio-drawer--cart .mini_cart_item, .orvio-drawer--cart .woocommerce-mini-cart-item").forEach(function (item) {
+      if (item.querySelector("[data-orvio-mini-cart-qty]")) return;
+      var remove = item.querySelector("[data-cart_item_key]");
+      if (!remove) return;
+      var key = remove.getAttribute("data-cart_item_key");
+      if (!key) return;
+      var oldQuantity = item.querySelector(".quantity");
+      var match = oldQuantity && oldQuantity.textContent.match(/[0-9]+/);
+      var value = match ? parseInt(match[0], 10) : 1;
+      var target = item.querySelector(".orvio-line__content") || item;
+      var actions = document.createElement("div");
+      actions.className = "orvio-line__actions";
+      actions.innerHTML = '<form class="orvio-mini-cart-qty" data-orvio-mini-cart-qty method="post"><button type="button" data-mini-cart-step="-1" aria-label="Decrease quantity">−</button><input type="number" min="1" value="' + value + '" aria-label="Quantity"><button type="button" data-mini-cart-step="1" aria-label="Increase quantity">+</button><input type="hidden" name="update_cart" value="1"></form>';
+      var input = actions.querySelector("input[type=number]");
+      input.name = "cart[" + key + "][qty]";
+      input.setAttribute("data-cart-item-key", key);
+      if (oldQuantity) oldQuantity.hidden = true;
+      remove.classList.add("orvio-line__remove");
+      actions.appendChild(remove);
+      target.appendChild(actions);
+    });
+  }
+
   function submitMiniCartQuantity(form, input) {
     if (!form || !input || form.classList.contains("is-loading")) return;
     var data = window.OrvioData;
@@ -551,6 +576,10 @@
   }
 
   function initMiniCartQuantity() {
+    enhanceNativeMiniCart();
+    if (window.MutationObserver) {
+      new MutationObserver(enhanceNativeMiniCart).observe(document.body, { childList: true, subtree: true });
+    }
     document.addEventListener("click", function (e) {
       var step = e.target.closest("[data-mini-cart-step]");
       if (!step) return;
