@@ -3026,3 +3026,21 @@ body.orvio-cart-layout-saas-compact .orvio-cart-item__remove {
   height: 31px;
   font-size: 13px;
 }
+
+/* Front-end notices stay compact instead of stretching across the whole page. */
+.woocommerce-message,
+.woocommerce-info,
+.woocommerce-error,
+.woocommerce-notice,
+.orvio-account-alert {
+  display: table;
+  width: auto;
+  max-width: calc(100% - 10px);
+  box-sizing: border-box;
+  margin-inline: 5px;
+}
+.orvio-toast {
+  width: fit-content;
+  max-width: calc(100vw - 24px);
+  box-sizing: border-box;
+}
