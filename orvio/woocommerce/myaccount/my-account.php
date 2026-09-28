@@ -6,7 +6,7 @@
  */
 
 defined( 'ABSPATH' ) || exit;
-$account_back_url = wp_validate_redirect( wp_get_referer(), home_url( '/' ) );
+$account_back_url = home_url( '/' );
 ?>
 <div class="orvio-pagehead">
 	<div class="orvio-account-pagehead__top">

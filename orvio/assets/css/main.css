@@ -2429,7 +2429,7 @@ body.orvio-account-fullscreen .orvio-main > .orvio-container { width: min(1800px
 body.orvio-account-fullscreen .orvio-pagehead { display: grid; gap: 16px; padding: 0 0 28px; }
 .orvio-account-pagehead__top { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
 .orvio-account-pagehead__top .orvio-crumb { margin: 0; }
-.orvio-account-back { display: inline-flex; align-items: center; gap: 8px; width: fit-content; min-height: 40px; padding: 0 13px; border: 1px solid var(--account-saas-line, var(--line)); border-radius: 11px; background: #fff; color: var(--account-saas-muted, var(--muted)); font-size: 12px; font-weight: 800; box-shadow: 0 5px 16px rgba(35,52,86,.04); }
+.orvio-account-back { display: inline-flex; align-items: center; gap: 8px; width: fit-content; min-height: 40px; margin: 5px; padding: 0 13px; border: 1px solid var(--account-saas-line, var(--line)); border-radius: 11px; background: #fff; color: var(--account-saas-muted, var(--muted)); font-size: 12px; font-weight: 800; box-shadow: 0 5px 16px rgba(35,52,86,.04); }
 .orvio-account-back:hover { border-color: var(--account-saas-primary, var(--accent)); color: var(--account-saas-primary-dark, var(--accent-dark)); }
 .orvio-account-back span { direction: ltr; font-size: 17px; line-height: 1; }
 body.orvio-account-fullscreen .orvio-pagehead h1 { margin: 0; }
