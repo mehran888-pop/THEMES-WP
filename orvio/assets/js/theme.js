@@ -512,6 +512,72 @@
     toast: toast
   };
 
+  function submitMiniCartQuantity(form, input) {
+    if (!form || !input || form.classList.contains("is-loading")) return;
+    var data = window.OrvioData;
+    var key = input.getAttribute("data-cart-item-key");
+    var quantity = Math.max(1, parseInt(input.value, 10) || 1);
+    var max = parseInt(input.getAttribute("max"), 10);
+    if (max > 0) quantity = Math.min(quantity, max);
+    input.value = String(quantity);
+    if (!data || !data.ajax || !data.nonce || !window.fetch) {
+      form.submit();
+      return;
+    }
+    form.classList.add("is-loading");
+    form.setAttribute("aria-busy", "true");
+    var body = new URLSearchParams({
+      action: "orvio_update_cart_item",
+      nonce: data.nonce,
+      cart_item_key: key || "",
+      quantity: String(quantity)
+    });
+    fetch(data.ajax, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+      body: body.toString()
+    }).then(function (response) { return response.json(); }).then(function (result) {
+      if (!result || !result.fragments) throw new Error("Cart update failed");
+      replaceWooFragments(result.fragments);
+      if (window.jQuery) window.jQuery(document.body).trigger("wc_fragments_refreshed");
+    }).catch(function () {
+      /* Native WooCommerce cart submission remains the no-JS and network fallback. */
+      form.submit();
+    }).finally(function () {
+      form.classList.remove("is-loading");
+      form.removeAttribute("aria-busy");
+    });
+  }
+
+  function initMiniCartQuantity() {
+    document.addEventListener("click", function (e) {
+      var step = e.target.closest("[data-mini-cart-step]");
+      if (!step) return;
+      var form = step.closest("[data-orvio-mini-cart-qty]");
+      var input = form && form.querySelector("input[type=number]");
+      if (!form || !input) return;
+      e.preventDefault();
+      var min = parseInt(input.getAttribute("min"), 10) || 1;
+      var max = parseInt(input.getAttribute("max"), 10);
+      var next = (parseInt(input.value, 10) || min) + (parseInt(step.getAttribute("data-mini-cart-step"), 10) || 0);
+      input.value = String(Math.max(min, max > 0 ? Math.min(next, max) : next));
+      submitMiniCartQuantity(form, input);
+    });
+    document.addEventListener("change", function (e) {
+      if (!e.target.matches("[data-orvio-mini-cart-qty] input[type=number]")) return;
+      submitMiniCartQuantity(e.target.closest("[data-orvio-mini-cart-qty]"), e.target);
+    });
+    document.addEventListener("submit", function (e) {
+      var form = e.target.closest("[data-orvio-mini-cart-qty]");
+      if (!form) return;
+      var input = form.querySelector("input[type=number]");
+      if (!input) return;
+      e.preventDefault();
+      submitMiniCartQuantity(form, input);
+    });
+  }
+
   function initAccountNav() {
     var nav = document.querySelector("[data-account-nav]");
     if (!nav) return;
@@ -581,6 +647,7 @@
     initProfileAvatar();
     initCardAddToCart();
     initSingleAddToCart();
+    initMiniCartQuantity();
     initCatMenu();
     if (!window.ORVIO_CATALOG && typeof renderWish === "function") renderWish();
     document.addEventListener("click", function (e) {

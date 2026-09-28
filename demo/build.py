@@ -768,6 +768,7 @@ def main():
         "theme.html": shell("theme", "قالب وردپرس — اُرویو", theme_page()),
     }
     for name, content in pages.items():
+        content = "\n".join(line.rstrip() for line in content.splitlines()) + "\n"
         (ROOT / name).write_text(content, encoding="utf-8")
         print("wrote", name, len(content))
 
