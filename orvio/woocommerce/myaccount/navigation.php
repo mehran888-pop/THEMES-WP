@@ -23,9 +23,12 @@ $display_name = $current_user->display_name ?: $current_user->user_login;
 ?>
 <div class="orvio-account-nav-wrap">
 	<div class="orvio-account-nav-mobile" aria-label="<?php echo esc_attr( orvio_t( 'Account shortcuts', 'میانبرهای حساب کاربری' ) ); ?>">
-		<button type="button" class="orvio-account-nav-mobile__avatar" data-open="account-nav" aria-controls="orvio-account-navigation" aria-expanded="false" aria-label="<?php echo esc_attr( orvio_t( 'Open account menu', 'باز کردن منوی حساب کاربری' ) ); ?>">
-			<?php echo orvio_account_avatar_html( $current_user->ID, 72 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-		</button>
+		<div class="orvio-account-nav-mobile__identity">
+			<button type="button" class="orvio-account-nav-mobile__avatar" data-open="account-nav" aria-controls="orvio-account-navigation" aria-expanded="false" aria-label="<?php echo esc_attr( orvio_t( 'Open account menu', 'باز کردن منوی حساب کاربری' ) ); ?>">
+				<?php echo orvio_account_avatar_html( $current_user->ID, 56 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</button>
+			<div><strong><?php echo esc_html( $display_name ); ?></strong><span><?php echo esc_html( orvio_t( 'Account', 'حساب کاربری' ) ); ?></span></div>
+		</div>
 		<div class="orvio-account-nav-mobile__links">
 			<?php foreach ( $account_items as $endpoint => $label ) : $icon = $account_icons[ $endpoint ] ?? 'grid'; ?>
 				<a class="<?php echo esc_attr( wc_get_account_menu_item_classes( $endpoint ) ); ?><?php echo wc_is_current_account_menu_item( $endpoint ) ? ' is-on' : ''; ?>" href="<?php echo esc_url( wc_get_account_endpoint_url( $endpoint ) ); ?>" aria-label="<?php echo esc_attr( $label ); ?>" title="<?php echo esc_attr( $label ); ?>"<?php echo wc_is_current_account_menu_item( $endpoint ) ? ' aria-current="page"' : ''; ?>>
