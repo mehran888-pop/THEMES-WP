@@ -29,6 +29,11 @@
     document.querySelectorAll(".orvio-filters.is-open").forEach(function (el) {
       el.classList.remove("is-open");
     });
+    document.querySelectorAll("[data-account-nav].is-open").forEach(function (el) {
+      el.classList.remove("is-open");
+      el.setAttribute("aria-hidden", "true");
+    });
+    setTriggerState("account-nav", false);
     var modal = document.querySelector("[data-modal]");
     if (modal) modal.classList.remove("is-open");
     var search = document.querySelector("[data-searchpanel]");
@@ -56,6 +61,12 @@
       d.setAttribute("aria-hidden", "true");
       setTriggerState(d.getAttribute("data-drawer"), false);
     });
+    var accountNav = document.querySelector("[data-account-nav].is-open");
+    if (accountNav) {
+      accountNav.classList.remove("is-open");
+      accountNav.setAttribute("aria-hidden", "true");
+      setTriggerState("account-nav", false);
+    }
     lastDrawerTrigger = trigger || document.activeElement;
     activeDrawer = el;
     el.classList.add("is-open");
@@ -68,6 +79,25 @@
     }
     lock(true);
     var focusable = drawerFocusable(el);
+    if (focusable.length) focusable[0].focus();
+  }
+
+  function openAccountNav(trigger) {
+    var nav = document.querySelector("[data-account-nav]");
+    if (!nav) return;
+    closeDrawers();
+    lastDrawerTrigger = trigger || document.activeElement;
+    activeDrawer = nav;
+    nav.classList.add("is-open");
+    nav.setAttribute("aria-hidden", "false");
+    setTriggerState("account-nav", true);
+    var ov = overlay();
+    if (ov) {
+      ov.classList.add("is-open");
+      ov.setAttribute("aria-hidden", "false");
+    }
+    lock(true);
+    var focusable = drawerFocusable(nav);
     if (focusable.length) focusable[0].focus();
   }
 
@@ -322,6 +352,11 @@
         }
         return;
       }
+      if (name === "account-nav") {
+        openAccountNav(open);
+        document.dispatchEvent(new CustomEvent("orvio:open", { detail: name }));
+        return;
+      }
       openDrawer(name, open);
       document.dispatchEvent(new CustomEvent("orvio:open", { detail: name }));
       return;
@@ -456,6 +491,18 @@
     toast: toast
   };
 
+  function initAccountNav() {
+    var nav = document.querySelector("[data-account-nav]");
+    if (!nav) return;
+    var sync = function () {
+      if (!nav.classList.contains("is-open")) {
+        nav.setAttribute("aria-hidden", window.innerWidth <= 980 ? "true" : "false");
+      }
+    };
+    sync();
+    window.addEventListener("resize", sync);
+  }
+
   function initProfileAvatar() {
     document.querySelectorAll("[data-avatar-input]").forEach(function (input) {
       input.addEventListener("change", function () {
@@ -509,6 +556,7 @@
     initCarousel();
     initTimers();
     initGallery();
+    initAccountNav();
     initProfileAvatar();
     initCardAddToCart();
     initSingleAddToCart();
