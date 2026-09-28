@@ -14,17 +14,23 @@ function orvio_enqueue() {
 	$css = ORVIO_DIR . '/assets/css/main.css';
 	$js  = ORVIO_DIR . '/assets/js/theme.js';
 	$deps = array();
+	$js_deps = array();
 	if ( wp_style_is( 'woocommerce-general', 'registered' ) ) {
 		$deps[] = 'woocommerce-general';
 	}
+	if ( wp_script_is( 'wc-add-to-cart', 'registered' ) ) {
+		$js_deps = array( 'jquery', 'wc-add-to-cart' );
+	}
 	wp_enqueue_style( 'orvio', ORVIO_URI . '/assets/css/main.css', $deps, file_exists( $css ) ? filemtime( $css ) : ORVIO_VERSION );
 	wp_enqueue_style( 'orvio-style', get_stylesheet_uri(), array( 'orvio' ), ORVIO_VERSION );
-	wp_enqueue_script( 'orvio', ORVIO_URI . '/assets/js/theme.js', array(), file_exists( $js ) ? filemtime( $js ) : ORVIO_VERSION, true );
+	wp_enqueue_script( 'orvio', ORVIO_URI . '/assets/js/theme.js', $js_deps, file_exists( $js ) ? filemtime( $js ) : ORVIO_VERSION, true );
 	wp_localize_script( 'orvio', 'OrvioData', array(
 		'ajax'     => admin_url( 'admin-ajax.php' ),
 		'nonce'    => wp_create_nonce( 'orvio' ),
 		'cart'     => function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '',
 		'cartType' => orvio_opt( 'cart_type', 'drawer' ),
+		'atcBehavior' => orvio_opt( 'atc_behavior', 'auto' ),
+		'checkout' => function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url() : '',
 		'i18n'     => array(
 			'added'    => orvio_t( 'Added to bag', 'به سبد اضافه شد' ),
 			'empty'    => orvio_t( 'Your bag is empty.', 'سبد شما خالی است.' ),

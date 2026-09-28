@@ -557,6 +557,24 @@ html[dir="rtl"] .orvio-logo__word strong { letter-spacing: 0.08em; font-family: 
 .orvio-h-centered .orvio-search { display: none; }
 .orvio-h-centered .orvio-tools { grid-column: 3; justify-self: end; }
 .orvio-h-centered .orvio-burger { grid-column: 1; }
+.orvio-header--split .orvio-header__row,
+.orvio-el-header-layout-split .orvio-header__row { display: grid; grid-template-columns: auto auto minmax(180px, 1fr) auto; gap: 16px; }
+.orvio-header--split .orvio-logo,
+.orvio-el-header-layout-split .orvio-logo { grid-column: 2; }
+.orvio-header--split .orvio-search,
+.orvio-el-header-layout-split .orvio-search { grid-column: 3; width: 100%; }
+.orvio-header--split .orvio-tools,
+.orvio-el-header-layout-split .orvio-tools { grid-column: 4; }
+body.orvio-header-layout-minimal .orvio-announce,
+.orvio-header--minimal .orvio-search,
+.orvio-header--minimal .orvio-catbar,
+.orvio-el-header-layout-minimal .orvio-search,
+.orvio-el-header-layout-minimal .orvio-catbar,
+.orvio-el-header-layout-minimal .orvio-announce { display: none !important; }
+.orvio-header--minimal .orvio-search-toggle,
+.orvio-el-header-layout-minimal .orvio-search-toggle { display: inline-flex; }
+.orvio-header--minimal .orvio-header__row,
+.orvio-el-header-layout-minimal .orvio-header__row { min-height: 62px; }
 
 /* Configurable mobile navigation. It is intentionally hidden on desktop. */
 .orvio-mobile-nav { display: none; }
@@ -903,6 +921,10 @@ html[dir="rtl"] .orvio-hero h1 { max-width: 12em; }
   bottom: 10px;
   z-index: 2;
   min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
   border: 0;
   border-radius: 999px;
   background: var(--ink);
@@ -911,10 +933,37 @@ html[dir="rtl"] .orvio-hero h1 { max-width: 12em; }
   font-size: 13px;
   opacity: 0;
   transform: translateY(6px);
-  transition: 0.25s var(--ease);
+  transition: width .25s var(--ease), opacity .25s var(--ease), transform .25s var(--ease), background .2s var(--ease);
 }
+.orvio-card__quick-icon { display: inline-flex; flex: none; line-height: 1; }
+.orvio-card__quick-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.orvio-atc-visual-text .orvio-card__quick-icon { display: none; }
+.orvio-atc-visual-icon .orvio-card__quick { opacity: 1; transform: none; }
+.orvio-atc-visual-icon-only .orvio-card__quick { inset-inline-start: auto; width: 42px; opacity: 1; transform: none; }
+.orvio-atc-visual-icon-only .orvio-card__quick-label { display: none; }
+.orvio-atc-visual-hover .orvio-card__quick { inset-inline-start: auto; width: 42px; overflow: hidden; white-space: nowrap; opacity: 1; transform: none; }
+.orvio-atc-visual-hover .orvio-card__quick-label { opacity: 0; max-width: 0; transition: opacity .2s var(--ease), max-width .25s var(--ease); }
+.orvio-card:hover .orvio-atc-visual-hover .orvio-card__quick,
+.orvio-card:focus-within .orvio-atc-visual-hover .orvio-card__quick { width: calc(100% - 20px); }
+.orvio-card:hover .orvio-atc-visual-hover .orvio-card__quick-label,
+.orvio-card:focus-within .orvio-atc-visual-hover .orvio-card__quick-label { opacity: 1; max-width: 20ch; }
 .orvio-card:hover .orvio-card__quick, .orvio-card:focus-within .orvio-card__quick { opacity: 1; transform: none; }
 .orvio-card__body { padding: 12px 12px 14px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.orvio-card__body > .orvio-card__quick { position: static; inset: auto; width: 100%; margin-top: 8px; opacity: 1; transform: none; border-radius: 12px; }
+.orvio-card-content-tile { border-radius: 12px; box-shadow: var(--shadow-sm); }
+.orvio-card-content-tile .orvio-card__body { padding: 14px; }
+.orvio-card-content-hover-info .orvio-card__body { max-height: 0; overflow: hidden; opacity: 0; transform: translateY(10px); padding-block: 0; transition: max-height .3s var(--ease), opacity .25s var(--ease), transform .3s var(--ease), padding .3s var(--ease); }
+.orvio-card-content-hover-info:hover .orvio-card__body,
+.orvio-card-content-hover-info:focus-within .orvio-card__body { max-height: 360px; opacity: 1; transform: none; padding-block: 12px 14px; }
+.orvio-card-content-hover-overlay { position: relative; }
+.orvio-card-content-hover-overlay .orvio-card__body { position: absolute; inset-inline: 0; bottom: 0; z-index: 3; color: #fff; background: linear-gradient(transparent, rgba(18,14,10,.84)); padding: 42px 14px 14px; opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .28s var(--ease), transform .28s var(--ease); }
+.orvio-card-content-hover-overlay .orvio-card__title a,
+.orvio-card-content-hover-overlay .orvio-price,
+.orvio-card-content-hover-overlay .orvio-price ins { color: #fff; }
+.orvio-card-content-hover-overlay .orvio-card__cat,
+.orvio-card-content-hover-overlay .orvio-price del { color: rgba(255,255,255,.78); }
+.orvio-card-content-hover-overlay:hover .orvio-card__body,
+.orvio-card-content-hover-overlay:focus-within .orvio-card__body { opacity: 1; transform: none; pointer-events: auto; }
 .orvio-card__cat { color: var(--faint); font-size: 12px; font-weight: 600; }
 .orvio-card__title { font-size: 15px; font-weight: 700; line-height: 1.45; letter-spacing: 0; }
 .orvio-card__title a:hover { color: var(--accent-dark); }
@@ -1059,6 +1108,9 @@ html[dir="rtl"] .orvio-hero h1 { max-width: 12em; }
 .orvio-el-products.orvio-atc-outline .orvio-card__quick { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
 .orvio-el-products.orvio-atc-soft .orvio-card__quick { background: var(--accent-soft); color: var(--ink); border-radius: 12px; }
 .orvio-el-products.orvio-atc-pill .orvio-card__quick { border-radius: 999px; }
+body.orvio-atc-block .orvio-card__quick { border-radius: 10px; }
+body.orvio-atc-outline .orvio-card__quick { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+body.orvio-atc-soft .orvio-card__quick { background: var(--accent-soft); color: var(--ink); border-radius: 12px; }
 
 /* Banners */
 .orvio-banner { border-radius: 22px; overflow: hidden; position: relative; }
@@ -1209,6 +1261,16 @@ html[dir="rtl"] .orvio-banner--overlay::after { background: linear-gradient(270d
   font-size: 11px;
   letter-spacing: 0.04em;
 }
+.orvio-footer--centered .orvio-footer__grid { grid-template-columns: 1fr; text-align: center; }
+.orvio-footer--centered .orvio-footer__brand p { margin-inline: auto; }
+.orvio-footer--centered .orvio-social,
+.orvio-footer--centered .orvio-pay { justify-content: center; }
+.orvio-footer--minimal .orvio-footer__grid { grid-template-columns: 1fr auto; align-items: center; }
+.orvio-footer--minimal .orvio-footer__grid > div:not(.orvio-footer__brand) { display: none; }
+.orvio-footer--minimal .orvio-footer__brand p { max-width: 52ch; }
+.orvio-footer--editorial .orvio-footer__grid { grid-template-columns: 1.8fr 1fr 1fr; }
+.orvio-footer--editorial .orvio-footer__brand { grid-row: span 2; }
+
 .orvio-footer__bottom {
   border-top: 1px solid rgba(255,255,255,0.08);
   padding: 14px 0 18px;

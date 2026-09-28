@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 $o          = orvio_settings();
+$header_layouts = array( 'classic', 'centered', 'split', 'minimal' );
+$header_layout  = ( isset( $args['layout'] ) && in_array( $args['layout'], $header_layouts, true ) ) ? $args['layout'] : ( in_array( $o['header_layout'], $header_layouts, true ) ? $o['header_layout'] : 'classic' );
 $terms      = orvio_product_cats();
 $cart_count = orvio_cart_count();
 $cart_open  = 'page' === $o['cart_type'] ? '' : ' data-open="cart"';
@@ -22,7 +24,7 @@ $cart_href  = 'page' === $o['cart_type'] ? ' href="' . esc_url( function_exists(
 		</div>
 	</div>
 <?php endif; ?>
-<header class="orvio-header" data-header>
+<header class="orvio-header orvio-header--<?php echo esc_attr( $header_layout ); ?>" data-header>
 	<div class="orvio-container orvio-header__row">
 		<button type="button" class="orvio-iconbtn orvio-burger" data-open="menu" aria-label="<?php echo esc_attr( orvio_t( 'Menu', 'منو' ) ); ?>"><?php echo orvio_icon( 'menu' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></button>
 		<?php if ( has_custom_logo() ) : ?>

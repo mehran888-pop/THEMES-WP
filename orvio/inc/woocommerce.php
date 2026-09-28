@@ -89,13 +89,20 @@ function orvio_sale_query( $q ) {
 	$q->set( 'post__in', $ids ? $ids : array( 0 ) );
 }
 
-function orvio_wc_card( $product = null ) {
+function orvio_wc_card( $product = null, $args = array() ) {
 	if ( ! $product instanceof WC_Product ) {
 		global $product;
 	}
 	if ( ! $product || ! $product->is_visible() ) {
 		return;
 	}
+	$visuals  = array( 'text', 'icon', 'hover', 'tile', 'icon-only' );
+	$visual   = in_array( $args['atc_visual'] ?? '', $visuals, true ) ? $args['atc_visual'] : orvio_opt( 'atc_visual', 'text' );
+	$visual   = in_array( $visual, $visuals, true ) ? $visual : 'text';
+	$contents = array( 'below', 'tile', 'hover-info', 'hover-overlay' );
+	$content  = in_array( $args['card_content'] ?? '', $contents, true ) ? $args['card_content'] : orvio_opt( 'card_content', 'below' );
+	$content  = in_array( $content, $contents, true ) ? $content : 'below';
+	$behavior = in_array( $args['atc_behavior'] ?? '', array( 'auto', 'ajax-stay', 'cart', 'checkout' ), true ) ? $args['atc_behavior'] : orvio_opt( 'atc_behavior', 'auto' );
 	$permalink = $product->get_permalink();
 	$image     = $product->get_image( 'orvio-card', array( 'alt' => $product->get_name() ) );
 	$badge     = '';
@@ -109,7 +116,7 @@ function orvio_wc_card( $product = null ) {
 	}
 	$cats = wc_get_product_category_list( $product->get_id(), ', ' );
 	?>
-	<article <?php wc_product_class( 'orvio-card', $product ); ?>>
+	<article <?php wc_product_class( 'orvio-card orvio-card-content-' . $content, $product ); ?>>
 		<div class="orvio-card__media">
 			<a href="<?php echo esc_url( $permalink ); ?>" tabindex="-1"><?php echo $image; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a>
 			<?php echo $badge; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -117,20 +124,26 @@ function orvio_wc_card( $product = null ) {
 				<button type="button" class="orvio-card__wish" data-wish="<?php echo esc_attr( $product->get_id() ); ?>" data-wish-name="<?php echo esc_attr( $product->get_name() ); ?>" data-wish-img="<?php echo esc_url( wp_get_attachment_image_url( $product->get_image_id(), 'thumbnail' ) ); ?>" data-wish-url="<?php echo esc_url( $permalink ); ?>" aria-label="<?php echo esc_attr( orvio_t( 'Save', 'ذخیره' ) ); ?>"><?php echo orvio_icon( 'heart' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></button>
 			<?php endif; ?>
 			<?php
+			$quick_html = '';
 			if ( $product->is_purchasable() && $product->is_in_stock() && $product->is_type( 'simple' ) ) {
-				echo apply_filters(
-					'woocommerce_loop_add_to_cart_link',
-					sprintf(
-						'<a href="%s" data-quantity="1" class="orvio-card__quick add_to_cart_button ajax_add_to_cart" data-product_id="%s" aria-label="%s" rel="nofollow">%s</a>',
-						esc_url( $product->add_to_cart_url() ),
-						esc_attr( $product->get_id() ),
-						esc_attr( $product->add_to_cart_description() ),
-						esc_html( $product->add_to_cart_text() )
-					),
-					$product
+				$label = $product->add_to_cart_text();
+				$quick_html = sprintf(
+					'<a href="%s" data-quantity="1" class="orvio-card__quick orvio-card-add-to-cart orvio-atc-visual-%s" data-orvio-atc data-orvio-atc-behavior="%s" data-product_id="%s" aria-label="%s" rel="nofollow"><span class="orvio-card__quick-icon" aria-hidden="true">%s</span><span class="orvio-card__quick-label">%s</span></a>',
+				esc_url( $product->add_to_cart_url() ),
+				esc_attr( $visual ),
+				esc_attr( $behavior ),
+				esc_attr( $product->get_id() ),
+				esc_attr( $product->add_to_cart_description() ),
+				orvio_icon( 'bag' ),
+				esc_html( $label )
 				);
+				$quick_html = apply_filters( 'woocommerce_loop_add_to_cart_link', $quick_html, $product );
 			} else {
-				echo '<a class="orvio-card__quick" href="' . esc_url( $permalink ) . '">' . esc_html( orvio_t( 'View', 'مشاهده' ) ) . '</a>';
+				$quick_html = '<a class="orvio-card__quick orvio-card__quick--view" href="' . esc_url( $permalink ) . '">' . esc_html( orvio_t( 'View', 'مشاهده' ) ) . '</a>';
+			}
+			$quick_in_body = 'tile' === $visual || in_array( $content, array( 'below', 'tile' ), true );
+			if ( ! $quick_in_body ) {
+				echo $quick_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WooCommerce filter output.
 			}
 			?>
 		</div>
@@ -141,6 +154,9 @@ function orvio_wc_card( $product = null ) {
 				<span class="orvio-stars" style="--v:<?php echo esc_attr( $product->get_average_rating() ); ?>"><span class="orvio-stars__base">★★★★★</span><span class="orvio-stars__fill">★★★★★</span></span>
 			<?php endif; ?>
 			<div class="orvio-price"><?php echo wp_kses_post( $product->get_price_html() ); ?></div>
+			<?php if ( $quick_in_body ) : ?>
+				<?php echo $quick_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WooCommerce filter output. ?>
+			<?php endif; ?>
 		</div>
 	</article>
 	<?php

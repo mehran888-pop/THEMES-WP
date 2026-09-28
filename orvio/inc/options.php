@@ -45,10 +45,13 @@ function orvio_defaults() {
 		'container'          => 1220,
 		'site_layout'        => 'wide',
 		'atc_style'          => 'pill',
+		'atc_behavior'       => 'auto',
+		'atc_visual'         => 'text',
 		'body_font'          => 'vazirmatn',
 		'heading_font'       => 'vazirmatn',
 		'font_size'          => 15,
 		'header_layout'      => 'classic',
+		'footer_layout'      => 'classic',
 		'header_account_style' => 'minimal',
 		'header_cart_style'    => 'pill',
 		'header_bg'          => '#FFFCF8',
@@ -82,6 +85,7 @@ function orvio_defaults() {
 		'products_per_page'  => 12,
 		'shop_layout'        => 'sidebar-grid',
 		'card_style'         => 'classic',
+		'card_content'       => 'below',
 		'shop_sidebar'       => 1,
 		'product_layout'     => 'classic',
 		'related_count'      => 4,
@@ -145,12 +149,19 @@ function orvio_sanitize_settings( $input ) {
 	$fonts                      = array( 'vazirmatn', 'instrument', 'fraunces', 'system' );
 	$clean['body_font']         = in_array( $input['body_font'] ?? '', $fonts, true ) ? $input['body_font'] : 'vazirmatn';
 	$clean['heading_font']      = in_array( $input['heading_font'] ?? '', $fonts, true ) ? $input['heading_font'] : 'vazirmatn';
-	$clean['header_layout']       = in_array( $input['header_layout'] ?? '', array( 'classic', 'centered' ), true ) ? $input['header_layout'] : 'classic';
+	$header_layouts              = array( 'classic', 'centered', 'split', 'minimal' );
+	$clean['header_layout']       = in_array( $input['header_layout'] ?? '', $header_layouts, true ) ? $input['header_layout'] : 'classic';
+	$footer_layouts              = array( 'classic', 'centered', 'minimal', 'editorial' );
+	$clean['footer_layout']       = in_array( $input['footer_layout'] ?? '', $footer_layouts, true ) ? $input['footer_layout'] : 'classic';
 	$header_button_styles         = array( 'minimal', 'pill', 'solid', 'outline', 'soft' );
 	$clean['header_account_style'] = in_array( $input['header_account_style'] ?? '', $header_button_styles, true ) ? $input['header_account_style'] : 'minimal';
 	$clean['header_cart_style']    = in_array( $input['header_cart_style'] ?? '', $header_button_styles, true ) ? $input['header_cart_style'] : 'pill';
 	$clean['site_layout']          = in_array( $input['site_layout'] ?? '', array( 'wide', 'boxed', 'content-wide' ), true ) ? $input['site_layout'] : 'wide';
 	$clean['atc_style']            = in_array( $input['atc_style'] ?? '', array( 'pill', 'block', 'outline', 'soft' ), true ) ? $input['atc_style'] : 'pill';
+	$atc_behaviors                = array( 'auto', 'ajax-stay', 'cart', 'checkout' );
+	$clean['atc_behavior']         = in_array( $input['atc_behavior'] ?? '', $atc_behaviors, true ) ? $input['atc_behavior'] : 'auto';
+	$atc_visuals                  = array( 'text', 'icon', 'hover', 'tile', 'icon-only' );
+	$clean['atc_visual']           = in_array( $input['atc_visual'] ?? '', $atc_visuals, true ) ? $input['atc_visual'] : 'text';
 	$clean['cart_type']            = in_array( $input['cart_type'] ?? '', array( 'drawer', 'page' ), true ) ? $input['cart_type'] : 'drawer';
 	$mobile_nav_styles          = array( 'bar', 'floating', 'pill', 'glass', 'dark', 'minimal' );
 	$clean['mobile_nav_style']  = in_array( $input['mobile_nav_style'] ?? '', $mobile_nav_styles, true ) ? $input['mobile_nav_style'] : 'bar';
@@ -194,6 +205,8 @@ function orvio_sanitize_settings( $input ) {
 	$clean['checkout_layout']     = in_array( $input['checkout_layout'] ?? '', $page_layouts, true ) ? $input['checkout_layout'] : 'split';
 	$card_styles                  = array( 'classic', 'minimal', 'overlay', 'editorial', 'deal', 'polaroid', 'magazine' );
 	$clean['card_style']           = in_array( $input['card_style'] ?? '', $card_styles, true ) ? $input['card_style'] : 'classic';
+	$card_contents                = array( 'below', 'tile', 'hover-info', 'hover-overlay' );
+	$clean['card_content']         = in_array( $input['card_content'] ?? '', $card_contents, true ) ? $input['card_content'] : 'below';
 	$clean['shop_columns']      = max( 2, min( 5, absint( $input['shop_columns'] ?? 3 ) ) );
 	$clean['products_per_page'] = max( 4, min( 48, absint( $input['products_per_page'] ?? 12 ) ) );
 	$clean['related_count']     = max( 2, min( 8, absint( $input['related_count'] ?? 4 ) ) );
@@ -319,6 +332,8 @@ function orvio_render_settings_page() {
 						orvio_field_select( 'header_layout', orvio_t( 'Header layout', 'چیدمان هدر' ), $o, array(
 							'classic'  => orvio_t( 'Standard', 'استاندارد' ),
 							'centered' => orvio_t( 'Centered logo', 'لوگوی وسط' ),
+							'split'    => orvio_t( 'Split search', 'جستجوی دوطرفه' ),
+							'minimal'  => orvio_t( 'Minimal', 'مینیمال' ),
 						) );
 						orvio_field_check( 'sticky_header', orvio_t( 'Sticky header', 'هدر چسبان' ), $o );
 						orvio_field_color( 'header_bg', orvio_t( 'Background', 'پس‌زمینه' ), $o );
@@ -377,6 +392,9 @@ function orvio_render_settings_page() {
 					</div>
 				</section>
 				<section data-panel="footer" class="orvio-panel">
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Layout', 'چیدمان' ) ); ?></h2>
+						<?php orvio_field_select( 'footer_layout', orvio_t( 'Footer layout', 'چیدمان فوتر' ), $o, array( 'classic' => orvio_t( 'Classic', 'کلاسیک' ), 'centered' => orvio_t( 'Centered', 'مرکزی' ), 'minimal' => orvio_t( 'Minimal', 'مینیمال' ), 'editorial' => orvio_t( 'Editorial', 'ادیتوریال' ) ) ); ?>
+					</div>
 					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Footer', 'فوتر' ) ); ?></h2>
 						<?php
 						orvio_field_text( 'footer_about', orvio_t( 'About text', 'متن معرفی' ), $o );
@@ -408,6 +426,7 @@ function orvio_render_settings_page() {
 							'polaroid'  => orvio_t( 'Polaroid', 'پولاروید' ),
 							'magazine'  => orvio_t( 'Magazine', 'مجله‌ای' ),
 						) );
+						orvio_field_select( 'card_content', orvio_t( 'Product card content', 'چیدمان محتوای کارت کالا' ), $o, array( 'below' => orvio_t( 'Name, price and button below image', 'نام، قیمت و دکمه زیر تصویر' ), 'tile' => orvio_t( 'Tile', 'کاشی' ), 'hover-info' => orvio_t( 'Information on hover', 'اطلاعات در هاور' ), 'hover-overlay' => orvio_t( 'Overlay information on hover', 'اطلاعات روی تصویر در هاور' ) ) );
 						orvio_field_check( 'shop_sidebar', orvio_t( 'Filters', 'فیلترها' ), $o );
 						orvio_field_check( 'enable_wishlist', orvio_t( 'Wishlist', 'علاقه‌مندی' ), $o );
 						orvio_field_check( 'enable_quick_view', orvio_t( 'Quick add', 'افزودن سریع' ), $o );
@@ -423,6 +442,8 @@ function orvio_render_settings_page() {
 							'outline' => orvio_t( 'Outline', 'خطی' ),
 							'soft'    => orvio_t( 'Soft', 'نرم' ),
 						) );
+						orvio_field_select( 'atc_behavior', orvio_t( 'After add to cart', 'رفتار بعد از افزودن به سبد' ), $o, array( 'auto' => orvio_t( 'Theme default', 'پیش‌فرض قالب' ), 'ajax-stay' => orvio_t( 'Stay on page', 'ماندن در صفحه' ), 'cart' => orvio_t( 'Go to cart', 'انتقال به سبد' ), 'checkout' => orvio_t( 'Go to checkout', 'انتقال به تسویه حساب' ) ) );
+						orvio_field_select( 'atc_visual', orvio_t( 'Card add-to-cart visual', 'نمایش افزودن به سبد در کارت' ), $o, array( 'text' => orvio_t( 'Text', 'متن' ), 'icon' => orvio_t( 'Icon + text', 'آیکن و متن' ), 'hover' => orvio_t( 'Text on hover', 'متن در هاور' ), 'tile' => orvio_t( 'Tile below image', 'کاشی زیر تصویر' ), 'icon-only' => orvio_t( 'Icon only', 'فقط آیکن' ) ) );
 						orvio_field_select( 'product_layout', orvio_t( 'Single product layout', 'چیدمان صفحه محصول' ), $o, array(
 							'classic'       => orvio_t( 'Classic gallery', 'گالری کلاسیک' ),
 							'gallery-right' => orvio_t( 'Gallery right', 'گالری سمت راست' ),
@@ -641,12 +662,16 @@ function orvio_print_css_vars() {
 add_filter( 'body_class', 'orvio_body_classes' );
 function orvio_body_classes( $classes ) {
 	$o = orvio_settings();
-	if ( 'centered' === $o['header_layout'] ) {
+	$header_layout = in_array( $o['header_layout'], array( 'classic', 'centered', 'split', 'minimal' ), true ) ? $o['header_layout'] : 'classic';
+	$classes[] = 'orvio-header-layout-' . $header_layout;
+	if ( 'centered' === $header_layout ) {
 		$classes[] = 'orvio-h-centered';
 	}
 	if ( 'classic' !== $o['card_style'] ) {
 		$classes[] = 'orvio-cards-' . sanitize_html_class( $o['card_style'] );
 	}
+	$card_contents = array( 'below', 'tile', 'hover-info', 'hover-overlay' );
+	$classes[] = 'orvio-card-content-' . ( in_array( $o['card_content'], $card_contents, true ) ? $o['card_content'] : 'below' );
 	if ( empty( $o['sticky_summary'] ) ) {
 		$classes[] = 'orvio-summary-static';
 	}

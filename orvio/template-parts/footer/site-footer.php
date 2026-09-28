@@ -8,8 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 $o = orvio_settings();
+$footer_layouts = array( 'classic', 'centered', 'minimal', 'editorial' );
+$footer_layout  = ( isset( $args['layout'] ) && in_array( $args['layout'], $footer_layouts, true ) ) ? $args['layout'] : ( in_array( $o['footer_layout'], $footer_layouts, true ) ? $o['footer_layout'] : 'classic' );
 ?>
-<footer class="orvio-footer">
+<footer class="orvio-footer orvio-footer--<?php echo esc_attr( $footer_layout ); ?>">
 	<div class="orvio-container orvio-footer__grid">
 		<div class="orvio-footer__brand">
 			<a class="orvio-logo" href="<?php echo esc_url( home_url( '/' ) ); ?>" style="color:#fff"><?php echo orvio_logo_mark(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span class="orvio-logo__word"><strong><?php bloginfo( 'name' ); ?></strong></span></a>

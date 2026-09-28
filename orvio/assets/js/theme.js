@@ -48,6 +48,97 @@
     toast._t = setTimeout(function () { el.classList.remove("is-on"); }, 2400);
   }
 
+  function replaceWooFragments(fragments) {
+    if (!fragments) return;
+    Object.keys(fragments).forEach(function (selector) {
+      document.querySelectorAll(selector).forEach(function (oldNode) {
+        var holder = document.createElement("div");
+        holder.innerHTML = fragments[selector];
+        var fresh = holder.firstElementChild;
+        if (fresh) oldNode.replaceWith(fresh);
+      });
+    });
+  }
+
+  function afterCartAdd(button) {
+    var behavior = (button && button.getAttribute("data-orvio-atc-behavior")) || (window.OrvioData && OrvioData.atcBehavior) || "auto";
+    if (behavior === "checkout") {
+      window.location.href = (window.OrvioData && OrvioData.checkout) || "/checkout/";
+      return;
+    }
+    if (behavior === "cart" || (behavior === "auto" && window.OrvioData && OrvioData.cartType === "page")) {
+      window.location.href = (window.OrvioData && OrvioData.cart) || "/cart/";
+      return;
+    }
+    if (behavior === "ajax-stay") return;
+    openDrawer("cart");
+  }
+
+  function initCardAddToCart() {
+    document.addEventListener("click", function (e) {
+      var button = e.target.closest("[data-orvio-atc]");
+      if (!button || button.classList.contains("is-loading")) return;
+      e.preventDefault();
+      var params = window.wc_add_to_cart_params || {};
+      var endpoint = params.wc_ajax_url ? params.wc_ajax_url.replace("%%endpoint%%", "add_to_cart") : "";
+      if (!endpoint || !window.fetch) {
+        window.location.href = button.href;
+        return;
+      }
+      var quantity = parseFloat(button.getAttribute("data-quantity") || "1") || 1;
+      var productId = button.getAttribute("data-product_id");
+      button.classList.add("is-loading");
+      button.setAttribute("aria-busy", "true");
+      fetch(endpoint, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+        body: new URLSearchParams({ product_id: productId, quantity: String(quantity) }).toString()
+      }).then(function (response) { return response.json(); }).then(function (result) {
+        if (result.error && result.product_url) {
+          window.location.href = result.product_url;
+          return;
+        }
+        replaceWooFragments(result.fragments);
+        if (window.jQuery) {
+          window.jQuery(document.body).trigger("added_to_cart", [result.fragments || {}, result.cart_hash || "", button]);
+        } else {
+          afterCartAdd(button);
+        }
+      }).catch(function () {
+        window.location.href = button.href;
+      }).finally(function () {
+        button.classList.remove("is-loading");
+        button.removeAttribute("aria-busy");
+      });
+    });
+  }
+
+  function initSingleAddToCart() {
+    document.addEventListener("submit", function (e) {
+      var form = e.target.closest("form[data-orvio-single-atc]");
+      if (!form || form.classList.contains("variations_form") || form.classList.contains("is-loading")) return;
+      var params = window.wc_add_to_cart_params || {};
+      var endpoint = params.wc_ajax_url ? params.wc_ajax_url.replace("%%endpoint%%", "add_to_cart") : "";
+      if (!endpoint || !window.fetch) return;
+      e.preventDefault();
+      var body = new URLSearchParams();
+      new FormData(form).forEach(function (value, key) { body.append(key, value); });
+      body.set("product_id", form.getAttribute("data-product_id") || body.get("add-to-cart") || "");
+      form.classList.add("is-loading");
+      fetch(endpoint, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" }, body: body.toString() })
+        .then(function (response) { return response.json(); })
+        .then(function (result) {
+          if (result.error && result.product_url) { window.location.href = result.product_url; return; }
+          replaceWooFragments(result.fragments);
+          if (window.jQuery) window.jQuery(document.body).trigger("added_to_cart", [result.fragments || {}, result.cart_hash || "", form]);
+          else afterCartAdd(form);
+        })
+        .catch(function () { form.submit(); })
+        .finally(function () { form.classList.remove("is-loading"); });
+    });
+  }
+
   function initSticky() {
     var header = document.querySelector("[data-header]");
     if (!header) return;
@@ -212,8 +303,9 @@
   });
 
   if (window.jQuery) {
-    window.jQuery(document.body).on("added_to_cart", function () {
-      openDrawer("cart");
+    window.jQuery(document.body).on("added_to_cart", function (event, fragments, hash, button) {
+      replaceWooFragments(fragments);
+      afterCartAdd(button && button.jquery ? button[0] : button);
     });
   }
 
@@ -339,6 +431,8 @@
     initCarousel();
     initTimers();
     initGallery();
+    initCardAddToCart();
+    initSingleAddToCart();
     initCatMenu();
     if (!window.ORVIO_CATALOG && typeof renderWish === "function") renderWish();
     document.addEventListener("click", function (e) {

@@ -307,6 +307,24 @@ class Orvio_Widget_Products extends Orvio_Widget_Base {
 				'soft'    => orvio_t( 'Soft', 'نرم' ),
 			),
 		) );
+		$this->add_control( 'atc_visual', array(
+			'label'   => orvio_t( 'Add-to-cart visual', 'حالت نمایش افزودن به سبد' ),
+			'type'    => \Elementor\Controls_Manager::SELECT,
+			'default' => '',
+			'options' => array( '' => orvio_t( 'Theme default', 'پیش‌فرض قالب' ), 'text' => orvio_t( 'Text', 'متن' ), 'icon' => orvio_t( 'Icon + text', 'آیکن و متن' ), 'hover' => orvio_t( 'Text on hover', 'متن در هاور' ), 'tile' => orvio_t( 'Tile below image', 'کاشی زیر تصویر' ), 'icon-only' => orvio_t( 'Icon only', 'فقط آیکن' ) ),
+		) );
+		$this->add_control( 'atc_behavior', array(
+			'label'   => orvio_t( 'After add to cart', 'رفتار بعد از افزودن به سبد' ),
+			'type'    => \Elementor\Controls_Manager::SELECT,
+			'default' => '',
+			'options' => array( '' => orvio_t( 'Theme default', 'پیش‌فرض قالب' ), 'ajax-stay' => orvio_t( 'Stay on page', 'ماندن در صفحه' ), 'cart' => orvio_t( 'Go to cart', 'انتقال به سبد' ), 'checkout' => orvio_t( 'Go to checkout', 'انتقال به تسویه حساب' ) ),
+		) );
+		$this->add_control( 'card_content', array(
+			'label'   => orvio_t( 'Product information layout', 'چیدمان اطلاعات محصول' ),
+			'type'    => \Elementor\Controls_Manager::SELECT,
+			'default' => 'below',
+			'options' => array( 'below' => orvio_t( 'Name, price and button below image', 'نام، قیمت و دکمه زیر تصویر' ), 'tile' => orvio_t( 'Tile', 'کاشی' ), 'hover-info' => orvio_t( 'Information on hover', 'اطلاعات در هاور' ), 'hover-overlay' => orvio_t( 'Overlay information on hover', 'اطلاعات روی تصویر در هاور' ) ),
+		) );
 		$this->add_control( 'hover_effect', array(
 			'label'   => orvio_t( 'Card hover effect', 'افکت هاور کارت' ),
 			'type'    => \Elementor\Controls_Manager::SELECT,
@@ -477,9 +495,12 @@ class Orvio_Widget_Products extends Orvio_Widget_Base {
 		$hover  = in_array( $s['hover_effect'] ?? '', $hover_effects, true ) ? $s['hover_effect'] : 'lift';
 		$ratio  = in_array( $s['media_ratio'] ?? '', $media_ratios, true ) ? $s['media_ratio'] : 'square';
 		$card   = in_array( $s['card'] ?? '', array( 'classic', 'minimal', 'overlay', 'editorial', 'deal', 'polaroid', 'magazine' ), true ) ? $s['card'] : 'classic';
+		$content = in_array( $s['card_content'] ?? '', array( 'below', 'tile', 'hover-info', 'hover-overlay' ), true ) ? $s['card_content'] : 'below';
+		$visual = in_array( $s['atc_visual'] ?? '', array( 'text', 'icon', 'hover', 'tile', 'icon-only' ), true ) ? $s['atc_visual'] : '';
+		$behavior = in_array( $s['atc_behavior'] ?? '', array( 'ajax-stay', 'cart', 'checkout' ), true ) ? $s['atc_behavior'] : '';
 		$atc    = in_array( $s['atc'] ?? '', array( 'pill', 'block', 'outline', 'soft' ), true ) ? $s['atc'] : '';
 		$sale_end = ! empty( $s['sale_end'] ) ? $s['sale_end'] : ( $s['deal_end'] ?? '' );
-		$classes = array( 'orvio-section', 'orvio-el-products', 'orvio-cards-' . $card, 'orvio-products-layout-' . $layout, 'orvio-products-hover-' . $hover, 'orvio-products-ratio-' . $ratio );
+		$classes = array( 'orvio-section', 'orvio-el-products', 'orvio-cards-' . $card, 'orvio-products-layout-' . $layout, 'orvio-products-hover-' . $hover, 'orvio-products-ratio-' . $ratio, 'orvio-products-card-content-' . $content, 'orvio-products-atc-visual-' . ( $visual ?: 'theme' ) );
 		if ( $atc ) {
 			$classes[] = 'orvio-atc-' . $atc;
 		}
@@ -491,11 +512,11 @@ class Orvio_Widget_Products extends Orvio_Widget_Base {
 			}
 			echo '</div>';
 		}
-		$render_grid = function ( $items, $extra = '' ) use ( $s, $layout ) {
+		$render_grid = function ( $items, $extra = '' ) use ( $s, $content, $visual, $behavior ) {
 			$cols = max( 1, min( 6, (int) ( $s['columns'] ?? 4 ) ) );
 			echo '<div class="orvio-grid' . esc_attr( $extra ) . '" style="--cols:' . esc_attr( $cols ) . '">';
 			foreach ( $items as $product ) {
-				orvio_wc_card( $product );
+				orvio_wc_card( $product, array( 'card_content' => $content, 'atc_visual' => $visual, 'atc_behavior' => $behavior ) );
 			}
 			echo '</div>';
 		};
@@ -509,7 +530,7 @@ class Orvio_Widget_Products extends Orvio_Widget_Base {
 			}
 			echo '<div class="orvio-carousel__view"><div class="orvio-carousel__track">';
 			foreach ( $products as $product ) {
-				orvio_wc_card( $product );
+				orvio_wc_card( $product, array( 'card_content' => $content, 'atc_visual' => $visual, 'atc_behavior' => $behavior ) );
 			}
 			echo '</div></div>';
 			if ( empty( $s['car_dots'] ) || 'yes' === $s['car_dots'] ) {
@@ -519,7 +540,7 @@ class Orvio_Widget_Products extends Orvio_Widget_Base {
 		} elseif ( 'showcase' === $layout && ! empty( $products ) ) {
 			$featured = $products[0];
 			echo '<div class="orvio-products-showcase"><div class="orvio-products-showcase__feature">';
-			orvio_wc_card( $featured );
+			orvio_wc_card( $featured, array( 'card_content' => $content, 'atc_visual' => $visual, 'atc_behavior' => $behavior ) );
 			echo '</div><div class="orvio-products-showcase__grid-wrap">';
 			$render_grid( array_slice( $products, 1 ), ' orvio-products-showcase__grid' );
 			echo '</div></div>';
@@ -791,6 +812,8 @@ class Orvio_Widget_Header extends Orvio_Widget_Base {
 			'options' => array(
 				'classic'  => orvio_t( 'Standard', 'استاندارد' ),
 				'centered' => orvio_t( 'Centered logo', 'لوگوی وسط' ),
+				'split'    => orvio_t( 'Split search', 'جستجوی دوطرفه' ),
+				'minimal'  => orvio_t( 'Minimal', 'مینیمال' ),
 			),
 		) );
 		$this->add_control( 'cart_style', array( 'label' => orvio_t( 'Cart button preset', 'قالب دکمه سبد' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'pill', 'options' => array( 'minimal' => orvio_t( 'Minimal', 'مینیمال' ), 'pill' => orvio_t( 'Pill', 'گرد' ), 'solid' => orvio_t( 'Solid', 'پر' ), 'outline' => orvio_t( 'Outline', 'خطی' ), 'soft' => orvio_t( 'Soft', 'نرم' ) ) ) );
@@ -823,8 +846,10 @@ class Orvio_Widget_Header extends Orvio_Widget_Base {
 			'show_cats'    => 'is-hide-cats',
 			'show_bar'     => 'is-hide-announce',
 		);
-		$classes = array( 'orvio-el-header' );
-		if ( 'centered' === ( $s['layout'] ?? '' ) ) {
+		$header_layouts = array( 'classic', 'centered', 'split', 'minimal' );
+		$header_layout  = in_array( $s['layout'] ?? '', $header_layouts, true ) ? $s['layout'] : 'classic';
+		$classes = array( 'orvio-el-header', 'orvio-el-header-layout-' . $header_layout );
+		if ( 'centered' === $header_layout ) {
 			$classes[] = 'orvio-h-centered';
 		}
 		foreach ( $map as $key => $class ) {
@@ -836,7 +861,7 @@ class Orvio_Widget_Header extends Orvio_Widget_Base {
 		$classes[] = 'orvio-header-cart-' . ( in_array( $s['cart_style'] ?? '', $header_styles, true ) ? $s['cart_style'] : 'pill' );
 		$classes[] = 'orvio-header-account-' . ( in_array( $s['account_style'] ?? '', $header_styles, true ) ? $s['account_style'] : 'minimal' );
 		echo '<div class="' . esc_attr( implode( ' ', $classes ) ) . '">';
-		get_template_part( 'template-parts/header/site-header' );
+		get_template_part( 'template-parts/header/site-header', null, array( 'layout' => $header_layout ) );
 		echo '</div>';
 	}
 }
@@ -847,12 +872,16 @@ class Orvio_Widget_Footer extends Orvio_Widget_Base {
 	public function get_icon() { return 'eicon-footer'; }
 	protected function register_controls() {
 		$this->start_controls_section( 's', array( 'label' => orvio_t( 'Footer elements', 'المان‌های فوتر' ) ) );
+		$this->add_control( 'layout', array( 'label' => orvio_t( 'Footer layout', 'چیدمان فوتر' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'classic', 'options' => array( 'classic' => orvio_t( 'Classic', 'کلاسیک' ), 'centered' => orvio_t( 'Centered', 'مرکزی' ), 'minimal' => orvio_t( 'Minimal', 'مینیمال' ), 'editorial' => orvio_t( 'Editorial', 'ادیتوریال' ) ) ) );
 		$this->add_control( 'note', array( 'type' => \Elementor\Controls_Manager::RAW_HTML, 'raw' => esc_html( orvio_t( 'Columns, newsletter text and payment marks come from Orvio settings.', 'ستون‌ها، متن و نشان پرداخت از تنظیمات اُرویو می‌آیند.' ) ) ) );
 		$this->end_controls_section();
 		$this->orvio_register_style();
 	}
 	protected function render() {
-		get_template_part( 'template-parts/footer/site-footer' );
+		$settings = $this->get_settings_for_display();
+		$layouts  = array( 'classic', 'centered', 'minimal', 'editorial' );
+		$layout   = in_array( $settings['layout'] ?? '', $layouts, true ) ? $settings['layout'] : 'classic';
+		get_template_part( 'template-parts/footer/site-footer', null, array( 'layout' => $layout ) );
 	}
 }
 
