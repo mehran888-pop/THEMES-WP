@@ -108,7 +108,7 @@ function orvio_ajax_update_cart_item() {
 	$fragments = array(
 		'div.orvio-minicart'                  => '<div class="orvio-drawer__body orvio-minicart">' . $mini . '</div>',
 		'span.orvio-count[data-cart-count]'   => '<span class="orvio-count' . ( $count ? '' : ' is-zero' ) . '" data-cart-count>' . esc_html( (string) $count ) . '</span>',
-		'span.orvio-cartbtn__total'           => '<span class="orvio-cartbtn__total" data-cart-total>' . WC()->cart->get_cart_subtotal() . '</span>',
+		'.orvio-cartbtn__total[data-cart-total]'     => '<span class="orvio-cartbtn__total" data-cart-total>' . WC()->cart->get_cart_subtotal() . '</span>',
 	);
 	wp_send_json( array( 'fragments' => $fragments ) );
 }

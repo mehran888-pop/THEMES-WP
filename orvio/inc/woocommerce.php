@@ -158,7 +158,7 @@ function orvio_cart_fragments( $fragments ) {
 	$mini = ob_get_clean();
 	$fragments['div.orvio-minicart'] = '<div class="orvio-drawer__body orvio-minicart">' . $mini . '</div>';
 	$fragments['span.orvio-count[data-cart-count]'] = '<span class="orvio-count' . ( $count ? '' : ' is-zero' ) . '" data-cart-count>' . esc_html( (string) $count ) . '</span>';
-	$fragments['span.orvio-cartbtn__total'] = '<span class="orvio-cartbtn__total" data-cart-total>' . ( WC()->cart ? WC()->cart->get_cart_subtotal() : '' ) . '</span>';
+	$fragments['.orvio-cartbtn__total[data-cart-total]'] = '<span class="orvio-cartbtn__total" data-cart-total>' . ( WC()->cart ? WC()->cart->get_cart_subtotal() : '' ) . '</span>';
 	return $fragments;
 }
 
