@@ -93,8 +93,10 @@ function orvio_defaults() {
 		'mobile_nav_icon_size'     => '',
 		'mobile_nav_active_style'  => 'soft',
 		'mobile_nav_items'         => orvio_mobile_nav_defaults(),
-		'shop_columns'       => 3,
-		'products_per_page'  => 12,
+		'shop_columns'           => 3,
+		'shop_columns_desktop'   => 3,
+		'shop_columns_mobile'    => 2,
+		'products_per_page'      => 12,
 		'shop_layout'        => 'sidebar-grid',
 		'card_style'         => 'classic',
 		'card_content'       => 'below',
@@ -139,7 +141,15 @@ function orvio_settings() {
 	if ( ! is_array( $saved ) ) {
 		$saved = array();
 	}
-	return wp_parse_args( $saved, orvio_defaults() );
+	$settings = wp_parse_args( $saved, orvio_defaults() );
+	/* Migrate the original single shop column setting to the desktop value. */
+	if ( ! array_key_exists( 'shop_columns_desktop', $saved ) && isset( $saved['shop_columns'] ) ) {
+		$settings['shop_columns_desktop'] = max( 2, min( 6, absint( $saved['shop_columns'] ) ) );
+	}
+	if ( ! array_key_exists( 'shop_columns_mobile', $saved ) ) {
+		$settings['shop_columns_mobile'] = 2;
+	}
+	return $settings;
 }
 
 function orvio_opt( $key, $fallback = null ) {
@@ -243,7 +253,12 @@ function orvio_sanitize_settings( $input ) {
 	$clean['card_style']           = in_array( $input['card_style'] ?? '', $card_styles, true ) ? $input['card_style'] : 'classic';
 	$card_contents                = array( 'below', 'tile', 'hover-info', 'hover-overlay' );
 	$clean['card_content']         = in_array( $input['card_content'] ?? '', $card_contents, true ) ? $input['card_content'] : 'below';
-	$clean['shop_columns']      = max( 2, min( 5, absint( $input['shop_columns'] ?? 3 ) ) );
+	$desktop_columns = absint( $input['shop_columns_desktop'] ?? ( $input['shop_columns'] ?? 3 ) );
+	$mobile_columns  = absint( $input['shop_columns_mobile'] ?? 2 );
+	$clean['shop_columns_desktop'] = max( 2, min( 6, $desktop_columns ) );
+	$clean['shop_columns_mobile']  = max( 1, min( 4, $mobile_columns ) );
+	/* Keep the original key as a backward-compatible desktop alias. */
+	$clean['shop_columns']      = $clean['shop_columns_desktop'];
 	$clean['products_per_page'] = max( 4, min( 48, absint( $input['products_per_page'] ?? 12 ) ) );
 	$clean['related_count']     = max( 2, min( 8, absint( $input['related_count'] ?? 4 ) ) );
 	$clean['free_shipping']     = max( 0, absint( $input['free_shipping'] ?? 0 ) );
@@ -451,7 +466,8 @@ function orvio_render_settings_page() {
 				<section data-panel="shop" class="orvio-panel">
 					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Shop', 'فروشگاه' ) ); ?></h2>
 						<?php
-						orvio_field_number( 'shop_columns', orvio_t( 'Columns', 'ستون‌ها' ), $o, 2, 5 );
+						orvio_field_number( 'shop_columns_desktop', orvio_t( 'Desktop columns', 'ستون‌های دسکتاپ' ), $o, 2, 6 );
+						orvio_field_number( 'shop_columns_mobile', orvio_t( 'Mobile columns', 'ستون‌های موبایل' ), $o, 1, 4 );
 						orvio_field_number( 'products_per_page', orvio_t( 'Per page', 'تعداد در صفحه' ), $o, 4, 48 );
 						orvio_field_select( 'shop_layout', orvio_t( 'Shop layout', 'چیدمان فروشگاه' ), $o, array(
 							'sidebar-grid' => orvio_t( 'Sidebar + grid', 'سایدبار و شبکه' ),
@@ -730,7 +746,9 @@ function orvio_print_css_vars() {
 	$o    = orvio_settings();
 	$body = orvio_font_stack( $o['body_font'] );
 	$head = orvio_font_stack( $o['heading_font'] );
-	$css  = ':root{--accent:' . $o['accent'] . ';--accent-dark:' . $o['accent'] . ';--bg:' . $o['bg'] . ';--ink:' . $o['ink'] . ';--dark:' . $o['dark'] . ';--radius:' . intval( $o['radius'] ) . 'px;--radius-sm:' . max( 4, intval( $o['radius'] ) - 4 ) . 'px;--container:' . intval( $o['container'] ) . 'px;--cols:' . intval( $o['shop_columns'] ) . ';--font:' . $body . ';--display:' . $head . ';--header-bg:' . $o['header_bg'] . ';--header-ink:' . $o['header_ink'] . ';--menu-size:' . intval( $o['menu_size'] ) . 'px;}';
+	$shop_desktop = max( 2, min( 6, absint( $o['shop_columns_desktop'] ?? ( $o['shop_columns'] ?? 3 ) ) ) );
+	$shop_mobile  = max( 1, min( 4, absint( $o['shop_columns_mobile'] ?? 2 ) ) );
+	$css  = ':root{--accent:' . $o['accent'] . ';--accent-dark:' . $o['accent'] . ';--bg:' . $o['bg'] . ';--ink:' . $o['ink'] . ';--dark:' . $o['dark'] . ';--radius:' . intval( $o['radius'] ) . 'px;--radius-sm:' . max( 4, intval( $o['radius'] ) - 4 ) . 'px;--container:' . intval( $o['container'] ) . 'px;--cols:' . $shop_desktop . ';--orvio-shop-cols-desktop:' . $shop_desktop . ';--orvio-shop-cols-mobile:' . $shop_mobile . ';--font:' . $body . ';--display:' . $head . ';--header-bg:' . $o['header_bg'] . ';--header-ink:' . $o['header_ink'] . ';--menu-size:' . intval( $o['menu_size'] ) . 'px;}';
 	$css .= 'body{font-size:' . intval( $o['font_size'] ) . 'px;}';
 	$css .= 'h1,h2,h3,h4,.orvio-logo__word strong{font-family:var(--display);}';
 	$css .= '.orvio-header,.orvio-catbar{background:var(--header-bg);color:var(--header-ink);}';

@@ -245,8 +245,9 @@ function orvio_wc_card( $product = null, $args = array() ) {
 }
 
 add_filter( 'woocommerce_product_loop_start', function () {
-	$cols = (int) orvio_opt( 'shop_columns', 3 );
-	return '<div class="orvio-grid products" style="--cols:' . $cols . '">';
+	$desktop = max( 2, min( 6, (int) orvio_opt( 'shop_columns_desktop', orvio_opt( 'shop_columns', 3 ) ) ) );
+	$mobile  = max( 1, min( 4, (int) orvio_opt( 'shop_columns_mobile', 2 ) ) );
+	return '<div class="orvio-grid products" style="--cols:' . $desktop . ';--orvio-shop-cols-desktop:' . $desktop . ';--orvio-shop-cols-mobile:' . $mobile . '">';
 } );
 add_filter( 'woocommerce_product_loop_end', function () {
 	return '</div>';
