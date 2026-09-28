@@ -731,6 +731,7 @@ function orvio_body_classes( $classes ) {
 		}
 	}
 	if ( function_exists( 'is_account_page' ) && is_account_page() ) {
+		$classes[] = 'orvio-account-fullscreen';
 		$account_layouts = array( 'saas' );
 		$account_styles  = array( 'saas' );
 		$classes[] = 'orvio-account-layout-' . ( in_array( $o['account_layout'], $account_layouts, true ) ? $o['account_layout'] : 'saas' );
