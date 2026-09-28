@@ -2387,16 +2387,25 @@ body.orvio-account-style-saas .orvio-account__nav .orvio-account-nav__links a::b
 body.orvio-account-style-saas .orvio-account__nav .orvio-account-nav__edit::before,
 .orvio-account--style-saas .orvio-account__nav .orvio-account-nav__edit::before { display: none; }
 @media (max-width: 980px) {
+  /* Keep the account menu as a narrow vertical rail beside the mobile content. */
   body.orvio-account-layout-saas .orvio-account,
-  .orvio-account--layout-saas { grid-template-columns: 1fr; gap: 16px; }
-  .orvio-account__nav[data-account-nav] { display: block; background: transparent; border: 0; border-radius: 0; box-shadow: none; }
-  .orvio-account__nav[data-account-nav] .orvio-account-nav__profile,
-  .orvio-account__nav[data-account-nav] .orvio-account-nav__drawer-head,
-  .orvio-account__nav[data-account-nav] .orvio-account-nav__photo-tools { display: none; }
-  .orvio-account__nav[data-account-nav] .orvio-account-nav__links { display: flex; justify-content: center; gap: 7px; }
-  .orvio-account__nav[data-account-nav] .orvio-account-nav__links a { display: inline-flex; width: 44px; height: 44px; min-height: 44px; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--account-saas-line); border-radius: 13px; background: #fff; box-shadow: 0 5px 14px rgba(35,52,86,.05); }
-  .orvio-account__nav[data-account-nav] .orvio-account-nav__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .orvio-account__nav[data-account-nav].is-open { position: fixed; z-index: 80; inset-block: 0; inset-inline-start: 0; width: min(360px, calc(100vw - 28px)); max-width: 100%; overflow-y: auto; padding: 16px; border: 1px solid var(--account-saas-line); border-radius: 0 22px 22px 0; background: #fff; box-shadow: 0 18px 60px rgba(21,34,70,.2); }
+  .orvio-account--layout-saas { grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: start; }
+  .orvio-account-nav-wrap { display: contents; }
+  .orvio-account-nav-mobile { grid-column: 1; grid-row: 1; position: sticky; top: 76px; z-index: 4; display: flex; width: 64px; flex-direction: column; align-items: center; gap: 9px; margin: 0; padding: 8px 6px; border: 1px solid var(--account-saas-line); border-radius: 18px; background: #fff; box-shadow: 0 8px 22px rgba(35,52,86,.08); }
+  .orvio-account-nav-mobile__identity { display: block; min-width: 0; }
+  .orvio-account-nav-mobile__identity > div:last-child { display: none; }
+  .orvio-account-nav-mobile__avatar { display: inline-grid; width: 48px; height: 48px; padding: 0; place-items: center; border: 0; border-radius: 13px; background: transparent; cursor: pointer; }
+  .orvio-account-nav-mobile__avatar img { width: 48px; height: 48px; border-radius: 13px; }
+  .orvio-account-nav-mobile__links { display: flex; flex-direction: column; align-items: center; gap: 6px; width: auto; }
+  .orvio-account-nav-mobile__links a { display: inline-flex; width: 44px; height: 44px; align-items: center; justify-content: center; border: 1px solid var(--account-saas-line); border-radius: 13px; background: #fff; color: var(--account-saas-muted); box-shadow: 0 4px 12px rgba(35,52,86,.04); }
+  .orvio-account-nav-mobile__links a.is-on { border-color: #d2dcff; background: #eef2ff; color: var(--account-saas-primary-dark); }
+  .orvio-account-nav-mobile__icon { display: inline-flex; }
+  .orvio-account-nav-mobile__icon svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .orvio-account-nav-mobile__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .orvio-account__content { grid-column: 2; grid-row: 1; min-width: 0; }
+
+  .orvio-account__nav[data-account-nav] { display: none; }
+  .orvio-account__nav[data-account-nav].is-open { position: fixed; z-index: 80; inset-block: 0; inset-inline-start: 0; display: block; width: min(360px, calc(100vw - 28px)); max-width: 100%; overflow-y: auto; padding: 16px; border: 1px solid var(--account-saas-line); border-radius: 0 22px 22px 0; background: #fff; box-shadow: 0 18px 60px rgba(21,34,70,.2); }
   html[dir="rtl"] .orvio-account__nav[data-account-nav].is-open { inset-inline-start: auto; inset-inline-end: 0; border-radius: 22px 0 0 22px; }
   .orvio-account__nav[data-account-nav].is-open .orvio-account-nav__drawer-head { display: flex; }
   .orvio-account__nav[data-account-nav].is-open .orvio-account-nav__profile { display: grid; }
