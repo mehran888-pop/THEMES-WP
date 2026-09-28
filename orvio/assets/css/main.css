@@ -3001,3 +3001,28 @@ body.orvio-cart-layout-saas-compact .orvio-cart-item__remove {
   width: 100%;
   margin-top: 6px;
 }
+
+/* Give the cart page a small, consistent breathing room on both inline edges. */
+.orvio-cartpage {
+  box-sizing: border-box;
+  padding-inline: 5px;
+}
+
+/* Slightly roomier drawer quantity controls for touch screens and mouse use. */
+.orvio-drawer--cart .orvio-mini-cart-qty {
+  min-height: 34px;
+  gap: 2px;
+  padding-inline: 4px;
+}
+.orvio-drawer--cart .orvio-mini-cart-qty button {
+  width: 31px;
+  height: 31px;
+  font-size: 20px;
+}
+.orvio-drawer--cart .orvio-mini-cart-qty input[type="number"] {
+  width: 38px;
+  min-width: 34px;
+  max-width: 44px;
+  height: 31px;
+  font-size: 13px;
+}
