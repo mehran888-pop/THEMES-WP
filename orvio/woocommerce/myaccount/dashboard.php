@@ -33,6 +33,7 @@ $member_since  = $current->user_registered ? date_i18n( get_option( 'date_format
 		<div class="orvio-account-alert orvio-account-alert--error" role="alert"><?php echo esc_html( orvio_t( 'Please choose a valid image under 5 MB.', 'یک تصویر معتبر با حجم کمتر از ۵ مگابایت انتخاب کنید.' ) ); ?></div>
 	<?php endif; ?>
 
+	<div class="orvio-dashboard__layout">
 	<section class="orvio-profile-card" aria-labelledby="orvio-profile-title">
 		<div class="orvio-profile-card__wash" aria-hidden="true"></div>
 		<div class="orvio-profile-card__top">
@@ -82,6 +83,7 @@ $member_since  = $current->user_registered ? date_i18n( get_option( 'date_format
 		</div>
 	</section>
 
+	<div class="orvio-dashboard__main">
 	<div class="orvio-dashboard__section-head">
 		<div><p class="orvio-eyebrow"><?php echo esc_html( orvio_t( 'Your overview', 'نمای کلی حساب' ) ); ?></p><h3><?php echo esc_html( orvio_t( 'Everything in one place', 'همه‌چیز در یک نگاه' ) ); ?></h3></div>
 		<a class="orvio-text-link" href="<?php echo esc_url( wc_get_account_endpoint_url( 'orders' ) ); ?>"><?php echo esc_html( orvio_t( 'View all orders', 'مشاهده همه سفارش‌ها' ) ); ?> <span aria-hidden="true">←</span></a>
@@ -115,4 +117,6 @@ $member_since  = $current->user_registered ? date_i18n( get_option( 'date_format
 			<div class="orvio-empty orvio-empty--dashboard"><strong><?php echo esc_html( orvio_t( 'Your next order starts here.', 'سفارش بعدی شما از اینجا شروع می‌شود.' ) ); ?></strong><p><?php echo esc_html( orvio_t( 'Explore the collection and save your favorites.', 'کالکشن را ببینید و علاقه‌مندی‌های خود را ذخیره کنید.' ) ); ?></p><a class="orvio-btn orvio-btn--dark orvio-btn--sm" href="<?php echo esc_url( orvio_shop_url() ); ?>"><?php echo esc_html( orvio_t( 'Explore shop', 'مشاهده فروشگاه' ) ); ?></a></div>
 		<?php endif; ?>
 	</section>
+	</div>
+	</div>
 </div>
