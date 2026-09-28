@@ -71,6 +71,7 @@
       couponBad: "این کد معتبر نیست.",
       discount: "تخفیف",
       shipping: "ارسال",
+      tax: "مالیات",
       total: "مبلغ قابل پرداخت",
       place: "ثبت سفارش",
       notes: "یادداشت سفارش",
@@ -191,6 +192,7 @@
       couponBad: "That code is not valid.",
       discount: "Discount",
       shipping: "Shipping",
+      tax: "Tax",
       total: "Total",
       place: "Place order",
       notes: "Order note",
@@ -381,6 +383,12 @@
     if (code === "DEMO10") return Math.round(subtotal() * 0.1);
     return 0;
   }
+  function taxAmount() {
+    return Math.round(Math.max(0, subtotal() - discountAmount()) * 0.09);
+  }
+  function taxAmountUsd() {
+    return Math.round(Math.max(0, subtotalUsd() - (localStorage.getItem(COUPON_KEY) === "DEMO10" ? subtotalUsd() * 0.1 : 0)) * 0.09 * 100) / 100;
+  }
   function shipCost(method) {
     var base = subtotal() - discountAmount();
     if (method === "express") return lang() === "en" ? 12 : 149000;
@@ -510,19 +518,22 @@
     }
     var disc = discountAmount();
     var ship = shipCost("standard");
-    var total = subtotal() - disc + ship;
-    var totalUsd = subtotalUsd() - (localStorage.getItem(COUPON_KEY) === "DEMO10" ? Math.round(subtotalUsd() * 0.1) : 0) + (ship ? (lang() === "en" ? ship : 6) : 0);
+    var tax = taxAmount();
+    var taxUsd = taxAmountUsd();
+    var total = subtotal() - disc + ship + tax;
+    var totalUsd = subtotalUsd() - (localStorage.getItem(COUPON_KEY) === "DEMO10" ? Math.round(subtotalUsd() * 0.1) : 0) + (ship ? (lang() === "en" ? ship : 6) : 0) + taxUsd;
     root.innerHTML =
       '<div class="orvio-cartpage"><div class="orvio-panel"><h2 style="font-size:20px;letter-spacing:0;margin-bottom:6px">' + esc(t("cart")) + "</h2>" + items.map(function (i) {
         var p = byId(i.id);
         if (!p) return "";
         var key = lineKey(i);
-        return '<article class="orvio-cart-item"><a href="product.html?id=' + p.id + '"><img src="' + p.img + '" alt=""></a><div><h3><a href="product.html?id=' + p.id + '">' + esc(nameOf(p)) + "</a></h3><div class=\"orvio-line__meta\">" + esc([i.color, i.size].filter(Boolean).join(" · ")) + '</div><div class="orvio-qty" style="margin-top:8px"><button type="button" data-qty="minus" data-line="' + esc(key) + '">−</button><input value="' + i.qty + '" data-line-input="' + esc(key) + '"><button type="button" data-qty="plus" data-line="' + esc(key) + '">+</button></div><button class="orvio-line__remove" data-remove="' + esc(key) + '">' + esc(t("remove")) + "</button></div><strong>" + money(p.price * i.qty, p.usd * i.qty) + "</strong></article>";
+        return '<article class="orvio-cart-item"><a href="product.html?id=' + p.id + '"><img src="' + p.img + '" alt=""></a><div class="orvio-cart-item__content"><div class="orvio-cart-item__top"><h3><a href="product.html?id=' + p.id + '">' + esc(nameOf(p)) + "</a></h3><div class=\"orvio-qty\"><button type=\"button\" data-qty=\"minus\" data-line=\"' + esc(key) + '\">−</button><input value=\"' + i.qty + '\" data-line-input=\"' + esc(key) + '\"><button type=\"button\" data-qty=\"plus\" data-line=\"' + esc(key) + '\">+</button></div></div><div class=\"orvio-line__meta\">" + esc([i.color, i.size].filter(Boolean).join(" · ")) + '</div><button class="orvio-line__remove" data-remove="' + esc(key) + '">' + esc(t("remove")) + "</button></div><strong>" + money(p.price * i.qty, p.usd * i.qty) + "</strong></article>";
       }).join("") + "</div>" +
       '<aside class="orvio-panel"><h2 style="font-size:18px;letter-spacing:0">' + esc(t("invoice")) + '</h2><div class="orvio-coupon"><input id="coupon-code" placeholder="DEMO10" aria-label="coupon"><button class="orvio-btn orvio-btn--dark orvio-btn--sm" data-coupon>' + esc(t("applyCoupon")) + "</button></div>" +
       '<div class="orvio-sum-row"><span>' + esc(t("subtotal")) + "</span><strong>" + money(subtotal(), subtotalUsd()) + "</strong></div>" +
       (disc ? '<div class="orvio-sum-row"><span>' + esc(t("discount")) + "</span><strong>−" + money(disc, Math.round(subtotalUsd() * 0.1)) + "</strong></div>" : "") +
       '<div class="orvio-sum-row"><span>' + esc(t("shipping")) + "</span><strong>" + (ship ? money(ship, lang() === "en" ? ship : 6) : esc(t("free"))) + "</strong></div>" +
+      '<div class="orvio-sum-row"><span>' + esc(t("tax")) + "</span><strong>" + money(tax, taxUsd) + "</strong></div>" +
       '<div class="orvio-sum-row orvio-sum-row--total"><span>' + esc(t("total")) + "</span><span>" + money(total, lang() === "en" ? totalUsd : Math.round(total / 45000)) + '</span></div><a class="orvio-btn orvio-btn--primary orvio-btn--full" href="checkout.html">' + esc(t("checkout")) + '</a><p class="orvio-note" style="margin-top:8px">' + esc(t("shipFree")) + "</p></aside></div>" +
       '<section class="orvio-section"><div class="orvio-section__head"><h2>' + esc(t("related")) + '</h2></div><div class="orvio-grid" style="--cols:4">' + CATALOG.slice(0, 4).map(card).join("") + "</div></section>";
     var fillNote = root.querySelector(".orvio-note");
@@ -574,7 +585,8 @@
     var method = (document.querySelector('input[name="ship"]:checked') || {}).value || "standard";
     var disc = discountAmount();
     var ship = shipCost(method);
-    var total = subtotal() - disc + ship;
+    var tax = taxAmount();
+    var total = subtotal() - disc + ship + tax;
     document.querySelectorAll("[data-ship-price]").forEach(function (el) {
       var c = shipCost(el.getAttribute("data-ship-price"));
       el.textContent = c ? money(c, lang() === "en" ? c : Math.max(2, Math.round(c / 45000))) : t("free");
@@ -585,6 +597,7 @@
       return '<div class="orvio-sum-row"><span>' + esc(nameOf(p)) + " × " + (lang() === "fa" ? faDigits(i.qty) : i.qty) + "</span><strong>" + money(p.price * i.qty, p.usd * i.qty) + "</strong></div>";
     }).join("") +
       '<div class="orvio-sum-row"><span>' + esc(t("shipping")) + "</span><strong>" + (ship ? money(ship, lang() === "en" ? ship : 6) : esc(t("free"))) + "</strong></div>" +
+      '<div class="orvio-sum-row"><span>' + esc(t("tax")) + "</span><strong>" + money(tax, taxAmountUsd()) + "</strong></div>" +
       (disc ? '<div class="orvio-sum-row"><span>' + esc(t("discount")) + "</span><strong>−" + money(disc, Math.round(subtotalUsd() * 0.1)) + "</strong></div>" : "") +
       '<div class="orvio-sum-row orvio-sum-row--total"><span>' + esc(t("total")) + "</span><span>" + money(total, lang() === "en" ? Math.round(total / 45) : Math.round(total / 45000)) + "</span></div>" +
       '<button class="orvio-btn orvio-btn--primary orvio-btn--full" type="submit">' + esc(t("place")) + "</button>";
@@ -811,7 +824,8 @@
       var method = data.get("ship") || "standard";
       var disc = discountAmount();
       var ship = shipCost(method);
-      var total = subtotal() - disc + ship;
+      var tax = taxAmount();
+      var total = subtotal() - disc + ship + tax;
       var order = {
         no: String(2400 + Math.floor(Math.random() * 500)),
         date: new Date().toLocaleDateString(lang() === "fa" ? "fa-IR" : "en-GB"),

@@ -1506,6 +1506,16 @@ html[dir="rtl"] .orvio-banner--overlay::after { background: linear-gradient(270d
 }
 .orvio-cart-item img { width: 96px; height: 96px; object-fit: cover; border-radius: 14px; }
 .orvio-cart-item h3 { font-size: 16px; letter-spacing: 0; font-weight: 750; }
+.orvio-cart-item__content { min-width: 0; }
+.orvio-cart-item__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; }
+.orvio-cart-item__top h3 { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.orvio-cart-item__top .orvio-qty { flex: 0 0 auto; height: 36px; }
+.orvio-cart-item__top .quantity { display: inline-flex; flex: 0 0 auto; align-items: center; min-height: 36px; margin: 0; padding: 0 5px; border: 1px solid var(--line-strong); border-radius: 999px; background: #fff; }
+.orvio-cart-item__top .quantity .qty { width: 34px; min-height: 30px; padding: 0; border: 0; background: transparent; text-align: center; font-weight: 750; }
+.orvio-cart-item__top .orvio-qty button { width: 30px; height: 36px; font-size: 16px; }
+.orvio-cart-item__top .orvio-qty input { width: 28px; }
+.orvio-cart-item__content > .orvio-line__meta { margin-top: 6px; }
+.orvio-cart-item__content > .orvio-line__remove { display: inline-block; margin-top: 7px; }
 .orvio-sum-row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; font-size: 14px; }
 .orvio-sum-row--total { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 12px; font-size: 16px; font-weight: 800; }
 .orvio-coupon { display: flex; gap: 8px; margin-top: 8px; }
@@ -2465,6 +2475,12 @@ body.orvio-account-style-saas .orvio-profile-form__footer .orvio-btn,
   body.orvio-cart-layout-saas-bento .orvio-cartpage { grid-template-columns: 1fr; }
   body.orvio-cart-style-saas .cart-collaterals { position: static; max-width: none; width: auto; margin-inline-start: 0; }
   body.orvio-cart-layout-saas-bento .orvio-cartpage { grid-template-areas: "items" "totals"; }
+}
+@media (max-width: 720px) {
+  body.orvio-cart-style-saas .orvio-cart-item,
+  body.orvio-cart-layout-saas-bento .orvio-cart-item,
+  body.orvio-cart-layout-saas-compact .orvio-cart-item { grid-template-columns: 76px minmax(0, 1fr); align-items: start; }
+  body.orvio-cart-style-saas .orvio-cart-item > strong { grid-column: 2; justify-self: start; }
 }
 @media (max-width: 600px) {
   body.orvio-cart-style-saas .orvio-cart-item,

@@ -296,7 +296,7 @@ def header():
       <button type="button" class="orvio-tool orvio-lang" data-lang>EN</button>
       <a class="orvio-tool" href="account.html"><span class="orvio-tool__icon">{SVG["user"]}</span><span class="orvio-tool__label" data-i18n="account">حساب</span></a>
       <button type="button" class="orvio-tool" data-open="wish"><span class="orvio-tool__icon">{SVG["heart"]}<span class="orvio-count is-zero" data-wish-count>0</span></span><span class="orvio-tool__label" data-i18n="wish">علاقه‌مندی</span></button>
-      <button type="button" class="orvio-tool orvio-cartbtn" data-open="cart"><span class="orvio-tool__icon">{SVG["bag"]}<span class="orvio-count is-zero" data-cart-count>0</span></span><span class="orvio-tool__meta"><span class="orvio-tool__label" data-i18n="cart">سبد</span><span class="orvio-cartbtn__total" data-cart-total>۰</span></span></button>
+      <a class="orvio-tool orvio-cartbtn" href="cart.html" data-open="cart" aria-controls="orvio-cart-drawer" aria-expanded="false"><span class="orvio-tool__icon">{SVG["bag"]}<span class="orvio-count is-zero" data-cart-count>0</span></span><span class="orvio-tool__meta"><span class="orvio-tool__label" data-i18n="cart">سبد</span><span class="orvio-cartbtn__total" data-cart-total>۰</span></span></a>
     </div>
   </div>
   <div class="orvio-searchpanel" data-searchpanel>
@@ -320,7 +320,7 @@ def header():
     </div>
   </nav>
 </header>
-<div class="orvio-overlay" data-overlay></div>
+<div class="orvio-overlay" data-overlay data-cart-overlay="dim"></div>
 <aside class="orvio-drawer orvio-drawer--menu" data-drawer="menu" aria-hidden="true">
   <div class="orvio-drawer__head"><h2 data-i18n="menu">منو</h2><button type="button" class="orvio-drawer__x" data-close aria-label="بستن">×</button></div>
   <div class="orvio-drawer__body">
@@ -339,7 +339,7 @@ def header():
     </div>
   </div>
 </aside>
-<aside class="orvio-drawer orvio-drawer--cart" data-drawer="cart" aria-hidden="true">
+<aside class="orvio-drawer orvio-drawer--cart orvio-drawer--side-right orvio-drawer--style-saas" data-drawer="cart" aria-hidden="true">
   <div class="orvio-drawer__head"><h2 data-i18n="cart">سبد</h2><button type="button" class="orvio-drawer__x" data-close>×</button></div>
   <div class="orvio-shipbar"><div class="orvio-shipbar__track"><span data-ship-fill></span></div><p data-ship-text></p></div>
   <div class="orvio-drawer__body" data-cart-items></div>
@@ -445,9 +445,9 @@ def shell(page, title, body, extra=""):
   <title>{e(title)}</title>
   <meta name="description" content="Orvio — قالب فروشگاهی ووکامرس با پشتیبانی المنتور">
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/main.css?v=4">
+  <link rel="stylesheet" href="assets/css/main.css?v=5">
 </head>
-<body class="orvio-body" data-page="{page}">
+<body class="orvio-body{' orvio-cart-style-saas orvio-cart-layout-saas-split' if page == 'cart' else ''}" data-page="{page}">
 <div class="orvio-themebar"><div class="orvio-container">
   <p data-fa="این صفحه، ظاهر قالب وردپرس Orvio است." data-en="This page is the face of the Orvio WordPress theme.">این صفحه، ظاهر قالب وردپرس Orvio است.</p>
   <a href="theme.html" data-fa="خود قالب" data-en="The theme">خود قالب</a>
@@ -457,7 +457,7 @@ def shell(page, title, body, extra=""):
 <main id="main">{body}</main>
 {footer()}
 <script src="catalog.js"></script>
-<script src="assets/js/theme.js?v=4" defer></script>
+<script src="assets/js/theme.js?v=5" defer></script>
 <script src="demo.js" defer></script>
 {extra}
 </body>

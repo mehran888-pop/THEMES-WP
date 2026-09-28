@@ -27,24 +27,28 @@ do_action( 'woocommerce_before_cart' );
 			?>
 			<article class="orvio-cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
 				<a href="<?php echo esc_url( $permalink ); ?>"><?php echo $_product->get_image( 'woocommerce_thumbnail' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a>
-				<div>
-					<h3><a href="<?php echo esc_url( $permalink ); ?>"><?php echo wp_kses_post( $_product->get_name() ); ?></a></h3>
+				<div class="orvio-cart-item__content">
+					<div class="orvio-cart-item__top">
+						<h3><a href="<?php echo esc_url( $permalink ); ?>"><?php echo wp_kses_post( $_product->get_name() ); ?></a></h3>
+						<?php
+						if ( $_product->is_sold_individually() ) {
+							$min = 1;
+							$max = 1;
+						} else {
+							$min = 0;
+							$max = $_product->get_max_purchase_quantity();
+						}
+						woocommerce_quantity_input( array(
+							'input_name'   => "cart[{$cart_item_key}][qty]",
+							'input_value'  => $cart_item['quantity'],
+							'max_value'    => $max,
+							'min_value'    => $min,
+							'product_name' => $_product->get_name(),
+						), $_product, true );
+						?>
+					</div>
 					<div class="orvio-line__meta"><?php echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 					<?php
-					if ( $_product->is_sold_individually() ) {
-						$min = 1;
-						$max = 1;
-					} else {
-						$min = 0;
-						$max = $_product->get_max_purchase_quantity();
-					}
-					woocommerce_quantity_input( array(
-						'input_name'   => "cart[{$cart_item_key}][qty]",
-						'input_value'  => $cart_item['quantity'],
-						'max_value'    => $max,
-						'min_value'    => $min,
-						'product_name' => $_product->get_name(),
-					), $_product, true );
 					echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						'woocommerce_cart_item_remove_link',
 						sprintf(
