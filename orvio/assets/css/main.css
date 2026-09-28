@@ -2808,6 +2808,10 @@ body.orvio-account-fullscreen .orvio-account__nav { top: 24px; }
   .orvio-cart-item > a:first-child img { width: 68px; height: 68px; }
   .orvio-cart-item__content h3 { white-space: normal; }
 }
+/* Keep cart cards clear of the panel edges by five pixels at every viewport. */
+.orvio-cart-item,
+.orvio-line { padding-inline: 5px; }
+
 .orvio-cart-item__qty .orvio-qty {
   display: inline-flex;
   align-items: center;
