@@ -465,8 +465,8 @@ function orvio_render_settings_page() {
 				<section data-panel="checkout" class="orvio-panel">
 					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Cart', 'سبد' ) ); ?></h2>
 						<?php
-						orvio_field_select( 'cart_type', orvio_t( 'Cart button', 'دکمه سبد' ), $o, array(
-							'drawer' => orvio_t( 'Drawer', 'کشو' ),
+						orvio_field_select( 'cart_type', orvio_t( 'Cart behavior', 'رفتار سبد خرید' ), $o, array(
+							'drawer' => orvio_t( 'Slide-in drawer', 'کشوی اسلایدی' ),
 							'page'   => orvio_t( 'Cart page', 'صفحه سبد' ),
 						) );
 						orvio_field_select( 'cart_layout', orvio_t( 'Cart layout', 'چیدمان سبد خرید' ), $o, orvio_page_layout_choices() );

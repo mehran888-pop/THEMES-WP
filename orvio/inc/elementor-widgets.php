@@ -756,10 +756,11 @@ class Orvio_Widget_Cart_Button extends Orvio_Widget_Base {
 	protected function render() {
 		$s     = $this->get_settings_for_display();
 		$count = orvio_cart_count();
-		$tag   = 'page' === orvio_opt( 'cart_type' ) ? 'a' : 'button';
-		$attr  = 'page' === orvio_opt( 'cart_type' )
+		$cart_type = orvio_opt( 'cart_type', 'drawer' );
+		$tag       = 'page' === $cart_type ? 'a' : 'button';
+		$attr      = 'page' === $cart_type
 			? ' href="' . esc_url( function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '#' ) . '"'
-			: ' type="button" data-open="cart"';
+			: ' type="button" data-open="cart" aria-controls="orvio-cart-drawer" aria-expanded="false"';
 		$presets = array( 'minimal', 'pill', 'solid', 'outline', 'soft' );
 		$preset = in_array( $s['orvio_button_preset'] ?? '', $presets, true ) ? $s['orvio_button_preset'] : ( in_array( $s['preset'] ?? '', $presets, true ) ? $s['preset'] : 'pill' );
 		echo '<' . $tag . ' class="orvio-tool orvio-cartbtn orvio-headerbtn--' . esc_attr( $preset ) . '"' . $attr . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
