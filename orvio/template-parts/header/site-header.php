@@ -14,8 +14,9 @@ $terms      = orvio_product_cats();
 $cart_count = orvio_cart_count();
 $cart_open  = 'page' === $o['cart_type'] ? '' : ' data-open="cart"';
 $cart_aria  = 'page' === $o['cart_type'] ? '' : ' aria-controls="orvio-cart-drawer" aria-expanded="false"';
-$cart_tag   = 'page' === $o['cart_type'] ? 'a' : 'button';
-$cart_href  = 'page' === $o['cart_type'] ? ' href="' . esc_url( function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '#' ) . '"' : ' type="button"';
+/* Keep the native cart URL on the trigger so the drawer has a no-JavaScript fallback. */
+$cart_tag   = 'a';
+$cart_href  = ' href="' . esc_url( function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '#' ) . '"';
 ?>
 <?php if ( ! empty( $o['show_announcement'] ) && orvio_announcement_text() ) : ?>
 	<div class="orvio-announce" data-announce>

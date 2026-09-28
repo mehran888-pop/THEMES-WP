@@ -90,11 +90,9 @@ foreach ( $numeric_map as $setting => $variable ) {
 				$active = function_exists( 'is_shop' ) && is_shop();
 				break;
 			case 'cart':
-				if ( 'page' === orvio_opt( 'cart_type', 'drawer' ) ) {
-					$url = function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '#';
-				} else {
-					$tag   = 'button';
-					$attrs = ' type="button" data-open="cart" aria-controls="orvio-cart-drawer" aria-expanded="false"';
+				$url = function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '#';
+				if ( 'page' !== orvio_opt( 'cart_type', 'drawer' ) ) {
+					$attrs = ' data-open="cart" aria-controls="orvio-cart-drawer" aria-expanded="false"';
 				}
 				$active = function_exists( 'is_cart' ) && is_cart();
 				break;

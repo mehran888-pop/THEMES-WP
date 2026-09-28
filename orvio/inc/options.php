@@ -67,6 +67,18 @@ function orvio_defaults() {
 		'announcement_en'    => 'Free shipping over the threshold · Easy 30-day returns',
 		'free_shipping'      => 2000000,
 		'cart_type'          => 'drawer',
+		'cart_drawer_side'       => 'right',
+		'cart_drawer_style'      => 'saas',
+		'cart_drawer_font'       => 'vazirmatn',
+		'cart_drawer_overlay'    => 'dim',
+		'cart_drawer_width'      => 420,
+		'cart_drawer_font_size'  => 14,
+		'cart_drawer_item_spacing' => 12,
+		'cart_drawer_radius'     => 20,
+		'cart_drawer_background' => '',
+		'cart_drawer_text'       => '',
+		'cart_drawer_accent'     => '',
+		'cart_drawer_border'     => '',
 		'mobile_nav_enabled'       => 1,
 		'mobile_nav_style'         => 'bar',
 		'mobile_nav_background'    => '',
@@ -90,7 +102,8 @@ function orvio_defaults() {
 		'product_layout'     => 'classic',
 		'related_count'      => 4,
 		'sticky_summary'     => 1,
-		'cart_layout'        => 'split',
+		'cart_layout'        => 'saas-split',
+		'cart_style'         => 'saas',
 		'checkout_layout'    => 'split',
 		'account_layout'     => 'saas',
 		'account_style'      => 'saas',
@@ -165,6 +178,21 @@ function orvio_sanitize_settings( $input ) {
 	$atc_visuals                  = array( 'text', 'icon', 'hover', 'tile', 'icon-only' );
 	$clean['atc_visual']           = in_array( $input['atc_visual'] ?? '', $atc_visuals, true ) ? $input['atc_visual'] : 'text';
 	$clean['cart_type']            = in_array( $input['cart_type'] ?? '', array( 'drawer', 'page' ), true ) ? $input['cart_type'] : 'drawer';
+	$drawer_sides                 = array( 'left', 'right' );
+	$drawer_styles                = array( 'saas', 'soft', 'dark', 'minimal' );
+	$drawer_overlays              = array( 'dim', 'soft', 'strong', 'none' );
+	$drawer_fonts                 = array( 'vazirmatn', 'instrument', 'fraunces', 'system' );
+	$clean['cart_drawer_side']    = in_array( $input['cart_drawer_side'] ?? '', $drawer_sides, true ) ? $input['cart_drawer_side'] : 'right';
+	$clean['cart_drawer_style']   = in_array( $input['cart_drawer_style'] ?? '', $drawer_styles, true ) ? $input['cart_drawer_style'] : 'saas';
+	$clean['cart_drawer_font']    = in_array( $input['cart_drawer_font'] ?? '', $drawer_fonts, true ) ? $input['cart_drawer_font'] : 'vazirmatn';
+	$clean['cart_drawer_overlay'] = in_array( $input['cart_drawer_overlay'] ?? '', $drawer_overlays, true ) ? $input['cart_drawer_overlay'] : 'dim';
+	$clean['cart_drawer_width']   = max( 300, min( 620, absint( $input['cart_drawer_width'] ?? 420 ) ) );
+	$clean['cart_drawer_font_size'] = max( 12, min( 20, absint( $input['cart_drawer_font_size'] ?? 14 ) ) );
+	$clean['cart_drawer_item_spacing'] = max( 4, min( 32, absint( $input['cart_drawer_item_spacing'] ?? 12 ) ) );
+	$clean['cart_drawer_radius']  = max( 0, min( 32, absint( $input['cart_drawer_radius'] ?? 20 ) ) );
+	foreach ( array( 'cart_drawer_background', 'cart_drawer_text', 'cart_drawer_accent', 'cart_drawer_border' ) as $drawer_color ) {
+		$clean[ $drawer_color ] = sanitize_hex_color( $input[ $drawer_color ] ?? '' ) ?: '';
+	}
 	$mobile_nav_styles          = array( 'bar', 'floating', 'pill', 'glass', 'dark', 'minimal' );
 	$clean['mobile_nav_style']  = in_array( $input['mobile_nav_style'] ?? '', $mobile_nav_styles, true ) ? $input['mobile_nav_style'] : 'bar';
 	$mobile_optional_colors     = array( 'mobile_nav_background', 'mobile_nav_text', 'mobile_nav_border', 'mobile_nav_active', 'mobile_nav_active_bg' );
@@ -203,7 +231,9 @@ function orvio_sanitize_settings( $input ) {
 	$page_layouts                 = array( 'split', 'classic', 'compact', 'focus', 'minimal' );
 	$clean['shop_layout']         = in_array( $input['shop_layout'] ?? '', $shop_layouts, true ) ? $input['shop_layout'] : 'sidebar-grid';
 	$clean['product_layout']      = in_array( $input['product_layout'] ?? '', $product_layouts, true ) ? $input['product_layout'] : 'classic';
-	$clean['cart_layout']         = in_array( $input['cart_layout'] ?? '', $page_layouts, true ) ? $input['cart_layout'] : 'split';
+	$cart_layouts                = array( 'saas-split', 'saas-focus', 'saas-compact', 'saas-bento' );
+	$clean['cart_layout']         = in_array( $input['cart_layout'] ?? '', $cart_layouts, true ) ? $input['cart_layout'] : 'saas-split';
+	$clean['cart_style']          = 'saas';
 	$clean['checkout_layout']     = in_array( $input['checkout_layout'] ?? '', $page_layouts, true ) ? $input['checkout_layout'] : 'split';
 	$account_layouts              = array( 'saas' );
 	$clean['account_layout']      = in_array( $input['account_layout'] ?? '', $account_layouts, true ) ? $input['account_layout'] : 'saas';
@@ -266,13 +296,19 @@ function orvio_render_settings_page() {
 		return;
 	}
 	$o = orvio_settings();
+	$cart_choices = orvio_cart_layout_choices();
+	if ( ! isset( $cart_choices[ $o['cart_layout'] ?? '' ] ) ) {
+		$o['cart_layout'] = 'saas-split';
+	}
+	$o['cart_style'] = 'saas';
 	$tabs = array(
 		'general'  => orvio_t( 'Design', 'طراحی' ),
 		'header'   => orvio_t( 'Header', 'هدر' ),
 		'footer'   => orvio_t( 'Footer', 'فوتر' ),
 		'shop'     => orvio_t( 'Shop', 'فروشگاه' ),
 		'product'  => orvio_t( 'Product', 'محصول' ),
-		'checkout' => orvio_t( 'Cart & checkout', 'سبد و صورتحساب' ),
+		'cart'     => orvio_t( 'Cart', 'سبد خرید' ),
+		'checkout' => orvio_t( 'Checkout', 'صورتحساب' ),
 		'account'  => orvio_t( 'Account', 'حساب کاربری' ),
 		'contact'  => orvio_t( 'Contact', 'ارتباط' ),
 		'home'     => orvio_t( 'Homepage', 'صفحه اول' ),
@@ -462,14 +498,33 @@ function orvio_render_settings_page() {
 						?>
 					</div>
 				</section>
-				<section data-panel="checkout" class="orvio-panel">
-					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Cart', 'سبد' ) ); ?></h2>
+				<section data-panel="cart" class="orvio-panel">
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Cart', 'سبد خرید' ) ); ?></h2>
 						<?php
 						orvio_field_select( 'cart_type', orvio_t( 'Cart behavior', 'رفتار سبد خرید' ), $o, array(
 							'drawer' => orvio_t( 'Slide-in drawer', 'کشوی اسلایدی' ),
 							'page'   => orvio_t( 'Cart page', 'صفحه سبد' ),
 						) );
-						orvio_field_select( 'cart_layout', orvio_t( 'Cart layout', 'چیدمان سبد خرید' ), $o, orvio_page_layout_choices() );
+						orvio_field_select( 'cart_style', orvio_t( 'Cart style', 'استایل صفحه سبد' ), $o, array( 'saas' => orvio_t( 'SaaS cart', 'سبد خرید SaaS' ) ) );
+						orvio_field_select( 'cart_layout', orvio_t( 'Cart layout', 'چیدمان سبد خرید' ), $o, orvio_cart_layout_choices() );
+						orvio_field_select( 'cart_drawer_side', orvio_t( 'Drawer side', 'سمت باز شدن کشو' ), $o, array( 'right' => orvio_t( 'Right', 'راست' ), 'left' => orvio_t( 'Left', 'چپ' ) ) );
+						orvio_field_select( 'cart_drawer_style', orvio_t( 'Drawer style', 'استایل کامل کشوی سبد' ), $o, array( 'saas' => orvio_t( 'SaaS', 'ساس' ), 'soft' => orvio_t( 'Soft', 'نرم' ), 'dark' => orvio_t( 'Dark', 'تیره' ), 'minimal' => orvio_t( 'Minimal', 'مینیمال' ) ) );
+						orvio_field_select( 'cart_drawer_font', orvio_t( 'Drawer font', 'فونت کشو' ), $o, orvio_font_choices() );
+						orvio_field_select( 'cart_drawer_overlay', orvio_t( 'Drawer overlay', 'حالت لایه رویی' ), $o, array( 'dim' => orvio_t( 'Dim', 'تیره' ), 'soft' => orvio_t( 'Soft', 'نرم' ), 'strong' => orvio_t( 'Strong', 'قوی' ), 'none' => orvio_t( 'None', 'بدون لایه' ) ) );
+						orvio_field_number( 'cart_drawer_width', orvio_t( 'Drawer width (px)', 'عرض کشو (پیکسل)' ), $o, 300, 620 );
+						orvio_field_number( 'cart_drawer_font_size', orvio_t( 'Drawer font size (px)', 'اندازه فونت کشو (پیکسل)' ), $o, 12, 20 );
+						orvio_field_number( 'cart_drawer_item_spacing', orvio_t( 'Item spacing (px)', 'فاصله آیتم‌ها (پیکسل)' ), $o, 4, 32 );
+						orvio_field_number( 'cart_drawer_radius', orvio_t( 'Drawer radius (px)', 'گردی کشو (پیکسل)' ), $o, 0, 32 );
+						orvio_field_optional_color( 'cart_drawer_background', orvio_t( 'Drawer background', 'پس‌زمینه کشو' ), $o );
+						orvio_field_optional_color( 'cart_drawer_text', orvio_t( 'Drawer text', 'متن کشو' ), $o );
+						orvio_field_optional_color( 'cart_drawer_accent', orvio_t( 'Drawer accent', 'رنگ تأکیدی کشو' ), $o );
+						orvio_field_optional_color( 'cart_drawer_border', orvio_t( 'Drawer border', 'حاشیه کشو' ), $o );
+						?>
+					</div>
+				</section>
+				<section data-panel="checkout" class="orvio-panel">
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Checkout', 'صورتحساب' ) ); ?></h2>
+						<?php
 						orvio_field_select( 'checkout_layout', orvio_t( 'Checkout layout', 'چیدمان صورتحساب' ), $o, orvio_page_layout_choices() );
 						echo '<h3 style="margin-top:18px">' . esc_html( orvio_t( 'Billing fields', 'فیلدهای صورتحساب' ) ) . '</h3>';
 						foreach ( orvio_billing_labels() as $field => $label ) {
@@ -561,6 +616,15 @@ function orvio_field_number( $key, $label, $o, $min, $max ) {
 function orvio_field_check( $key, $label, $o ) {
 	echo '<label class="orvio-admin__check"><input type="checkbox" name="orvio_settings[' . esc_attr( $key ) . ']" value="1" ' . checked( ! empty( $o[ $key ] ), true, false ) . '> ' . esc_html( $label ) . '</label>';
 }
+function orvio_cart_layout_choices() {
+	return array(
+		'saas-split'    => orvio_t( 'SaaS split', 'ساس دو بخشی' ),
+		'saas-focus'    => orvio_t( 'SaaS focus', 'ساس تمرکز' ),
+		'saas-compact'  => orvio_t( 'SaaS compact / list', 'ساس فشرده / لیست' ),
+		'saas-bento'    => orvio_t( 'SaaS bento', 'ساس بنتو' ),
+	);
+}
+
 function orvio_page_layout_choices() {
 	return array(
 		'split'   => orvio_t( 'Split', 'دو ستونه' ),
@@ -705,8 +769,9 @@ function orvio_body_classes( $classes ) {
 		$classes[] = 'orvio-product-layout-' . ( in_array( $o['product_layout'], $product_layouts, true ) ? $o['product_layout'] : 'classic' );
 	}
 	if ( function_exists( 'is_cart' ) && is_cart() ) {
-		$page_layouts = array( 'split', 'classic', 'compact', 'focus', 'minimal' );
-		$classes[] = 'orvio-cart-layout-' . ( in_array( $o['cart_layout'], $page_layouts, true ) ? $o['cart_layout'] : 'split' );
+		$cart_layouts = array( 'saas-split', 'saas-focus', 'saas-compact', 'saas-bento' );
+		$classes[] = 'orvio-cart-style-saas';
+		$classes[] = 'orvio-cart-layout-' . ( in_array( $o['cart_layout'], $cart_layouts, true ) ? $o['cart_layout'] : 'saas-split' );
 	}
 	if ( function_exists( 'is_checkout' ) && is_checkout() && ( ! function_exists( 'is_order_received_page' ) || ! is_order_received_page() ) ) {
 		$page_layouts = array( 'split', 'classic', 'compact', 'focus', 'minimal' );

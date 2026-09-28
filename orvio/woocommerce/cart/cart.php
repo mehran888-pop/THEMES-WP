@@ -72,8 +72,11 @@ do_action( 'woocommerce_before_cart' );
 		<?php do_action( 'woocommerce_after_cart_table' ); ?>
 	</form>
 	<aside class="orvio-panel cart-collaterals">
-		<?php woocommerce_cart_totals(); ?>
-		<?php do_action( 'woocommerce_cart_collaterals' ); ?>
+		<?php
+		// WooCommerce hooks the native totals template to this action. Keep the
+		// action as the single source of totals so extensions remain compatible.
+		do_action( 'woocommerce_cart_collaterals' );
+		?>
 	</aside>
 </div>
 <?php do_action( 'woocommerce_after_cart' ); ?>

@@ -3,6 +3,24 @@
 
   var overlay = function () { return document.querySelector("[data-overlay]"); };
   var activeDrawer = null;
+
+  function resetOverlayTheme() {
+    var ov = overlay();
+    if (!ov) return;
+    ["soft", "strong", "none"].forEach(function (mode) {
+      ov.classList.remove("orvio-overlay--cart-" + mode);
+    });
+  }
+
+  function setOverlayTheme(name) {
+    var ov = overlay();
+    if (!ov) return;
+    resetOverlayTheme();
+    if (name === "cart") {
+      var mode = ov.getAttribute("data-cart-overlay");
+      if (["soft", "strong", "none"].indexOf(mode) !== -1) ov.classList.add("orvio-overlay--cart-" + mode);
+    }
+  }
   var lastDrawerTrigger = null;
 
   function lock(on) {
@@ -46,6 +64,7 @@
       ov.classList.remove("is-open");
       ov.setAttribute("aria-hidden", "true");
     }
+    resetOverlayTheme();
     lock(false);
     var restore = lastDrawerTrigger;
     activeDrawer = null;
@@ -74,6 +93,7 @@
     setTriggerState(name, true);
     var ov = overlay();
     if (ov) {
+      setOverlayTheme(name);
       ov.classList.add("is-open");
       ov.setAttribute("aria-hidden", "false");
     }
@@ -357,6 +377,7 @@
         document.dispatchEvent(new CustomEvent("orvio:open", { detail: name }));
         return;
       }
+      if (name === "cart" && open.tagName === "A") e.preventDefault();
       openDrawer(name, open);
       document.dispatchEvent(new CustomEvent("orvio:open", { detail: name }));
       return;

@@ -657,6 +657,9 @@ body.orvio-header-layout-minimal .orvio-announce,
   transition: opacity 0.3s var(--ease), visibility 0s linear 0.3s;
 }
 .orvio-overlay.is-open { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
+.orvio-overlay--cart-soft { background: rgba(22, 18, 14, .28); }
+.orvio-overlay--cart-strong { background: rgba(22, 18, 14, .68); }
+.orvio-overlay--cart-none { background: transparent; }
 .orvio-drawer {
   position: fixed;
   top: 0;
@@ -674,8 +677,54 @@ body.orvio-header-layout-minimal .orvio-announce,
 }
 .orvio-drawer--menu { inset-inline-start: 0; transform: translateX(-105%); }
 html[dir="rtl"] .orvio-drawer--menu { transform: translateX(105%); }
-.orvio-drawer--cart, .orvio-drawer--wish { inset-inline-end: 0; transform: translateX(105%); }
-html[dir="rtl"] .orvio-drawer--cart, html[dir="rtl"] .orvio-drawer--wish { transform: translateX(-105%); }
+.orvio-drawer--wish { inset-inline-end: 0; transform: translateX(105%); }
+html[dir="rtl"] .orvio-drawer--wish { transform: translateX(-105%); }
+/* Cart side is physical, not logical: RTL must not silently mirror the admin choice. */
+.orvio-drawer--cart {
+  left: auto;
+  right: 0;
+  width: min(var(--orvio-cart-drawer-width, 420px), calc(100vw - 24px));
+  background: var(--orvio-cart-drawer-background, var(--surface));
+  color: var(--orvio-cart-drawer-text, var(--ink));
+  font-family: var(--orvio-cart-drawer-font-family, var(--font));
+  font-size: var(--orvio-cart-drawer-font-size, 14px);
+  border: 0;
+}
+.orvio-drawer--cart.orvio-drawer--side-right { border-left: 1px solid var(--orvio-cart-drawer-border, transparent); }
+.orvio-drawer--cart.orvio-drawer--side-left {
+  left: 0;
+  right: auto;
+  transform: translateX(-105%);
+  border-right: 1px solid var(--orvio-cart-drawer-border, transparent);
+}
+.orvio-drawer--cart.orvio-drawer--side-right { transform: translateX(105%); border-radius: var(--orvio-cart-drawer-radius, 20px) 0 0 var(--orvio-cart-drawer-radius, 20px); }
+.orvio-drawer--cart.orvio-drawer--side-left { border-radius: 0 var(--orvio-cart-drawer-radius, 20px) var(--orvio-cart-drawer-radius, 20px) 0; }
+.orvio-drawer--cart.orvio-drawer--side-right.is-open,
+.orvio-drawer--cart.orvio-drawer--side-left.is-open { transform: none; }
+.orvio-drawer--cart.orvio-drawer--style-soft { background: var(--orvio-cart-drawer-background, #f7faf8); }
+.orvio-drawer--cart.orvio-drawer--style-dark {
+  --orvio-cart-drawer-background: #17231f;
+  --orvio-cart-drawer-text: #f6fbf8;
+  --line: rgba(255,255,255,.14);
+  --line-strong: rgba(255,255,255,.24);
+  --muted: rgba(246,251,248,.68);
+  background: var(--orvio-cart-drawer-background);
+  color: var(--orvio-cart-drawer-text);
+}
+.orvio-drawer--cart.orvio-drawer--style-minimal { box-shadow: none; }
+.orvio-drawer--cart h1,
+.orvio-drawer--cart h2,
+.orvio-drawer--cart h3,
+.orvio-drawer--cart h4,
+.orvio-drawer--cart button,
+.orvio-drawer--cart input,
+.orvio-drawer--cart select,
+.orvio-drawer--cart textarea { font-family: inherit; }
+.orvio-drawer--cart .orvio-drawer__head,
+.orvio-drawer--cart .orvio-drawer__foot { border-color: var(--line); }
+.orvio-drawer--cart .orvio-line { padding-block: var(--orvio-cart-drawer-item-spacing, 12px); border-color: var(--line); }
+.orvio-drawer--cart .orvio-drawer__x { color: inherit; background: transparent; border-color: var(--line-strong, var(--line)); }
+.orvio-drawer--cart .orvio-btn--primary { background: var(--orvio-cart-drawer-accent, var(--accent-dark)); border-color: var(--orvio-cart-drawer-accent, var(--accent-dark)); }
 .orvio-drawer.is-open { transform: none; visibility: visible; pointer-events: auto; transition-delay: 0s; }
 .orvio-drawer__head, .orvio-drawer__foot {
   display: flex;
@@ -1915,15 +1964,45 @@ body.orvio-product-layout-immersive .orvio-gallery__main { border-radius: 0; asp
 body.orvio-product-layout-immersive .orvio-summary { padding-top: 28px; }
 body.orvio-summary-static .orvio-product-layout-stacked .orvio-summary { position: static; }
 
-body.orvio-cart-layout-classic .orvio-cartpage { grid-template-columns: 1fr .55fr; }
-body.orvio-cart-layout-compact .orvio-cartpage { grid-template-columns: 1fr .65fr; gap: 12px; }
-body.orvio-cart-layout-compact .orvio-panel { border-radius: 12px; padding: 10px; }
-body.orvio-cart-layout-compact .orvio-cart-item { grid-template-columns: 64px 1fr auto; gap: 10px; padding: 9px 0; }
-body.orvio-cart-layout-compact .orvio-cart-item img { width: 64px; height: 64px; border-radius: 10px; }
-body.orvio-cart-layout-focus .orvio-cartpage { grid-template-columns: 1fr; max-width: 900px; margin-inline: auto; }
-body.orvio-cart-layout-focus .orvio-cartpage .cart-collaterals { max-width: 460px; width: 100%; margin-inline-start: auto; }
-body.orvio-cart-layout-minimal .orvio-cartpage { grid-template-columns: 1fr .7fr; gap: 36px; }
-body.orvio-cart-layout-minimal .orvio-panel { background: transparent; border: 0; padding-inline: 0; }
+/* Cart is SaaS-only. The four presets change composition, not WooCommerce's native markup/hooks. */
+body.orvio-cart-style-saas .orvio-cartpage {
+  gap: clamp(16px, 2.4vw, 30px);
+  align-items: start;
+}
+body.orvio-cart-style-saas .orvio-cartpage > .orvio-panel {
+  border-color: rgba(28, 25, 22, .10);
+  box-shadow: 0 14px 40px rgba(28, 25, 22, .06);
+}
+body.orvio-cart-style-saas .woocommerce-cart-form { min-width: 0; }
+body.orvio-cart-style-saas .cart-collaterals { position: sticky; top: 24px; }
+body.orvio-cart-style-saas .cart_totals h2 { margin: 0 0 16px; font-size: 20px; }
+body.orvio-cart-style-saas .cart_totals table { width: 100%; border-collapse: collapse; }
+body.orvio-cart-style-saas .cart_totals tr { border-bottom: 1px solid var(--line); }
+body.orvio-cart-style-saas .cart_totals th,
+body.orvio-cart-style-saas .cart_totals td { padding: 12px 0; vertical-align: top; text-align: start; }
+body.orvio-cart-style-saas .cart_totals td { text-align: end; }
+body.orvio-cart-style-saas .cart_totals .order-total th,
+body.orvio-cart-style-saas .cart_totals .order-total td { border-top: 1px solid var(--line-strong); font-size: 17px; font-weight: 800; }
+body.orvio-cart-style-saas .wc-proceed-to-checkout { padding-top: 16px; }
+body.orvio-cart-style-saas .wc-proceed-to-checkout .checkout-button { width: 100%; text-align: center; }
+body.orvio-cart-layout-saas-split .orvio-cartpage { grid-template-columns: minmax(0, 1.4fr) minmax(280px, .7fr); }
+body.orvio-cart-layout-saas-focus .orvio-cartpage { grid-template-columns: minmax(0, 900px); max-width: 960px; margin-inline: auto; }
+body.orvio-cart-layout-saas-focus .cart-collaterals { max-width: 480px; width: 100%; margin-inline-start: auto; }
+body.orvio-cart-layout-saas-compact .orvio-cartpage { grid-template-columns: minmax(0, 1fr) minmax(250px, .58fr); gap: 14px; }
+body.orvio-cart-layout-saas-compact .orvio-cartpage > .orvio-panel { border-radius: 14px; padding: 12px; }
+body.orvio-cart-layout-saas-compact .orvio-cart-item { grid-template-columns: 64px minmax(0, 1fr) auto; gap: 10px; padding: 10px 0; }
+body.orvio-cart-layout-saas-compact .orvio-cart-item img { width: 64px; height: 64px; border-radius: 10px; }
+body.orvio-cart-layout-saas-bento .orvio-cartpage {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, .78fr);
+  grid-template-areas: "items totals";
+  gap: 18px;
+}
+body.orvio-cart-layout-saas-bento .woocommerce-cart-form { grid-area: items; }
+body.orvio-cart-layout-saas-bento .cart-collaterals { grid-area: totals; }
+body.orvio-cart-layout-saas-bento .woocommerce-cart-form,
+body.orvio-cart-layout-saas-bento .cart-collaterals { border-radius: 24px; }
+body.orvio-cart-layout-saas-bento .orvio-cart-item { grid-template-columns: 88px minmax(0, 1fr) auto; }
+body.orvio-cart-layout-saas-bento .orvio-cart-item img { width: 88px; height: 88px; border-radius: 18px; }
 
 body.orvio-checkout-layout-classic .orvio-checkout { grid-template-columns: 1fr .65fr; }
 body.orvio-checkout-layout-compact .orvio-checkout { grid-template-columns: 1fr .7fr; gap: 12px; }
@@ -2377,6 +2456,24 @@ body.orvio-account-style-saas .orvio-form-section__head > span,
 .orvio-account--style-saas .orvio-form-section__head > span { color: var(--account-saas-primary); }
 body.orvio-account-style-saas .orvio-profile-form__footer .orvio-btn,
 .orvio-account--style-saas .orvio-profile-form__footer .orvio-btn { background: var(--account-saas-primary); border-color: var(--account-saas-primary); color: #fff; }
+
+@media (max-width: 980px) {
+  body.orvio-cart-style-saas .orvio-cartpage,
+  body.orvio-cart-layout-saas-split .orvio-cartpage,
+  body.orvio-cart-layout-saas-focus .orvio-cartpage,
+  body.orvio-cart-layout-saas-compact .orvio-cartpage,
+  body.orvio-cart-layout-saas-bento .orvio-cartpage { grid-template-columns: 1fr; }
+  body.orvio-cart-style-saas .cart-collaterals { position: static; max-width: none; width: auto; margin-inline-start: 0; }
+  body.orvio-cart-layout-saas-bento .orvio-cartpage { grid-template-areas: "items" "totals"; }
+}
+@media (max-width: 600px) {
+  body.orvio-cart-style-saas .orvio-cart-item,
+  body.orvio-cart-layout-saas-bento .orvio-cart-item,
+  body.orvio-cart-layout-saas-compact .orvio-cart-item { grid-template-columns: 68px minmax(0, 1fr); gap: 10px; align-items: start; }
+  body.orvio-cart-style-saas .orvio-cart-item img,
+  body.orvio-cart-layout-saas-bento .orvio-cart-item img { width: 68px; height: 68px; }
+  body.orvio-cart-style-saas .orvio-cart-item > strong { grid-column: 2; justify-self: start; }
+}
 
 /* The account is intentionally a single SaaS workspace; legacy layout values fall back to this shell. */
 body.orvio-account-layout-saas .orvio-account,
