@@ -92,7 +92,7 @@ function orvio_defaults() {
 		'sticky_summary'     => 1,
 		'cart_layout'        => 'split',
 		'checkout_layout'    => 'split',
-		'account_layout'     => 'sidebar',
+		'account_layout'     => 'saas',
 		'account_style'      => 'saas',
 		'billing_fields'     => array(
 			'billing_first_name' => 'required',
@@ -205,9 +205,9 @@ function orvio_sanitize_settings( $input ) {
 	$clean['product_layout']      = in_array( $input['product_layout'] ?? '', $product_layouts, true ) ? $input['product_layout'] : 'classic';
 	$clean['cart_layout']         = in_array( $input['cart_layout'] ?? '', $page_layouts, true ) ? $input['cart_layout'] : 'split';
 	$clean['checkout_layout']     = in_array( $input['checkout_layout'] ?? '', $page_layouts, true ) ? $input['checkout_layout'] : 'split';
-	$account_layouts              = array( 'sidebar', 'topbar', 'split', 'cards' );
-	$clean['account_layout']      = in_array( $input['account_layout'] ?? '', $account_layouts, true ) ? $input['account_layout'] : 'sidebar';
-	$account_styles               = array( 'saas', 'classic', 'soft', 'editorial', 'minimal' );
+	$account_layouts              = array( 'saas' );
+	$clean['account_layout']      = in_array( $input['account_layout'] ?? '', $account_layouts, true ) ? $input['account_layout'] : 'saas';
+	$account_styles               = array( 'saas' );
 	$clean['account_style']       = in_array( $input['account_style'] ?? '', $account_styles, true ) ? $input['account_style'] : 'saas';
 	$card_styles                  = array( 'classic', 'minimal', 'overlay', 'editorial', 'deal', 'polaroid', 'magazine' );
 	$clean['card_style']           = in_array( $input['card_style'] ?? '', $card_styles, true ) ? $input['card_style'] : 'classic';
@@ -482,8 +482,8 @@ function orvio_render_settings_page() {
 				<section data-panel="account" class="orvio-panel">
 					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Account layout', 'چیدمان ناحیه کاربری' ) ); ?></h2>
 						<?php
-						orvio_field_select( 'account_layout', orvio_t( 'Layout', 'چیدمان' ), $o, array( 'sidebar' => orvio_t( 'Sidebar dashboard', 'داشبورد سایدبار' ), 'topbar' => orvio_t( 'Top navigation', 'ناوبری بالا' ), 'split' => orvio_t( 'Split workspace', 'فضای دو بخشی' ), 'cards' => orvio_t( 'Cards dashboard', 'داشبورد کارتی' ) ) );
-						orvio_field_select( 'account_style', orvio_t( 'Style', 'استایل' ), $o, array( 'saas' => orvio_t( 'SaaS workspace', 'پنل SaaS' ), 'classic' => orvio_t( 'Classic', 'کلاسیک' ), 'soft' => orvio_t( 'Soft', 'نرم' ), 'editorial' => orvio_t( 'Dark / editorial', 'تیره / ادیتوریال' ), 'minimal' => orvio_t( 'Minimal', 'مینیمال' ) ) );
+						orvio_field_select( 'account_layout', orvio_t( 'Layout', 'چیدمان' ), $o, array( 'saas' => orvio_t( 'SaaS workspace', 'چیدمان پنل SaaS' ) ) );
+						orvio_field_select( 'account_style', orvio_t( 'Style', 'استایل' ), $o, array( 'saas' => orvio_t( 'SaaS workspace', 'استایل پنل SaaS' ) ) );
 						?>
 					</div>
 				</section>
@@ -731,9 +731,9 @@ function orvio_body_classes( $classes ) {
 		}
 	}
 	if ( function_exists( 'is_account_page' ) && is_account_page() ) {
-		$account_layouts = array( 'sidebar', 'topbar', 'split', 'cards' );
-		$account_styles  = array( 'saas', 'classic', 'soft', 'editorial', 'minimal' );
-		$classes[] = 'orvio-account-layout-' . ( in_array( $o['account_layout'], $account_layouts, true ) ? $o['account_layout'] : 'sidebar' );
+		$account_layouts = array( 'saas' );
+		$account_styles  = array( 'saas' );
+		$classes[] = 'orvio-account-layout-' . ( in_array( $o['account_layout'], $account_layouts, true ) ? $o['account_layout'] : 'saas' );
 		$classes[] = 'orvio-account-style-' . ( in_array( $o['account_style'], $account_styles, true ) ? $o['account_style'] : 'saas' );
 	}
 	$layout = in_array( $o['site_layout'], array( 'wide', 'boxed', 'content-wide' ), true ) ? $o['site_layout'] : 'wide';

@@ -12,11 +12,11 @@ defined( 'ABSPATH' ) || exit;
 	<h1><?php echo esc_html( orvio_t( 'Account', 'حساب کاربری' ) ); ?></h1>
 </div>
 <?php
-$account_layouts = array( 'sidebar', 'topbar', 'split', 'cards' );
-$account_styles  = array( 'saas', 'classic', 'soft', 'editorial', 'minimal' );
-$layout_setting  = orvio_opt( 'account_layout', 'sidebar' );
+$account_layouts = array( 'saas' );
+$account_styles  = array( 'saas' );
+$layout_setting  = orvio_opt( 'account_layout', 'saas' );
 $style_setting   = orvio_opt( 'account_style', 'saas' );
-$account_layout  = in_array( $layout_setting, $account_layouts, true ) ? $layout_setting : 'sidebar';
+$account_layout  = in_array( $layout_setting, $account_layouts, true ) ? $layout_setting : 'saas';
 $account_style   = in_array( $style_setting, $account_styles, true ) ? $style_setting : 'saas';
 ?>
 <div class="orvio-account orvio-account--layout-<?php echo esc_attr( $account_layout ); ?> orvio-account--style-<?php echo esc_attr( $account_style ); ?>">
