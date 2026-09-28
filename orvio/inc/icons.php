@@ -14,6 +14,8 @@ function orvio_icon( $name ) {
 		'search' => '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16.2 16.2L20 20"/></svg>',
 		'user'   => '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5.2 19.2c1.3-3 3.7-4.5 6.8-4.5s5.5 1.5 6.8 4.5"/></svg>',
 		'heart'  => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19s-7-4.4-7-8.5A3.5 3.5 0 0 1 12 8a3.5 3.5 0 0 1 7 2.5C19 14.6 12 19 12 19z"/></svg>',
+		'home'   => '<svg viewBox="0 0 24 24"><path d="M3.5 11.2L12 4l8.5 7.2"/><path d="M5.5 10.5V20h13v-9.5M9.5 20v-5h5v5"/></svg>',
+		'store'  => '<svg viewBox="0 0 24 24"><path d="M4 10h16v10H4zM3 10l2-6h14l2 6"/><path d="M8 10v3M12 10v3M16 10v3"/></svg>',
 		'bag'    => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 8h11L16.4 20H7.6L6.5 8z"/><path d="M9 8V7a3 3 0 0 1 6 0v1"/></svg>',
 		'menu'   => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h11"/></svg>',
 		'grid'   => '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',

@@ -25,3 +25,4 @@ if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_loca
 } else {
 	get_template_part( 'template-parts/header/site-header' );
 }
+get_template_part( 'template-parts/header/mobile-nav' );

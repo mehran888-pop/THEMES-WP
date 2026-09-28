@@ -25,6 +25,16 @@ function orvio_t( $en, $fa = '' ) {
 	return $en;
 }
 
+function orvio_mobile_nav_defaults() {
+	return array(
+		'item_1' => array( 'enabled' => 1, 'order' => 1, 'type' => 'home',       'label' => orvio_t( 'Home', 'خانه' ),       'icon' => 'home',  'url' => '' ),
+		'item_2' => array( 'enabled' => 1, 'order' => 2, 'type' => 'categories', 'label' => orvio_t( 'Categories', 'دسته‌ها' ), 'icon' => 'grid',  'url' => '' ),
+		'item_3' => array( 'enabled' => 1, 'order' => 3, 'type' => 'shop',       'label' => orvio_t( 'Shop', 'فروشگاه' ),     'icon' => 'store', 'url' => '' ),
+		'item_4' => array( 'enabled' => 1, 'order' => 4, 'type' => 'cart',       'label' => orvio_t( 'Bag', 'سبد' ),          'icon' => 'bag',   'url' => '' ),
+		'item_5' => array( 'enabled' => 1, 'order' => 5, 'type' => 'account',    'label' => orvio_t( 'Account', 'حساب' ),     'icon' => 'user',  'url' => '' ),
+	);
+}
+
 function orvio_defaults() {
 	return array(
 		'accent'             => '#A34B2B',
@@ -54,6 +64,20 @@ function orvio_defaults() {
 		'announcement_en'    => 'Free shipping over the threshold · Easy 30-day returns',
 		'free_shipping'      => 2000000,
 		'cart_type'          => 'drawer',
+		'mobile_nav_enabled'       => 1,
+		'mobile_nav_style'         => 'bar',
+		'mobile_nav_background'    => '',
+		'mobile_nav_text'          => '',
+		'mobile_nav_border'        => '',
+		'mobile_nav_active'        => '',
+		'mobile_nav_active_bg'     => '',
+		'mobile_nav_shadow'        => '',
+		'mobile_nav_radius'        => '',
+		'mobile_nav_spacing'       => '',
+		'mobile_nav_height'        => '',
+		'mobile_nav_icon_size'     => '',
+		'mobile_nav_active_style'  => 'soft',
+		'mobile_nav_items'         => orvio_mobile_nav_defaults(),
 		'shop_columns'       => 3,
 		'products_per_page'  => 12,
 		'shop_layout'        => 'sidebar-grid',
@@ -128,6 +152,39 @@ function orvio_sanitize_settings( $input ) {
 	$clean['site_layout']          = in_array( $input['site_layout'] ?? '', array( 'wide', 'boxed', 'content-wide' ), true ) ? $input['site_layout'] : 'wide';
 	$clean['atc_style']            = in_array( $input['atc_style'] ?? '', array( 'pill', 'block', 'outline', 'soft' ), true ) ? $input['atc_style'] : 'pill';
 	$clean['cart_type']            = in_array( $input['cart_type'] ?? '', array( 'drawer', 'page' ), true ) ? $input['cart_type'] : 'drawer';
+	$mobile_nav_styles          = array( 'bar', 'floating', 'pill', 'glass', 'dark', 'minimal' );
+	$clean['mobile_nav_style']  = in_array( $input['mobile_nav_style'] ?? '', $mobile_nav_styles, true ) ? $input['mobile_nav_style'] : 'bar';
+	$mobile_optional_colors     = array( 'mobile_nav_background', 'mobile_nav_text', 'mobile_nav_border', 'mobile_nav_active', 'mobile_nav_active_bg' );
+	foreach ( $mobile_optional_colors as $key ) {
+		$color        = sanitize_hex_color( $input[ $key ] ?? '' );
+		$clean[ $key ] = $color ? $color : '';
+	}
+	$mobile_shadows             = array( '', 'soft', 'strong', 'none' );
+	$clean['mobile_nav_shadow'] = in_array( $input['mobile_nav_shadow'] ?? '', $mobile_shadows, true ) ? $input['mobile_nav_shadow'] : '';
+	$mobile_active_styles       = array( 'soft', 'solid', 'underline', 'dot' );
+	$clean['mobile_nav_active_style'] = in_array( $input['mobile_nav_active_style'] ?? '', $mobile_active_styles, true ) ? $input['mobile_nav_active_style'] : 'soft';
+	foreach ( array( 'mobile_nav_radius', 'mobile_nav_spacing', 'mobile_nav_height', 'mobile_nav_icon_size' ) as $key ) {
+		$clean[ $key ] = '' === ( $input[ $key ] ?? '' ) ? '' : absint( $input[ $key ] );
+	}
+	$clean['mobile_nav_radius']    = '' === $clean['mobile_nav_radius'] ? '' : min( 40, $clean['mobile_nav_radius'] );
+	$clean['mobile_nav_spacing']   = '' === $clean['mobile_nav_spacing'] ? '' : min( 20, $clean['mobile_nav_spacing'] );
+	$clean['mobile_nav_height']    = '' === $clean['mobile_nav_height'] ? '' : max( 42, min( 96, $clean['mobile_nav_height'] ) );
+	$clean['mobile_nav_icon_size'] = '' === $clean['mobile_nav_icon_size'] ? '' : max( 16, min( 32, $clean['mobile_nav_icon_size'] ) );
+	$mobile_types               = array_keys( orvio_mobile_nav_type_choices() );
+	$mobile_icons               = array_keys( orvio_mobile_nav_icon_choices() );
+	$mobile_defaults            = orvio_mobile_nav_defaults();
+	$clean['mobile_nav_items']  = array();
+	foreach ( $mobile_defaults as $slot => $default ) {
+		$raw = isset( $input['mobile_nav_items'][ $slot ] ) && is_array( $input['mobile_nav_items'][ $slot ] ) ? $input['mobile_nav_items'][ $slot ] : array();
+		$clean['mobile_nav_items'][ $slot ] = array(
+			'enabled' => empty( $raw['enabled'] ) ? 0 : 1,
+			'order'   => max( 1, min( count( $mobile_defaults ), absint( $raw['order'] ?? $default['order'] ) ) ),
+			'type'    => in_array( $raw['type'] ?? '', $mobile_types, true ) ? $raw['type'] : $default['type'],
+			'label'   => ! empty( $raw['label'] ) ? sanitize_text_field( $raw['label'] ) : $default['label'],
+			'icon'    => in_array( $raw['icon'] ?? '', $mobile_icons, true ) ? $raw['icon'] : $default['icon'],
+			'url'     => esc_url_raw( $raw['url'] ?? '' ),
+		);
+	}
 	$shop_layouts                 = array( 'sidebar-grid', 'wide-grid', 'list', 'masonry', 'minimal' );
 	$product_layouts              = array( 'classic', 'gallery-right', 'stacked', 'immersive' );
 	$page_layouts                 = array( 'split', 'classic', 'compact', 'focus', 'minimal' );
@@ -148,7 +205,7 @@ function orvio_sanitize_settings( $input ) {
 		$mode = $input['billing_fields'][ $field ] ?? $default_mode;
 		$clean['billing_fields'][ $field ] = in_array( $mode, $billing_modes, true ) ? $mode : $default_mode;
 	}
-	$toggles                    = array( 'sticky_header', 'show_announcement', 'shop_sidebar', 'sticky_summary', 'enable_wishlist', 'enable_quick_view', 'show_search', 'show_account', 'show_cart', 'show_catbar' );
+	$toggles                    = array( 'sticky_header', 'mobile_nav_enabled', 'show_announcement', 'shop_sidebar', 'sticky_summary', 'enable_wishlist', 'enable_quick_view', 'show_search', 'show_account', 'show_cart', 'show_catbar' );
 	foreach ( $toggles as $key ) {
 		$clean[ $key ] = empty( $input[ $key ] ) ? 0 : 1;
 	}
@@ -281,6 +338,30 @@ function orvio_render_settings_page() {
 							'soft'    => orvio_t( 'Soft', 'نرم' ),
 						) );
 						orvio_field_number( 'menu_size', orvio_t( 'Menu size', 'اندازه منو' ), $o, 12, 20 );
+						orvio_field_check( 'mobile_nav_enabled', orvio_t( 'Mobile navigation', 'ناوبری موبایل' ), $o );
+						orvio_field_select( 'mobile_nav_style', orvio_t( 'Mobile nav style', 'استایل ناوبری موبایل' ), $o, array(
+						'bar'      => orvio_t( 'Bottom bar', 'نوار پایین' ),
+						'floating' => orvio_t( 'Floating panel', 'پنل شناور' ),
+						'pill'     => orvio_t( 'Pill', 'کپسولی' ),
+						'glass'    => orvio_t( 'Glass', 'شیشه‌ای' ),
+						'dark'     => orvio_t( 'Dark', 'تیره' ),
+						'minimal'  => orvio_t( 'Minimal', 'مینیمال' ),
+					) );
+						orvio_field_optional_color( 'mobile_nav_background', orvio_t( 'Background color', 'رنگ پس‌زمینه' ), $o );
+						orvio_field_optional_color( 'mobile_nav_text', orvio_t( 'Text and icon color', 'رنگ متن و آیکن' ), $o );
+						orvio_field_optional_color( 'mobile_nav_border', orvio_t( 'Border color', 'رنگ حاشیه' ), $o );
+						orvio_field_optional_color( 'mobile_nav_active', orvio_t( 'Active color', 'رنگ حالت فعال' ), $o );
+						orvio_field_optional_color( 'mobile_nav_active_bg', orvio_t( 'Active background', 'پس‌زمینه فعال' ), $o );
+						orvio_field_select( 'mobile_nav_shadow', orvio_t( 'Shadow', 'سایه' ), $o, array( '' => orvio_t( 'Preset default', 'پیش‌فرض استایل' ), 'none' => orvio_t( 'None', 'بدون سایه' ), 'soft' => orvio_t( 'Soft', 'نرم' ), 'strong' => orvio_t( 'Strong', 'قوی' ) ) );
+						orvio_field_select( 'mobile_nav_active_style', orvio_t( 'Active state', 'حالت فعال' ), $o, array( 'soft' => orvio_t( 'Soft background', 'پس‌زمینه نرم' ), 'solid' => orvio_t( 'Solid', 'پر' ), 'underline' => orvio_t( 'Underline', 'خط زیر' ), 'dot' => orvio_t( 'Dot', 'نقطه' ) ) );
+						orvio_field_number( 'mobile_nav_radius', orvio_t( 'Radius', 'گردی' ), $o, 0, 40 );
+						orvio_field_number( 'mobile_nav_spacing', orvio_t( 'Spacing', 'فاصله' ), $o, 0, 20 );
+						orvio_field_number( 'mobile_nav_height', orvio_t( 'Height', 'ارتفاع' ), $o, 42, 96 );
+						orvio_field_number( 'mobile_nav_icon_size', orvio_t( 'Icon size', 'اندازه آیکن' ), $o, 16, 32 );
+						echo '<h3 style="margin-top:18px">' . esc_html( orvio_t( 'Mobile navigation buttons', 'دکمه‌های ناوبری موبایل' ) ) . '</h3>';
+						foreach ( orvio_mobile_nav_defaults() as $slot => $default ) {
+							orvio_field_mobile_nav_item( $slot, $o['mobile_nav_items'][ $slot ] ?? $default );
+						}
 						?>
 					</div>
 					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Elements', 'المان‌ها' ) ); ?></h2>
@@ -432,6 +513,9 @@ function orvio_font_stack( $key ) {
 function orvio_field_color( $key, $label, $o ) {
 	echo '<label class="orvio-admin__field"><span>' . esc_html( $label ) . '</span><input type="color" name="orvio_settings[' . esc_attr( $key ) . ']" value="' . esc_attr( $o[ $key ] ) . '"></label>';
 }
+function orvio_field_optional_color( $key, $label, $o ) {
+	echo '<label class="orvio-admin__field"><span>' . esc_html( $label ) . '</span><input type="text" name="orvio_settings[' . esc_attr( $key ) . ']" value="' . esc_attr( $o[ $key ] ?? '' ) . '" placeholder="' . esc_attr( orvio_t( 'Preset default', 'پیش‌فرض استایل' ) ) . '"></label>';
+}
 function orvio_field_text( $key, $label, $o ) {
 	echo '<label class="orvio-admin__field orvio-admin__field--wide"><span>' . esc_html( $label ) . '</span><input type="text" class="regular-text" name="orvio_settings[' . esc_attr( $key ) . ']" value="' . esc_attr( $o[ $key ] ) . '"></label>';
 }
@@ -479,6 +563,58 @@ function orvio_field_billing_mode( $key, $label, $o ) {
 		echo '<option value="' . esc_attr( $choice ) . '" ' . selected( $value, $choice, false ) . '>' . esc_html( $text ) . '</option>';
 	}
 	echo '</select></label>';
+}
+
+function orvio_mobile_nav_type_choices() {
+	return array(
+		'home'       => orvio_t( 'Home', 'خانه' ),
+		'categories' => orvio_t( 'Categories / menu', 'دسته‌ها / منو' ),
+		'shop'       => orvio_t( 'Shop', 'فروشگاه' ),
+		'cart'       => orvio_t( 'Cart', 'سبد خرید' ),
+		'account'    => orvio_t( 'Account', 'ناحیه کاربری' ),
+		'wishlist'   => orvio_t( 'Wishlist', 'علاقه‌مندی' ),
+		'search'     => orvio_t( 'Search', 'جستجو' ),
+		'custom'     => orvio_t( 'Custom link', 'لینک سفارشی' ),
+	);
+}
+
+function orvio_mobile_nav_icon_choices() {
+	return array(
+		'home'  => orvio_t( 'Home icon', 'آیکن خانه' ),
+		'grid'  => orvio_t( 'Grid icon', 'آیکن شبکه' ),
+		'menu'  => orvio_t( 'Menu icon', 'آیکن منو' ),
+		'store' => orvio_t( 'Store icon', 'آیکن فروشگاه' ),
+		'bag'   => orvio_t( 'Bag icon', 'آیکن سبد' ),
+		'user'  => orvio_t( 'User icon', 'آیکن کاربر' ),
+		'heart' => orvio_t( 'Heart icon', 'آیکن علاقه‌مندی' ),
+		'search'=> orvio_t( 'Search icon', 'آیکن جستجو' ),
+	);
+}
+
+function orvio_field_mobile_nav_item( $slot, $item ) {
+	$number = str_replace( 'item_', '', $slot );
+	$types  = orvio_mobile_nav_type_choices();
+	$icons  = orvio_mobile_nav_icon_choices();
+	$item   = wp_parse_args( is_array( $item ) ? $item : array(), array( 'enabled' => 1, 'order' => (int) $number, 'type' => 'home', 'label' => '', 'icon' => 'home', 'url' => '' ) );
+	echo '<div class="orvio-mobile-nav-setting"><h4>' . esc_html( sprintf( orvio_t( 'Button %s', 'دکمه %s' ), $number ) ) . '</h4>';
+	echo '<label class="orvio-admin__field"><span>' . esc_html( orvio_t( 'Position', 'جایگاه' ) ) . '</span><select name="orvio_settings[mobile_nav_items][' . esc_attr( $slot ) . '][order]">';
+	for ( $position = 1; $position <= 5; $position++ ) {
+		echo '<option value="' . esc_attr( $position ) . '" ' . selected( (int) $item['order'], $position, false ) . '>' . esc_html( sprintf( orvio_t( 'Position %s', 'جایگاه %s' ), $position ) ) . '</option>';
+	}
+	echo '</select></label>';
+	echo '<label class="orvio-admin__check"><input type="checkbox" name="orvio_settings[mobile_nav_items][' . esc_attr( $slot ) . '][enabled]" value="1" ' . checked( ! empty( $item['enabled'] ), true, false ) . '> ' . esc_html( orvio_t( 'Enabled', 'فعال' ) ) . '</label>';
+	echo '<label class="orvio-admin__field"><span>' . esc_html( orvio_t( 'Action', 'عملکرد' ) ) . '</span><select name="orvio_settings[mobile_nav_items][' . esc_attr( $slot ) . '][type]">';
+	foreach ( $types as $value => $label ) {
+		echo '<option value="' . esc_attr( $value ) . '" ' . selected( $item['type'], $value, false ) . '>' . esc_html( $label ) . '</option>';
+	}
+	echo '</select></label>';
+	echo '<label class="orvio-admin__field"><span>' . esc_html( orvio_t( 'Label', 'عنوان' ) ) . '</span><input type="text" name="orvio_settings[mobile_nav_items][' . esc_attr( $slot ) . '][label]" value="' . esc_attr( $item['label'] ) . '"></label>';
+	echo '<label class="orvio-admin__field"><span>' . esc_html( orvio_t( 'Icon', 'آیکن' ) ) . '</span><select name="orvio_settings[mobile_nav_items][' . esc_attr( $slot ) . '][icon]">';
+	foreach ( $icons as $value => $label ) {
+		echo '<option value="' . esc_attr( $value ) . '" ' . selected( $item['icon'], $value, false ) . '>' . esc_html( $label ) . '</option>';
+	}
+	echo '</select></label>';
+	echo '<label class="orvio-admin__field orvio-admin__field--wide"><span>' . esc_html( orvio_t( 'Custom URL', 'آدرس سفارشی' ) ) . '</span><input type="url" name="orvio_settings[mobile_nav_items][' . esc_attr( $slot ) . '][url]" value="' . esc_attr( $item['url'] ) . '" placeholder="https://"></label></div>';
 }
 
 function orvio_field_select( $key, $label, $o, $choices ) {
@@ -535,6 +671,24 @@ function orvio_body_classes( $classes ) {
 	if ( function_exists( 'is_checkout' ) && is_checkout() && ( ! function_exists( 'is_order_received_page' ) || ! is_order_received_page() ) ) {
 		$page_layouts = array( 'split', 'classic', 'compact', 'focus', 'minimal' );
 		$classes[] = 'orvio-checkout-layout-' . ( in_array( $o['checkout_layout'], $page_layouts, true ) ? $o['checkout_layout'] : 'split' );
+	}
+	$mobile_styles      = array( 'bar', 'floating', 'pill', 'glass', 'dark', 'minimal' );
+	$mobile_nav_has_item = false;
+	foreach ( (array) ( $o['mobile_nav_items'] ?? array() ) as $mobile_item ) {
+		if ( is_array( $mobile_item ) && ! empty( $mobile_item['enabled'] ) ) {
+			$mobile_nav_has_item = true;
+			break;
+		}
+	}
+	if ( ! empty( $o['mobile_nav_enabled'] ) && $mobile_nav_has_item ) {
+		$classes[] = 'orvio-mobile-nav-on';
+		$classes[] = 'orvio-mobile-nav-style-' . ( in_array( $o['mobile_nav_style'], $mobile_styles, true ) ? $o['mobile_nav_style'] : 'bar' );
+		if ( ! empty( $o['mobile_nav_height'] ) && (int) $o['mobile_nav_height'] >= 70 ) {
+			$classes[] = 'orvio-mobile-nav-tall';
+		}
+		if ( ! empty( $o['mobile_nav_spacing'] ) && (int) $o['mobile_nav_spacing'] >= 12 ) {
+			$classes[] = 'orvio-mobile-nav-roomy';
+		}
 	}
 	$layout = in_array( $o['site_layout'], array( 'wide', 'boxed', 'content-wide' ), true ) ? $o['site_layout'] : 'wide';
 	$atc    = in_array( $o['atc_style'], array( 'pill', 'block', 'outline', 'soft' ), true ) ? $o['atc_style'] : 'pill';
