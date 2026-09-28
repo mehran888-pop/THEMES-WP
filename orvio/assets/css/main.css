@@ -2387,11 +2387,12 @@ body.orvio-account-style-saas .orvio-account__nav .orvio-account-nav__links a::b
 body.orvio-account-style-saas .orvio-account__nav .orvio-account-nav__edit::before,
 .orvio-account--style-saas .orvio-account__nav .orvio-account-nav__edit::before { display: none; }
 @media (max-width: 980px) {
-  /* Keep the account menu as a narrow vertical rail beside the mobile content. */
+  /* Keep the account menu vertical, centered in the viewport and clear of the corners. */
   body.orvio-account-layout-saas .orvio-account,
-  .orvio-account--layout-saas { grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: start; }
+  .orvio-account--layout-saas { grid-template-columns: 1fr; gap: 12px; align-items: start; }
   .orvio-account-nav-wrap { display: contents; }
-  .orvio-account-nav-mobile { grid-column: 1; grid-row: 1; position: sticky; top: 76px; z-index: 4; display: flex; width: 64px; flex-direction: column; align-items: center; gap: 9px; margin: 0; padding: 8px 6px; border: 1px solid var(--account-saas-line); border-radius: 18px; background: #fff; box-shadow: 0 8px 22px rgba(35,52,86,.08); }
+  .orvio-account-nav-mobile { position: fixed; z-index: 40; top: 50%; inset-inline-start: 12px; display: flex; width: 64px; max-height: calc(100dvh - 32px); flex-direction: column; align-items: center; justify-content: center; gap: 9px; margin: 0; padding: 10px 8px; border: 1px solid var(--account-saas-line); border-radius: 18px; background: #fff; box-shadow: 0 10px 28px rgba(35,52,86,.12); transform: translateY(-50%); }
+  html[dir="rtl"] .orvio-account-nav-mobile { inset-inline-start: auto; inset-inline-end: 12px; }
   .orvio-account-nav-mobile__identity { display: block; min-width: 0; }
   .orvio-account-nav-mobile__identity > div:last-child { display: none; }
   .orvio-account-nav-mobile__avatar { display: inline-grid; width: 48px; height: 48px; padding: 0; place-items: center; border: 0; border-radius: 13px; background: transparent; cursor: pointer; }
@@ -2402,7 +2403,7 @@ body.orvio-account-style-saas .orvio-account__nav .orvio-account-nav__edit::befo
   .orvio-account-nav-mobile__icon { display: inline-flex; }
   .orvio-account-nav-mobile__icon svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .orvio-account-nav-mobile__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .orvio-account__content { grid-column: 2; grid-row: 1; min-width: 0; }
+  .orvio-account__content { grid-column: 1; grid-row: 1; min-width: 0; padding-inline-start: 76px; }
 
   .orvio-account__nav[data-account-nav] { display: none; }
   .orvio-account__nav[data-account-nav].is-open { position: fixed; z-index: 80; inset-block: 0; inset-inline-start: 0; display: block; width: min(360px, calc(100vw - 28px)); max-width: 100%; overflow-y: auto; padding: 16px; border: 1px solid var(--account-saas-line); border-radius: 0 22px 22px 0; background: #fff; box-shadow: 0 18px 60px rgba(21,34,70,.2); }
@@ -2443,7 +2444,7 @@ body.orvio-account-fullscreen .orvio-account__nav { top: 24px; }
   .orvio-account-pagehead__top { align-items: flex-start; flex-direction: column-reverse; gap: 10px; }
   .orvio-account-pagehead__top .orvio-crumb { order: 2; }
   body.orvio-account-fullscreen .orvio-account { min-height: calc(100dvh - 130px); }
-  body.orvio-account-fullscreen .orvio-account-nav-mobile { top: 16px; }
+  body.orvio-account-fullscreen .orvio-account-nav-mobile { top: 50%; transform: translateY(-50%); }
 }
 
 @media print {
