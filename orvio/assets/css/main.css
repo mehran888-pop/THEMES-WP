@@ -2943,3 +2943,29 @@ body.orvio-cart-layout-saas-compact .orvio-cart-item__remove {
   body.orvio-cart-layout-saas-bento .orvio-cart-item__remove,
   body.orvio-cart-layout-saas-compact .orvio-cart-item__remove { grid-area: remove; }
 }
+
+/* Keep the drawer quantity control and remove icon together in a visible,
+ * non-collapsing action row below the product name. */
+.orvio-line__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+  margin-top: 6px;
+}
+.orvio-line__actions .orvio-mini-cart-qty {
+  flex: 0 1 auto;
+  margin-top: 0;
+}
+.orvio-line__actions .orvio-line__remove {
+  flex: 0 0 28px;
+  visibility: visible;
+  opacity: 1;
+}
+.orvio-drawer--cart .orvio-line__actions .orvio-mini-cart-qty,
+.orvio-drawer--cart .orvio-line__actions .orvio-mini-cart-qty button,
+.orvio-drawer--cart .orvio-line__actions .orvio-mini-cart-qty input {
+  visibility: visible;
+  opacity: 1;
+}

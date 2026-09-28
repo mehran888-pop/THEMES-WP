@@ -24,6 +24,7 @@ if ( WC()->cart && ! WC()->cart->is_empty() ) :
 					<strong class="orvio-line__price"><?php echo wp_kses_post( WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ) ); ?></strong>
 				</div>
 				<div class="orvio-line__meta"><?php echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+				<div class="orvio-line__actions">
 				<form class="orvio-mini-cart-qty" data-orvio-mini-cart-qty action="<?php echo esc_url( wc_get_cart_url() ); ?>" method="post">
 					<button type="button" data-mini-cart-step="-1" aria-label="<?php echo esc_attr( orvio_t( 'Decrease quantity', 'کاهش تعداد' ) ); ?>">−</button>
 					<input type="number" name="cart[<?php echo esc_attr( $cart_item_key ); ?>][qty]" value="<?php echo esc_attr( $cart_item['quantity'] ); ?>" min="1" max="<?php echo esc_attr( $_product->get_max_purchase_quantity() ?: '' ); ?>" data-cart-item-key="<?php echo esc_attr( $cart_item_key ); ?>" aria-label="<?php echo esc_attr( orvio_t( 'Quantity', 'تعداد' ) ); ?>">
@@ -47,6 +48,7 @@ if ( WC()->cart && ! WC()->cart->is_empty() ) :
 					$cart_item_key
 				);
 				?>
+				</div>
 			</div>
 		</div>
 		<?php
