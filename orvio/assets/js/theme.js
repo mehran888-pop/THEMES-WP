@@ -333,8 +333,48 @@
     setInterval(tick, 1000);
   }
 
+  function openGalleryLightbox(src, alt) {
+    if (!src) return;
+    var box = document.querySelector("[data-gallery-lightbox]");
+    if (!box) {
+      box = document.createElement("div");
+      box.className = "orvio-lightbox";
+      box.setAttribute("role", "dialog");
+      box.setAttribute("aria-modal", "true");
+      box.setAttribute("data-gallery-lightbox", "true");
+      box.setAttribute("aria-hidden", "true");
+      box.innerHTML = '<button type="button" class="orvio-lightbox__close" data-gallery-close aria-label="Close">×</button><div class="orvio-lightbox__frame"><img alt=""></div>';
+      document.body.appendChild(box);
+    }
+    var image = box.querySelector("img");
+    image.src = src;
+    image.alt = alt || "";
+    box.classList.add("is-open");
+    box.setAttribute("aria-hidden", "false");
+    document.body.classList.add("is-gallery-open");
+    box.querySelector("[data-gallery-close]").focus();
+  }
+
+  function closeGalleryLightbox() {
+    var box = document.querySelector("[data-gallery-lightbox]");
+    if (!box) return;
+    box.classList.remove("is-open");
+    box.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("is-gallery-open");
+  }
+
   function initGallery() {
     document.addEventListener("click", function (e) {
+      var zoom = e.target.closest("[data-gallery-zoom]");
+      if (zoom) {
+        e.preventDefault();
+        openGalleryLightbox(zoom.getAttribute("data-gallery-zoom-src"), zoom.getAttribute("aria-label"));
+        return;
+      }
+      if (e.target.closest("[data-gallery-close]") || (e.target.matches("[data-gallery-lightbox]"))) {
+        closeGalleryLightbox();
+        return;
+      }
       var btn = e.target.closest("[data-thumb]");
       if (!btn) return;
       var gallery = btn.closest("[data-gallery]");
@@ -343,9 +383,16 @@
       if (main && btn.dataset.src) {
         main.src = btn.dataset.src;
         main.alt = btn.dataset.alt || main.alt;
+        var count = gallery.querySelector("[data-gallery-count]");
+        if (count) count.textContent = String(btn.dataset.index || "1").padStart(2, "0") + " / " + String(gallery.querySelectorAll("[data-thumb]").length).padStart(2, "0");
+        var zoomButton = gallery.querySelector("[data-gallery-zoom]");
+        if (zoomButton) zoomButton.setAttribute("data-gallery-zoom-src", btn.dataset.src);
       }
       gallery.querySelectorAll("[data-thumb]").forEach(function (b) { b.classList.remove("is-on"); });
       btn.classList.add("is-on");
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeGalleryLightbox();
     });
   }
 

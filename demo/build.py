@@ -445,7 +445,7 @@ def shell(page, title, body, extra=""):
   <title>{e(title)}</title>
   <meta name="description" content="Orvio — قالب فروشگاهی ووکامرس با پشتیبانی المنتور">
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/main.css?v=5">
+  <link rel="stylesheet" href="assets/css/main.css?v=6">
 </head>
 <body class="orvio-body{' orvio-cart-style-saas orvio-cart-layout-saas-split' if page == 'cart' else ''}" data-page="{page}">
 <div class="orvio-themebar"><div class="orvio-container">
