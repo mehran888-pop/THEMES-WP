@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>تنظیمات قالب — اُرویو</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/admin.css?v=5">
+  <style>
+    body { margin: 0; background: #e7e1d8; }
+    #orvio-app { margin: 24px auto; max-width: 1080px; min-height: 720px; }
+    .orvio-preview-note { max-width: 1080px; margin: 18px auto 0; color: #6f675f; font-family: Vazirmatn, Tahoma, sans-serif; font-size: 13px; }
+  </style>
+</head>
+<body>
+<p class="orvio-preview-note">پیش‌نمایش پنل تنظیمات پیشخوان. در وردپرس از منوی Orvio باز می‌شود.</p>
+<div id="orvio-app">
+  <aside class="orvio-side">
+    <div class="orvio-brand"><strong>ORVIO</strong><span>تنظیمات قالب</span></div>
+    <nav class="orvio-nav">
+      <button type="button" data-tab="general" class="is-on">طراحی</button>
+      <button type="button" data-tab="header">هدر</button>
+      <button type="button" data-tab="footer">فوتر</button>
+      <button type="button" data-tab="shop">فروشگاه</button>
+      <button type="button" data-tab="home">صفحه اول</button>
+    </nav>
+    <p class="orvio-side__note">تغییرها به‌صورت متغیر CSS اعمال می‌شود. استایل هر المان در تب استایل المنتور است.</p>
+  </aside>
+  <div class="orvio-main">
+    <div class="orvio-top">
+      <div>
+        <h1>تنظیمات قالب</h1>
+        <p>اتاق فرمان رنگ، فونت، هدر و فروشگاه. خود صفحه اول یک برگه المنتور است.</p>
+      </div>
+    </div>
+    <section data-panel="general" class="orvio-panel is-on">
+      <div class="orvio-card"><h2>رنگ</h2>
+        <label class="orvio-admin__field"><span>رنگ تأکید</span><input type="color" value="#A34B2B"></label>
+        <label class="orvio-admin__field"><span>پس‌زمینه</span><input type="color" value="#F6F1EA"></label>
+        <label class="orvio-admin__field"><span>متن</span><input type="color" value="#171512"></label>
+      </div>
+      <div class="orvio-card"><h2>فونت</h2>
+        <label class="orvio-admin__field"><span>فونت متن</span><select><option>Vazirmatn</option><option>Instrument Sans</option></select></label>
+        <label class="orvio-admin__field"><span>فونت عنوان</span><select><option>Fraunces</option><option>Vazirmatn</option></select></label>
+        <label class="orvio-admin__field"><span>اندازه پایه</span><input type="number" value="16"></label>
+      </div>
+    </section>
+    <section data-panel="header" class="orvio-panel">
+      <div class="orvio-card"><h2>چیدمان</h2>
+        <label class="orvio-admin__field"><span>چیدمان هدر</span><select><option>استاندارد</option><option>لوگوی وسط</option></select></label>
+        <label class="orvio-admin__check"><span>هدر چسبان</span><input type="checkbox" checked></label>
+        <label class="orvio-admin__field"><span>پس‌زمینه</span><input type="color" value="#FFFCF8"></label>
+      </div>
+      <div class="orvio-card"><h2>المان‌ها</h2>
+        <label class="orvio-admin__check"><span>جستجو</span><input type="checkbox" checked></label>
+        <label class="orvio-admin__check"><span>حساب</span><input type="checkbox" checked></label>
+        <label class="orvio-admin__check"><span>سبد</span><input type="checkbox" checked></label>
+        <label class="orvio-admin__check"><span>منوی دسته‌ها</span><input type="checkbox" checked></label>
+      </div>
+    </section>
+    <section data-panel="footer" class="orvio-panel">
+      <div class="orvio-card"><h2>فوتر</h2>
+        <label class="orvio-admin__field"><span>متن معرفی</span><input type="text" value="ویترینی از اشیاء روزمره"></label>
+        <label class="orvio-admin__field"><span>اینستاگرام</span><input type="text" value="https://instagram.com"></label>
+      </div>
+    </section>
+    <section data-panel="shop" class="orvio-panel">
+      <div class="orvio-card"><h2>فروشگاه</h2>
+        <label class="orvio-admin__field"><span>ستون‌ها</span><input type="number" value="4"></label>
+        <label class="orvio-admin__field"><span>کارت کالا</span><select><option>کلاسیک</option><option>مینیمال</option><option>روی تصویر</option></select></label>
+      </div>
+    </section>
+    <section data-panel="home" class="orvio-panel">
+      <div class="orvio-card" style="padding:18px 20px">
+        <h2>صفحه اول المنتور</h2>
+        <p class="orvio-home-copy">ویترین یک برگه المنتور است: هیرو، دسته‌ها، شبکه کالا، بنر، درباره و خبرنامه. در المنتور چیدمان، فونت، رنگ، پس‌زمینه، سایه و فاصله هر المان را عوض کنید.</p>
+        <p><span class="orvio-status is-ok">ساخته‌شده با المنتور</span></p>
+        <div class="orvio-actions"><a class="button button-primary" href="index.html">مشاهده صفحه اول</a></div>
+      </div>
+    </section>
+    <div class="orvio-save"><button class="button button-primary" type="button">ذخیره تنظیمات</button></div>
+  </div>
+</div>
+<script src="assets/js/admin.js?v=5"></script>
+</body>
+</html>
