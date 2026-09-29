@@ -109,6 +109,7 @@ function orvio_defaults() {
 		'product_price_size' => 30,
 		'product_button_size' => 14,
 		'product_content_width' => 1220,
+		'product_width_mode' => 'inherit',
 		'product_summary_width' => 46,
 		'product_gap'        => 48,
 		'product_radius'     => 24,
@@ -290,6 +291,8 @@ function orvio_sanitize_settings( $input ) {
 	$clean['product_price_size']  = max( 18, min( 48, absint( $input['product_price_size'] ?? 30 ) ) );
 	$clean['product_button_size'] = max( 11, min( 20, absint( $input['product_button_size'] ?? 14 ) ) );
 	$clean['product_content_width'] = max( 900, min( 1680, absint( $input['product_content_width'] ?? 1220 ) ) );
+	$product_width_modes = array( 'inherit', 'wide', 'boxed', 'content-wide' );
+	$clean['product_width_mode'] = in_array( $input['product_width_mode'] ?? '', $product_width_modes, true ) ? $input['product_width_mode'] : 'inherit';
 	$clean['product_summary_width'] = max( 36, min( 58, absint( $input['product_summary_width'] ?? 46 ) ) );
 	$clean['product_gap']         = max( 12, min( 96, absint( $input['product_gap'] ?? 48 ) ) );
 	$clean['product_radius']      = max( 0, min( 44, absint( $input['product_radius'] ?? 24 ) ) );
@@ -609,6 +612,7 @@ function orvio_render_settings_page() {
 						<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Product details and templates', 'جزئیات و قالب‌های محصول' ) ); ?></h2>
 							<?php
 							orvio_field_number( 'product_content_width', orvio_t( 'Content width (px)', 'عرض محتوای محصول (پیکسل)' ), $o, 900, 1680 );
+							orvio_field_select( 'product_width_mode', orvio_t( 'Product page width', 'عرض صفحه محصول' ), $o, array( 'inherit' => orvio_t( 'Use site setting', 'پیروی از تنظیمات سایت' ), 'wide' => orvio_t( 'Wide', 'عریض' ), 'boxed' => orvio_t( 'Boxed', 'جعبه‌ای' ), 'content-wide' => orvio_t( 'Wide content', 'محتوای عریض' ) ) );
 							orvio_field_number( 'product_summary_width', orvio_t( 'Summary column width (%)', 'عرض ستون نام و خرید (درصد)' ), $o, 36, 58 );
 							orvio_field_number( 'product_gap', orvio_t( 'Gallery / summary gap (px)', 'فاصله گالری و خلاصه (پیکسل)' ), $o, 12, 96 );
 							orvio_field_number( 'product_radius', orvio_t( 'Product radius (px)', 'گردی اجزای محصول (پیکسل)' ), $o, 0, 44 );
@@ -873,6 +877,10 @@ function orvio_print_css_vars() {
 	$css .= 'h1,h2,h3,h4,.orvio-logo__word strong{font-family:var(--display);}';
 	$css .= '.orvio-header,.orvio-catbar{background:var(--header-bg);color:var(--header-ink);}';
 	$css .= '.orvio-catbar__menu>li>a,.orvio-tool__label,.orvio-logo__word{font-size:var(--menu-size);}';
+	$css .= 'body.single-product.orvio-product-width-wide .orvio-main>.orvio-wc{width:calc(100% - 40px)!important;max-width:none!important;}';
+	$css .= 'body.single-product.orvio-product-width-content-wide .orvio-main>.orvio-wc{width:min(1680px,calc(100% - 32px))!important;max-width:none!important;}';
+	$css .= 'body.single-product.orvio-product-width-boxed .orvio-main>.orvio-wc{box-sizing:border-box;width:min(var(--container),calc(100% - 24px))!important;margin-inline:auto;padding:clamp(20px,3.5vw,48px);background:var(--product-surface);border:1px solid var(--product-border);border-radius:var(--product-radius);box-shadow:0 16px 48px rgba(23,21,18,.08);}';
+	$css .= '@media (max-width:720px){body.single-product.orvio-product-width-boxed .orvio-main>.orvio-wc{width:calc(100% - 20px)!important;padding:14px!important;border-radius:16px;}}';
 	$css .= 'body.single-product .orvio-product--premium{max-width:var(--product-content-width);font-family:var(--product-font);font-size:var(--product-body-size);color:var(--product-text);}';
 	$css .= 'body.single-product .orvio-product--premium .orvio-product__main{gap:var(--product-gap)!important;}';
 	$css .= '@media (min-width:981px){body.single-product .orvio-product--premium .orvio-product__main{grid-template-columns:minmax(0,calc(100% - var(--product-summary-width) - var(--product-gap))) minmax(320px,var(--product-summary-width))!important;}body.single-product.orvio-product-layout-gallery-right .orvio-product--premium .orvio-product__main{grid-template-columns:minmax(320px,var(--product-summary-width)) minmax(0,calc(100% - var(--product-summary-width) - var(--product-gap)))!important;}body.single-product.orvio-product-layout-immersive .orvio-product--premium .orvio-product__main{grid-template-columns:minmax(0,calc(100% - var(--product-summary-width) - var(--product-gap))) minmax(320px,var(--product-summary-width))!important;}body.single-product.orvio-product-layout-stacked .orvio-product--premium .orvio-product__main{grid-template-columns:1fr!important;max-width:980px;}}';
@@ -931,8 +939,13 @@ function orvio_body_classes( $classes ) {
 		$product_layouts = array( 'classic', 'gallery-right', 'stacked', 'immersive' );
 		$classes[] = 'orvio-product-layout-' . ( in_array( $o['product_layout'], $product_layouts, true ) ? $o['product_layout'] : 'classic' );
 		$product_tabs = array( 'card', 'underline', 'minimal' );
-		$classes[] = 'orvio-product-tabs-' . ( in_array( $o['product_tabs_style'] ?? 'card', $product_tabs, true ) ? $o['product_tabs_style'] : 'card' );
-		if ( empty( $o['product_show_sku'] ) ) {
+			$classes[] = 'orvio-product-tabs-' . ( in_array( $o['product_tabs_style'] ?? 'card', $product_tabs, true ) ? $o['product_tabs_style'] : 'card' );
+			$product_width_modes = array( 'inherit', 'wide', 'boxed', 'content-wide' );
+			$product_width_mode = in_array( $o['product_width_mode'] ?? 'inherit', $product_width_modes, true ) ? $o['product_width_mode'] : 'inherit';
+			if ( 'inherit' !== $product_width_mode ) {
+				$classes[] = 'orvio-product-width-' . $product_width_mode;
+			}
+			if ( empty( $o['product_show_sku'] ) ) {
 			$classes[] = 'orvio-product-hide-sku';
 		}
 	}
