@@ -56,12 +56,12 @@ add_action( 'wp_head', 'orvio_button_overrides', 100 );
 function orvio_button_overrides() {
 	$style = orvio_opt( 'atc_style', 'pill' );
 	$radius = 'pill' === $style ? '999px' : ( 'soft' === $style ? '14px' : '12px' );
-	$bg     = 'outline' === $style ? 'transparent' : ( 'soft' === $style ? 'var(--accent-soft,#f3e4dc)' : 'var(--accent)' );
-	$color  = 'outline' === $style || 'soft' === $style ? 'var(--ink)' : '#fff';
+	$bg     = 'outline' === $style ? 'transparent' : ( 'soft' === $style ? 'var(--accent-soft)' : 'var(--button-bg)' );
+	$color  = 'outline' === $style || 'soft' === $style ? 'var(--ink)' : 'var(--button-text)';
 	$border = 'outline' === $style ? '1.5px solid var(--ink)' : '0';
 	$width  = 'block' === $style ? '100%' : 'auto';
 	$flex   = 'block' === $style ? '1 1 100%' : '1 1 auto';
-	$hover  = 'outline' === $style ? 'background:var(--ink)!important;color:#fff!important' : ( 'soft' === $style ? 'background:var(--accent)!important;color:#fff!important' : 'background:var(--ink)!important;color:#fff!important' );
+	$hover  = 'outline' === $style ? 'background:var(--button-hover)!important;color:var(--button-hover-text)!important' : ( 'soft' === $style ? 'background:var(--button-hover)!important;color:var(--button-hover-text)!important' : 'background:var(--button-hover)!important;color:var(--button-hover-text)!important' );
 	$product_bg    = sanitize_hex_color( orvio_opt( 'product_button_bg', '#1C1916' ) ) ?: '#1C1916';
 	$product_hover = sanitize_hex_color( orvio_opt( 'product_button_hover', '#A34B2B' ) ) ?: '#A34B2B';
 	$product_color = sanitize_hex_color( orvio_opt( 'product_button_text', '#FFFFFF' ) ) ?: '#FFFFFF';

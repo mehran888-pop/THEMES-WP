@@ -41,6 +41,31 @@ function orvio_defaults() {
 		'bg'                 => '#F3EFE8',
 		'ink'                => '#1C1916',
 		'dark'               => '#171512',
+		'bg_2'               => '#E8E1D6',
+		'surface'            => '#FFFCF8',
+		'muted'              => '#6E665E',
+		'faint'              => '#8C837A',
+		'line'               => '#E5DDD3',
+		'line_strong'        => '#D5CCC0',
+		'accent_dark'        => '#843C22',
+		'accent_soft'        => '#F6E6DC',
+		'forest'             => '#234237',
+		'sale'               => '#9C2F2F',
+		'star'               => '#A7843C',
+		'dark_2'             => '#241F1B',
+		'ok'                 => '#1C6B45',
+		'warn'               => '#8A6412',
+		'info'               => '#1E4E6B',
+		'button_bg'          => '#A34B2B',
+		'button_text'        => '#FFFFFF',
+		'button_hover'       => '#843C22',
+		'button_hover_text'  => '#FFFFFF',
+		'focus_color'        => '#A34B2B',
+		'selection_bg'       => '#E8CDBE',
+		'global_shadow'      => 'soft',
+		'global_transition'  => 220,
+		'global_control_height' => 46,
+		'global_section_spacing' => 48,
 		'radius'             => 16,
 		'container'          => 1220,
 		'site_layout'        => 'wide',
@@ -205,7 +230,7 @@ function orvio_opt( $key, $fallback = null ) {
 function orvio_sanitize_settings( $input ) {
 	$defaults = orvio_defaults();
 	$clean    = array();
-	$hex      = array( 'accent', 'bg', 'ink', 'dark', 'header_bg', 'header_ink' );
+	$hex      = array( 'accent', 'bg', 'ink', 'dark', 'bg_2', 'surface', 'muted', 'faint', 'line', 'line_strong', 'accent_dark', 'accent_soft', 'forest', 'sale', 'star', 'dark_2', 'ok', 'warn', 'info', 'button_bg', 'button_text', 'button_hover', 'button_hover_text', 'focus_color', 'selection_bg', 'header_bg', 'header_ink' );
 	foreach ( $hex as $key ) {
 		$clean[ $key ] = sanitize_hex_color( $input[ $key ] ?? '' ) ?: $defaults[ $key ];
 	}
@@ -213,6 +238,10 @@ function orvio_sanitize_settings( $input ) {
 	$clean['container']         = max( 960, min( 1680, absint( $input['container'] ?? $defaults['container'] ) ) );
 	$clean['font_size']         = max( 13, min( 20, absint( $input['font_size'] ?? $defaults['font_size'] ) ) );
 	$clean['menu_size']         = max( 12, min( 20, absint( $input['menu_size'] ?? $defaults['menu_size'] ) ) );
+	$clean['global_control_height'] = max( 36, min( 68, absint( $input['global_control_height'] ?? $defaults['global_control_height'] ) ) );
+	$clean['global_section_spacing'] = max( 16, min( 120, absint( $input['global_section_spacing'] ?? $defaults['global_section_spacing'] ) ) );
+	$clean['global_transition'] = max( 80, min( 600, absint( $input['global_transition'] ?? $defaults['global_transition'] ) ) );
+	$clean['global_shadow'] = in_array( $input['global_shadow'] ?? '', array( 'none', 'soft', 'medium', 'strong' ), true ) ? $input['global_shadow'] : 'soft';
 	$fonts                      = array( 'vazirmatn', 'instrument', 'fraunces', 'system' );
 	$clean['body_font']         = in_array( $input['body_font'] ?? '', $fonts, true ) ? $input['body_font'] : 'vazirmatn';
 	$clean['heading_font']      = in_array( $input['heading_font'] ?? '', $fonts, true ) ? $input['heading_font'] : 'vazirmatn';
@@ -433,6 +462,34 @@ function orvio_render_settings_page() {
 						orvio_field_color( 'bg', orvio_t( 'Background', 'پس‌زمینه' ), $o );
 						orvio_field_color( 'ink', orvio_t( 'Text', 'متن' ), $o );
 						orvio_field_color( 'dark', orvio_t( 'Dark sections', 'بخش‌های تیره' ), $o );
+						?>
+					</div>
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Global design tokens', 'توکن‌های سراسری طراحی' ) ); ?></h2>
+						<?php
+						orvio_field_color( 'surface', orvio_t( 'Surface / cards', 'سطح و کارت‌ها' ), $o );
+						orvio_field_color( 'bg_2', orvio_t( 'Secondary background', 'پس‌زمینه دوم' ), $o );
+						orvio_field_color( 'muted', orvio_t( 'Muted text', 'متن کم‌رنگ' ), $o );
+						orvio_field_color( 'faint', orvio_t( 'Faint text', 'متن خیلی کم‌رنگ' ), $o );
+						orvio_field_color( 'line', orvio_t( 'Border', 'حاشیه' ), $o );
+						orvio_field_color( 'line_strong', orvio_t( 'Strong border', 'حاشیه قوی' ), $o );
+						orvio_field_color( 'accent_dark', orvio_t( 'Accent dark', 'تأکید تیره' ), $o );
+						orvio_field_color( 'accent_soft', orvio_t( 'Accent soft', 'تأکید نرم' ), $o );
+						orvio_field_color( 'forest', orvio_t( 'Success / forest', 'موفقیت / سبز' ), $o );
+						orvio_field_color( 'ok', orvio_t( 'Success semantic', 'رنگ معنایی موفقیت' ), $o );
+						orvio_field_color( 'warn', orvio_t( 'Warning semantic', 'رنگ معنایی هشدار' ), $o );
+						orvio_field_color( 'info', orvio_t( 'Info semantic', 'رنگ معنایی اطلاعات' ), $o );
+						orvio_field_color( 'sale', orvio_t( 'Sale / error', 'تخفیف / خطا' ), $o );
+						orvio_field_color( 'star', orvio_t( 'Rating stars', 'ستاره امتیاز' ), $o );
+						orvio_field_color( 'button_bg', orvio_t( 'Global button background', 'پس‌زمینه دکمه عمومی' ), $o );
+						orvio_field_color( 'button_text', orvio_t( 'Global button text', 'متن دکمه عمومی' ), $o );
+						orvio_field_color( 'button_hover', orvio_t( 'Global button hover', 'هاور دکمه عمومی' ), $o );
+						orvio_field_color( 'button_hover_text', orvio_t( 'Global button hover text', 'متن هاور دکمه عمومی' ), $o );
+						orvio_field_color( 'focus_color', orvio_t( 'Focus outline', 'رنگ فوکوس کیبورد' ), $o );
+						orvio_field_color( 'selection_bg', orvio_t( 'Text selection', 'انتخاب متن' ), $o );
+						orvio_field_select( 'global_shadow', orvio_t( 'Shadow intensity', 'شدت سایه' ), $o, array( 'none' => orvio_t( 'None', 'بدون سایه' ), 'soft' => orvio_t( 'Soft', 'نرم' ), 'medium' => orvio_t( 'Medium', 'متوسط' ), 'strong' => orvio_t( 'Strong', 'قوی' ) ) );
+						orvio_field_number( 'global_control_height', orvio_t( 'Control height (px)', 'ارتفاع کنترل‌ها (پیکسل)' ), $o, 36, 68 );
+						orvio_field_number( 'global_section_spacing', orvio_t( 'Section spacing (px)', 'فاصله بخش‌ها (پیکسل)' ), $o, 16, 120 );
+						orvio_field_number( 'global_transition', orvio_t( 'Motion speed (ms)', 'سرعت حرکت (میلی‌ثانیه)' ), $o, 80, 600 );
 						?>
 					</div>
 					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Type', 'فونت' ) ); ?></h2>
@@ -875,7 +932,13 @@ function orvio_print_css_vars() {
 	$product_width_mode = $o['product_width_mode'] ?? 'inherit';
 	$product_content_width = $product_width_presets[ $product_width_mode ] ?? $product_width_presets['inherit'];
 	$css  = ':root{--accent:' . $o['accent'] . ';--accent-dark:' . $o['accent'] . ';--bg:' . $o['bg'] . ';--ink:' . $o['ink'] . ';--dark:' . $o['dark'] . ';--radius:' . intval( $o['radius'] ) . 'px;--radius-sm:' . max( 4, intval( $o['radius'] ) - 4 ) . 'px;--container:' . intval( $o['container'] ) . 'px;--cols:' . $shop_desktop . ';--orvio-shop-cols-desktop:' . $shop_desktop . ';--orvio-shop-cols-mobile:' . $shop_mobile . ';--font:' . $body . ';--display:' . $head . ';--header-bg:' . $o['header_bg'] . ';--header-ink:' . $o['header_ink'] . ';--menu-size:' . intval( $o['menu_size'] ) . 'px;--product-font:' . $product_body . ';--product-display:' . $product_head . ';--product-text:' . $o['product_text_color'] . ';--product-heading:' . $o['product_heading_color'] . ';--product-accent:' . $o['product_accent_color'] . ';--product-price:' . $o['product_price_color'] . ';--product-button-bg:' . $o['product_button_bg'] . ';--product-button-hover:' . $o['product_button_hover'] . ';--product-button-text:' . $o['product_button_text'] . ';--product-sale:' . $o['product_sale_color'] . ';--product-sale-bg:' . $o['product_sale_bg'] . ';--product-stock:' . $o['product_stock_color'] . ';--product-muted:' . $o['product_muted_color'] . ';--product-border:' . $o['product_border_color'] . ';--product-gallery-bg:' . $o['product_gallery_bg'] . ';--product-surface:' . $o['product_surface_color'] . ';--product-tab-bg:' . $o['product_tab_bg'] . ';--product-perk-bg:' . $o['product_perk_bg'] . ';--product-gallery-ratio:' . $product_ratio . ';--product-image-fit:' . $o['product_image_fit'] . ';--product-title-size:' . intval( $o['product_title_size'] ) . 'px;--product-price-size:' . intval( $o['product_price_size'] ) . 'px;--product-button-size:' . intval( $o['product_button_size'] ) . 'px;--product-body-size:' . intval( $o['product_body_size'] ) . 'px;--product-content-width:' . $product_content_width . 'px;--product-summary-width:' . intval( $o['product_summary_width'] ) . '%;--product-gap:' . intval( $o['product_gap'] ) . 'px;--product-radius:' . intval( $o['product_radius'] ) . 'px;}';
-	$css .= 'body{font-size:' . intval( $o['font_size'] ) . 'px;}';
+	$shadow_presets = array( 'none' => 'none', 'soft' => '0 18px 50px rgba(28,25,22,.10)', 'medium' => '0 24px 70px rgba(28,25,22,.16)', 'strong' => '0 30px 100px rgba(28,25,22,.24)' );
+	$shadow_sm_presets = array( 'none' => 'none', 'soft' => '0 8px 24px rgba(28,25,22,.06)', 'medium' => '0 10px 30px rgba(28,25,22,.10)', 'strong' => '0 14px 40px rgba(28,25,22,.16)' );
+	$shadow_key = $o['global_shadow'] ?? 'soft';
+	$css .= ':root{--bg-2:' . $o['bg_2'] . ';--surface:' . $o['surface'] . ';--muted:' . $o['muted'] . ';--faint:' . $o['faint'] . ';--line:' . $o['line'] . ';--line-strong:' . $o['line_strong'] . ';--accent-dark:' . $o['accent_dark'] . ';--accent-soft:' . $o['accent_soft'] . ';--forest:' . $o['forest'] . ';--sale:' . $o['sale'] . ';--star:' . $o['star'] . ';--dark-2:' . $o['dark_2'] . ';--ok:' . $o['ok'] . ';--warn:' . $o['warn'] . ';--info:' . $o['info'] . ';--button-bg:' . $o['button_bg'] . ';--button-text:' . $o['button_text'] . ';--button-hover:' . $o['button_hover'] . ';--button-hover-text:' . $o['button_hover_text'] . ';--focus-color:' . $o['focus_color'] . ';--selection-bg:' . $o['selection_bg'] . ';--shadow:' . ( $shadow_presets[ $shadow_key ] ?? $shadow_presets['soft'] ) . ';--shadow-sm:' . ( $shadow_sm_presets[ $shadow_key ] ?? $shadow_sm_presets['soft'] ) . ';--control-height:' . intval( $o['global_control_height'] ) . 'px;--section-spacing:' . intval( $o['global_section_spacing'] ) . 'px;--motion:' . intval( $o['global_transition'] ) . 'ms;}';
+	$css .= 'body{font-size:' . intval( $o['font_size'] ) . 'px;color:var(--ink);background:var(--bg);}';
+	$css .= '::selection{background:var(--selection-bg);color:var(--ink);} :focus-visible{outline-color:var(--focus-color);}';
+	$css .= 'a:hover{color:var(--accent-dark);} .orvio-btn{min-height:var(--control-height);transition-duration:var(--motion);} .orvio-search input,.orvio-select,.orvio-field input,.orvio-field select,.woocommerce form .form-row input.input-text,.woocommerce form .form-row select{min-height:var(--control-height);} .orvio-panel,.orvio-card{border-color:var(--line);} .orvio-surface{border-color:var(--line);background-color:var(--surface);} .orvio-btn--dark{background:var(--dark);color:var(--button-text);}';
 	$css .= 'h1,h2,h3,h4,.orvio-logo__word strong{font-family:var(--display);}';
 	$css .= '.orvio-header,.orvio-catbar{background:var(--header-bg);color:var(--header-ink);}';
 	$css .= '.orvio-catbar__menu>li>a,.orvio-tool__label,.orvio-logo__word{font-size:var(--menu-size);}';

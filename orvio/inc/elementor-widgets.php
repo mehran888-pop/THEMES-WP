@@ -86,6 +86,66 @@ abstract class Orvio_Widget_Base extends \Elementor\Widget_Base {
 		) );
 		$this->end_controls_section();
 
+		$this->start_controls_section( 'orvio_layout_details', array(
+			'label' => orvio_t( 'Layout details', 'جزئیات چیدمان' ),
+			'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
+		) );
+		$this->add_responsive_control( 'orvio_width', array(
+			'label'      => orvio_t( 'Width', 'عرض' ),
+			'type'       => \Elementor\Controls_Manager::SLIDER,
+			'size_units' => array( 'px', '%', 'vw' ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 1800 ), '%' => array( 'min' => 10, 'max' => 100 ), 'vw' => array( 'min' => 10, 'max' => 100 ) ),
+			'selectors'  => array( $selector => 'width: {{SIZE}}{{UNIT}}; max-width: 100%;' ),
+		) );
+		$this->add_responsive_control( 'orvio_min_height', array(
+			'label'      => orvio_t( 'Minimum height', 'حداقل ارتفاع' ),
+			'type'       => \Elementor\Controls_Manager::SLIDER,
+			'size_units' => array( 'px', 'vh' ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 1000 ), 'vh' => array( 'min' => 10, 'max' => 100 ) ),
+			'selectors'  => array( $selector => 'min-height: {{SIZE}}{{UNIT}};' ),
+		) );
+		$this->add_responsive_control( 'orvio_gap', array(
+			'label'      => orvio_t( 'Internal gap', 'فاصله داخلی اجزا' ),
+			'type'       => \Elementor\Controls_Manager::SLIDER,
+			'size_units' => array( 'px', 'em' ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 80 ) ),
+			'selectors'  => array( $selector => 'gap: {{SIZE}}{{UNIT}};' ),
+		) );
+		$this->add_responsive_control( 'orvio_opacity', array(
+			'label'      => orvio_t( 'Opacity', 'شفافیت' ),
+			'type'       => \Elementor\Controls_Manager::SLIDER,
+			'size_units' => array( '' ),
+			'range'      => array( '' => array( 'min' => 0, 'max' => 1, 'step' => .05 ) ),
+			'selectors'  => array( $selector => 'opacity: {{SIZE}};' ),
+		) );
+		$this->add_control( 'orvio_overflow', array(
+			'label'     => orvio_t( 'Overflow', 'سرریز' ),
+			'type'      => \Elementor\Controls_Manager::SELECT,
+			'default'   => '',
+			'options'   => array( '' => orvio_t( 'Default', 'پیش‌فرض' ), 'visible' => 'Visible', 'hidden' => 'Hidden', 'auto' => 'Auto scroll' ),
+			'selectors' => array( $selector => 'overflow: {{VALUE}};' ),
+		) );
+		$this->add_control( 'orvio_zindex', array(
+			'label'     => orvio_t( 'Z-index', 'اولویت لایه' ),
+			'type'      => \Elementor\Controls_Manager::NUMBER,
+			'selectors'  => array( $selector => 'z-index: {{VALUE}};' ),
+		) );
+		$this->add_responsive_control( 'orvio_transition', array(
+			'label'      => orvio_t( 'Transition speed (ms)', 'سرعت حرکت (میلی‌ثانیه)' ),
+			'type'       => \Elementor\Controls_Manager::SLIDER,
+			'size_units' => array( 'ms' ),
+			'range'      => array( 'ms' => array( 'min' => 0, 'max' => 1000 ) ),
+			'selectors'  => array( $selector => 'transition-duration: {{SIZE}}ms;' ),
+		) );
+		$this->add_responsive_control( 'orvio_hover_lift', array(
+			'label'      => orvio_t( 'Hover lift', 'بالا آمدن در هاور' ),
+			'type'       => \Elementor\Controls_Manager::SLIDER,
+			'size_units' => array( 'px' ),
+			'range'      => array( 'px' => array( 'min' => 0, 'max' => 24 ) ),
+			'selectors'  => array( $selector . ':hover' => 'transform: translateY(calc(-1 * {{SIZE}}{{UNIT}}));' ),
+		) );
+		$this->end_controls_section();
+
 		$this->start_controls_section( 'orvio_style_hover', array(
 			'label' => orvio_t( 'Hover', 'هاور' ),
 			'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
