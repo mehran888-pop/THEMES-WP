@@ -3241,7 +3241,7 @@ body.orvio-product-layout-immersive .orvio-product--premium .orvio-summary { pad
 .orvio-product__status.is-out { color: var(--sale); }
 .orvio-product__sale { padding: 5px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-dark); font-size: 11px; font-weight: 800; }
 .orvio-product--premium .summary > .product_title,
-.orvio-product--premium .summary > h1 { max-width: 13ch; margin: 9px 0 10px; font-size: clamp(30px, 4vw, 54px); line-height: 1.08; letter-spacing: -.035em; }
+.orvio-product--premium .summary > h1 { max-width: 16ch; margin: 9px 0 10px; font-size: clamp(30px, 4vw, 54px); line-height: 1.08; letter-spacing: -.035em; }
 .orvio-product__rating-row { min-height: 24px; color: var(--muted); }
 .orvio-product__rating-row .woocommerce-product-rating { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
 .orvio-product__rating-row .star-rating { float: none; margin: 0; }
