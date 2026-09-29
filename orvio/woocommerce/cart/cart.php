@@ -9,10 +9,12 @@ defined( 'ABSPATH' ) || exit;
 
 do_action( 'woocommerce_before_cart' );
 ?>
-<div class="orvio-pagehead">
-	<?php orvio_breadcrumb(); ?>
-	<h1><?php echo esc_html( orvio_t( 'Bag', 'سبد خرید' ) ); ?></h1>
-</div>
+<?php if ( orvio_pagehead_once() ) : ?>
+	<div class="orvio-pagehead">
+		<?php orvio_breadcrumb(); ?>
+		<h1><?php echo esc_html( orvio_t( 'Bag', 'سبد خرید' ) ); ?></h1>
+	</div>
+<?php endif; ?>
 <div class="orvio-cartpage">
 	<form class="woocommerce-cart-form orvio-panel" action="<?php echo esc_url( wc_get_cart_url() ); ?>" method="post">
 		<?php do_action( 'woocommerce_before_cart_table' ); ?>

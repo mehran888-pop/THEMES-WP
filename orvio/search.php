@@ -7,9 +7,11 @@
 get_header();
 ?>
 <main id="main" class="orvio-main">
-	<div class="orvio-container orvio-pagehead">
-		<h1><?php printf( esc_html( orvio_t( 'Search: %s', 'جستجو: %s' ) ), esc_html( get_search_query() ) ); ?></h1>
-	</div>
+	<?php if ( orvio_pagehead_once() ) : ?>
+		<div class="orvio-container orvio-pagehead">
+			<h1><?php printf( esc_html( orvio_t( 'Search: %s', 'جستجو: %s' ) ), esc_html( get_search_query() ) ); ?></h1>
+		</div>
+	<?php endif; ?>
 	<div class="orvio-container">
 		<?php if ( have_posts() ) : ?>
 			<div class="orvio-grid" style="--cols:3">

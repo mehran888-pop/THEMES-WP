@@ -14,10 +14,12 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	return;
 }
 ?>
-<div class="orvio-pagehead">
-	<?php orvio_breadcrumb(); ?>
-	<h1><?php echo esc_html( orvio_t( 'Checkout', 'تسویه و صورتحساب' ) ); ?></h1>
-</div>
+<?php if ( orvio_pagehead_once() ) : ?>
+	<div class="orvio-pagehead">
+		<?php orvio_breadcrumb(); ?>
+		<h1><?php echo esc_html( orvio_t( 'Checkout', 'تسویه و صورتحساب' ) ); ?></h1>
+	</div>
+<?php endif; ?>
 <ol class="orvio-steps">
 	<li class="is-on"><small>01</small><?php echo esc_html( orvio_t( 'Details', 'اطلاعات' ) ); ?></li>
 	<li class="is-on"><small>02</small><?php echo esc_html( orvio_t( 'Shipping', 'ارسال' ) ); ?></li>

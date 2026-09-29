@@ -7,11 +7,13 @@
 get_header();
 ?>
 <main id="main" class="orvio-main">
-	<div class="orvio-container orvio-pagehead">
-		<?php orvio_breadcrumb(); ?>
-		<h1><?php the_title(); ?></h1>
-		<?php orvio_posted_on(); ?>
-	</div>
+	<?php if ( orvio_pagehead_once() ) : ?>
+		<div class="orvio-container orvio-pagehead">
+			<?php orvio_breadcrumb(); ?>
+			<h1><?php the_title(); ?></h1>
+			<?php orvio_posted_on(); ?>
+		</div>
+	<?php endif; ?>
 	<div class="orvio-container orvio-content">
 		<?php
 		while ( have_posts() ) :

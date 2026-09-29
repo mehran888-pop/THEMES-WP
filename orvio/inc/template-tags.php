@@ -103,6 +103,21 @@ function orvio_breadcrumb() {
 	echo '</nav>';
 }
 
+/**
+ * Allow only one page heading block per request.
+ *
+ * WooCommerce can render an inner template inside a page template; the guard
+ * keeps a second breadcrumb/title block from being printed in that situation.
+ */
+function orvio_pagehead_once() {
+	static $rendered = false;
+	if ( $rendered ) {
+		return false;
+	}
+	$rendered = true;
+	return true;
+}
+
 function orvio_product_cats() {
 	if ( ! taxonomy_exists( 'product_cat' ) ) {
 		return array();

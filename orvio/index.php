@@ -7,10 +7,12 @@
 get_header();
 ?>
 <main id="main" class="orvio-main">
-	<div class="orvio-container orvio-pagehead">
-		<?php orvio_breadcrumb(); ?>
-		<h1><?php echo esc_html( is_home() ? orvio_t( 'Journal', 'یادداشت‌ها' ) : wp_get_document_title() ); ?></h1>
-	</div>
+	<?php if ( orvio_pagehead_once() ) : ?>
+		<div class="orvio-container orvio-pagehead">
+			<?php orvio_breadcrumb(); ?>
+			<h1><?php echo esc_html( is_home() ? orvio_t( 'Journal', 'یادداشت‌ها' ) : wp_get_document_title() ); ?></h1>
+		</div>
+	<?php endif; ?>
 	<div class="orvio-container orvio-posts">
 		<?php if ( have_posts() ) : ?>
 			<?php while ( have_posts() ) : the_post(); ?>

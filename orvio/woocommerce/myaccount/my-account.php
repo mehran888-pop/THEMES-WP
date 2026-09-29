@@ -8,13 +8,15 @@
 defined( 'ABSPATH' ) || exit;
 $account_back_url = home_url( '/' );
 ?>
-<div class="orvio-pagehead">
-	<div class="orvio-account-pagehead__top">
-		<a class="orvio-account-back" href="<?php echo esc_url( $account_back_url ); ?>"><span aria-hidden="true">←</span><?php echo esc_html( orvio_t( 'Back', 'بازگشت' ) ); ?></a>
-		<?php orvio_breadcrumb(); ?>
+<?php if ( orvio_pagehead_once() ) : ?>
+	<div class="orvio-pagehead">
+		<div class="orvio-account-pagehead__top">
+			<a class="orvio-account-back" href="<?php echo esc_url( $account_back_url ); ?>"><span aria-hidden="true">←</span><?php echo esc_html( orvio_t( 'Back', 'بازگشت' ) ); ?></a>
+			<?php orvio_breadcrumb(); ?>
+		</div>
+		<h1><?php echo esc_html( orvio_t( 'Account', 'حساب کاربری' ) ); ?></h1>
 	</div>
-	<h1><?php echo esc_html( orvio_t( 'Account', 'حساب کاربری' ) ); ?></h1>
-</div>
+<?php endif; ?>
 <?php
 $account_layouts = array( 'saas' );
 $account_styles  = array( 'saas' );

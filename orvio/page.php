@@ -19,7 +19,7 @@ if ( $is_builder ) {
 }
 ?>
 <main id="main" class="orvio-main">
-	<?php if ( ! $wc_screen ) : ?>
+	<?php if ( ! $wc_screen && orvio_pagehead_once() ) : ?>
 		<div class="orvio-container orvio-pagehead">
 			<?php orvio_breadcrumb(); ?>
 			<h1><?php the_title(); ?></h1>

@@ -10,10 +10,12 @@ defined( 'ABSPATH' ) || exit;
 get_header( 'shop' );
 do_action( 'woocommerce_before_main_content' );
 ?>
-<div class="orvio-pagehead">
-	<?php orvio_breadcrumb(); ?>
-	<h1><?php woocommerce_page_title(); ?></h1>
-</div>
+<?php if ( orvio_pagehead_once() ) : ?>
+	<div class="orvio-pagehead">
+		<?php orvio_breadcrumb(); ?>
+		<h1><?php woocommerce_page_title(); ?></h1>
+	</div>
+<?php endif; ?>
 <div class="orvio-shop<?php echo orvio_opt( 'shop_sidebar' ) ? '' : ' orvio-shop--no-sidebar'; ?>">
 	<?php if ( orvio_opt( 'shop_sidebar' ) ) : ?>
 		<aside class="orvio-filters" data-filters>
