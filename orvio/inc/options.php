@@ -89,6 +89,14 @@ function orvio_defaults() {
 		'show_cart'          => 1,
 		'show_catbar'        => 1,
 		'show_announcement'  => 1,
+		'mobile_header_menu_enabled'       => 1,
+		'mobile_header_categories_enabled' => 1,
+		'mobile_header_logo_enabled'       => 1,
+		'mobile_header_search_enabled'     => 1,
+		'mobile_header_account_enabled'    => 1,
+		'mobile_header_wishlist_enabled'   => 1,
+		'mobile_header_cart_enabled'       => 1,
+		'mobile_header_announcement_enabled' => 1,
 		'show_pagehead'      => 1,
 		'show_woocommerce_breadcrumb' => 1,
 		'announcement'       => 'ارسال رایگان برای سفارش‌های بالای ۲ میلیون تومان  ·  بازگشت آسان تا ۳۰ روز',
@@ -381,7 +389,7 @@ function orvio_sanitize_settings( $input ) {
 		$mode = $input['billing_fields'][ $field ] ?? $default_mode;
 		$clean['billing_fields'][ $field ] = in_array( $mode, $billing_modes, true ) ? $mode : $default_mode;
 	}
-	$toggles                    = array( 'sticky_header', 'mobile_nav_enabled', 'show_announcement', 'show_pagehead', 'show_woocommerce_breadcrumb', 'shop_sidebar', 'sticky_summary', 'enable_wishlist', 'enable_quick_view', 'show_search', 'show_account', 'show_cart', 'show_catbar' );
+	$toggles                    = array( 'sticky_header', 'mobile_nav_enabled', 'show_announcement', 'show_pagehead', 'show_woocommerce_breadcrumb', 'shop_sidebar', 'sticky_summary', 'enable_wishlist', 'enable_quick_view', 'show_search', 'show_account', 'show_cart', 'show_catbar', 'mobile_header_menu_enabled', 'mobile_header_categories_enabled', 'mobile_header_logo_enabled', 'mobile_header_search_enabled', 'mobile_header_account_enabled', 'mobile_header_wishlist_enabled', 'mobile_header_cart_enabled', 'mobile_header_announcement_enabled' );
 	foreach ( $toggles as $key ) {
 		$clean[ $key ] = empty( $input[ $key ] ) ? 0 : 1;
 	}
@@ -598,6 +606,19 @@ function orvio_render_settings_page() {
 						orvio_field_check( 'show_announcement', orvio_t( 'Announcement', 'نوار اعلان' ), $o );
 						orvio_field_text( 'announcement', orvio_t( 'Announcement text', 'متن اعلان' ), $o );
 						orvio_field_text( 'announcement_en', orvio_t( 'English announcement', 'متن انگلیسی' ), $o );
+						?>
+					</div>
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Mobile header elements', 'اجزای هدر موبایل' ) ); ?></h2>
+						<p class="orvio-admin__hint"><?php echo esc_html( orvio_t( 'Choose which header components remain visible on mobile. Desktop header settings stay unchanged.', 'مشخص کنید کدام اجزای هدر در موبایل فعال باشند؛ تنظیمات هدر دسکتاپ تغییر نمی‌کند.' ) ); ?></p>
+						<?php
+						orvio_field_check( 'mobile_header_menu_enabled', orvio_t( 'Main menu button', 'دکمه منوی اصلی' ), $o );
+						orvio_field_check( 'mobile_header_categories_enabled', orvio_t( 'Categories button', 'دکمه دسته‌بندی‌ها' ), $o );
+						orvio_field_check( 'mobile_header_logo_enabled', orvio_t( 'Logo', 'لوگو' ), $o );
+						orvio_field_check( 'mobile_header_search_enabled', orvio_t( 'Search', 'جستجو' ), $o );
+						orvio_field_check( 'mobile_header_account_enabled', orvio_t( 'Account', 'حساب' ), $o );
+						orvio_field_check( 'mobile_header_wishlist_enabled', orvio_t( 'Wishlist', 'علاقه‌مندی' ), $o );
+						orvio_field_check( 'mobile_header_cart_enabled', orvio_t( 'Cart', 'سبد خرید' ), $o );
+						orvio_field_check( 'mobile_header_announcement_enabled', orvio_t( 'Announcement bar', 'نوار اعلان' ), $o );
 						?>
 					</div>
 				</section>
@@ -1110,6 +1131,21 @@ function orvio_body_classes( $classes ) {
 	$header_styles = array( 'minimal', 'pill', 'solid', 'outline', 'soft' );
 	$classes[] = 'orvio-header-account-' . ( in_array( $o['header_account_style'], $header_styles, true ) ? $o['header_account_style'] : 'minimal' );
 	$classes[] = 'orvio-header-cart-' . ( in_array( $o['header_cart_style'], $header_styles, true ) ? $o['header_cart_style'] : 'pill' );
+	$mobile_header_classes = array(
+		'menu'         => 'mobile_header_menu_enabled',
+		'categories'   => 'mobile_header_categories_enabled',
+		'logo'         => 'mobile_header_logo_enabled',
+		'search'       => 'mobile_header_search_enabled',
+		'account'      => 'mobile_header_account_enabled',
+		'wishlist'     => 'mobile_header_wishlist_enabled',
+		'cart'         => 'mobile_header_cart_enabled',
+		'announcement' => 'mobile_header_announcement_enabled',
+	);
+	foreach ( $mobile_header_classes as $class_suffix => $setting_key ) {
+		if ( empty( $o[ $setting_key ] ) ) {
+			$classes[] = 'orvio-mobile-header-hide-' . $class_suffix;
+		}
+	}
 	if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() || is_product_category() || is_product_tag() ) ) {
 		$shop_layouts = array( 'sidebar-grid', 'wide-grid', 'list', 'masonry', 'minimal' );
 		$classes[] = 'orvio-shop-layout-' . ( in_array( $o['shop_layout'], $shop_layouts, true ) ? $o['shop_layout'] : 'sidebar-grid' );

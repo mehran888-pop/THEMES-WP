@@ -2078,6 +2078,17 @@ body.orvio-checkout-layout-minimal .orvio-checkout .orvio-panel { background: tr
   .orvio-search { display: none; }
   .orvio-tool__meta, .orvio-logo__word small { display: none; }
   .orvio-catbar { display: none; }
+  body.orvio-mobile-header-hide-menu .orvio-burger,
+  body.orvio-mobile-header-hide-categories .orvio-category-toggle,
+  body.orvio-mobile-header-hide-logo .orvio-logo,
+  body.orvio-mobile-header-hide-logo .custom-logo-link,
+  body.orvio-mobile-header-hide-account .orvio-accountbtn,
+  body.orvio-mobile-header-hide-wishlist .orvio-wishlistbtn,
+  body.orvio-mobile-header-hide-cart .orvio-cartbtn,
+  body.orvio-mobile-header-hide-announcement .orvio-announce { display: none !important; }
+  body.orvio-mobile-header-hide-search .orvio-header .orvio-search,
+  body.orvio-mobile-header-hide-search .orvio-header .orvio-search-toggle,
+  body.orvio-mobile-header-hide-search .orvio-header .orvio-searchpanel { display: none !important; }
   .orvio-header__row,
   .orvio-header--split .orvio-header__row,
   .orvio-el-header-layout-split .orvio-header__row { display: flex; gap: 6px; min-height: 62px; }
