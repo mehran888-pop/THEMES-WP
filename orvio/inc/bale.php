@@ -228,6 +228,19 @@ function orvio_bale_attach_image( $url, $product_id ) {
 	return is_wp_error( $attachment_id ) ? 0 : (int) $attachment_id;
 }
 
+function orvio_bale_file_url( $file_id ) {
+	$file_id = sanitize_text_field( (string) $file_id );
+	if ( ! $file_id ) {
+		return '';
+	}
+	$result = orvio_bale_api( 'getFile', array( 'file_id' => $file_id ) );
+	if ( is_wp_error( $result ) || empty( $result['result']['file_path'] ) ) {
+		return '';
+	}
+	$token = preg_replace( '/[^A-Za-z0-9:_-]/', '', (string) orvio_opt( 'bale_bot_token', '' ) );
+	return 'https://tapi.bale.ai/file/bot' . $token . '/' . ltrim( (string) $result['result']['file_path'], '/' );
+}
+
 function orvio_bale_image_urls( $value ) {
 	$urls = preg_split( '/[\s,]+/', (string) $value );
 	$urls = array_map( 'esc_url_raw', (array) $urls );
@@ -313,7 +326,9 @@ function orvio_bale_product_data( $product ) {
 		'category'          => $category_names,
 		'features'          => orvio_bale_product_features_text( $product ),
 		'image'             => $image_url,
+		'image_files'       => array(),
 		'gallery'           => implode( ' ', $gallery_urls ),
+		'gallery_files'     => array(),
 		'status'            => $product->get_status(),
 	);
 }
@@ -330,7 +345,9 @@ function orvio_bale_new_product_data() {
 		'category'          => '',
 		'features'          => '',
 		'image'             => '',
+		'image_files'       => array(),
 		'gallery'           => '',
+		'gallery_files'     => array(),
 		'status'            => 'draft',
 	);
 }
@@ -368,6 +385,9 @@ function orvio_bale_prompt_product_field( $chat_id, $user_id, $field, $data, $ed
 		$text .= "\n" . $hints[ $field ];
 	}
 	$rows = array();
+	if ( 'gallery' === $field ) {
+		$rows[] = array( orvio_bale_button( '✅ پایان گالری', 'bale:photos-done' ) );
+	}
 	if ( $editing ) {
 		$rows[] = array( orvio_bale_button( '↩ حفظ مقدار فعلی', 'bale:keep' ) );
 		if ( 'title' !== $field ) {
@@ -444,12 +464,20 @@ function orvio_bale_finish_product( $chat_id, $user_id, $session ) {
 		if ( ! $saved_id ) {
 			throw new Exception( 'Product could not be saved.' );
 		}
-		$featured = orvio_bale_attach_image( $data['image'] ?? '', $saved_id );
+		$image_sources = array_merge( (array) ( $data['image_files'] ?? array() ), orvio_bale_image_urls( $data['image'] ?? '' ) );
+		$featured = 0;
+		foreach ( $image_sources as $image_source ) {
+			$featured = orvio_bale_attach_image( $image_source, $saved_id );
+			if ( $featured ) {
+				break;
+			}
+		}
 		if ( $featured ) {
 			$product->set_image_id( $featured );
 		}
 		$gallery_ids = array();
-		foreach ( orvio_bale_image_urls( $data['gallery'] ?? '' ) as $gallery_url ) {
+		$gallery_sources = array_merge( (array) ( $data['gallery_files'] ?? array() ), orvio_bale_image_urls( $data['gallery'] ?? '' ) );
+		foreach ( $gallery_sources as $gallery_url ) {
 			$gallery_id = orvio_bale_attach_image( $gallery_url, $saved_id );
 			if ( $gallery_id ) {
 				$gallery_ids[] = $gallery_id;
@@ -604,6 +632,13 @@ function orvio_bale_handle_callback( $callback ) {
 		}
 		return;
 	}
+	if ( 'bale:photos-done' === $data ) {
+		$session = orvio_bale_get_session( $user_id );
+		if ( ! empty( $session['action'] ) && 'product' === $session['action'] && 'gallery' === ( $session['field'] ?? '' ) ) {
+			orvio_bale_process_value( $chat_id, $user_id, $session, $session['data']['gallery'] ?? '' );
+		}
+		return;
+	}
 	if ( 'bale:skip' === $data ) {
 		$session = orvio_bale_get_session( $user_id );
 		if ( ! empty( $session['action'] ) && 'product' === $session['action'] ) {
@@ -665,6 +700,23 @@ function orvio_bale_handle_update( $update ) {
 	}
 	if ( $callback ) {
 		orvio_bale_handle_callback( $callback );
+		return;
+	}
+	$session = orvio_bale_get_session( $user_id );
+	if ( ! empty( $message['photo'] ) && ! empty( $session['action'] ) && 'product' === $session['action'] && in_array( $session['field'] ?? '', array( 'image', 'gallery' ), true ) ) {
+		$photo = end( $message['photo'] );
+		$file_url = orvio_bale_file_url( $photo['file_id'] ?? '' );
+		if ( $file_url ) {
+			if ( 'image' === $session['field'] ) {
+				$session['data']['image_files'] = array( $file_url );
+				orvio_bale_set_session( $user_id, $session );
+				orvio_bale_process_value( $chat_id, $user_id, $session, '' );
+			} else {
+				$session['data']['gallery_files'] = array_values( array_merge( (array) ( $session['data']['gallery_files'] ?? array() ), array( $file_url ) ) );
+				orvio_bale_set_session( $user_id, $session );
+				orvio_bale_send_message( $chat_id, '✅ تصویر گالری دریافت شد. تصویر بعدی را بفرستید یا روی «پایان گالری» بزنید.', orvio_bale_keyboard( array( array( orvio_bale_button( '✅ پایان گالری', 'bale:photos-done' ) ), array( orvio_bale_button( '✖ لغو', 'bale:cancel' ) ) ) ) );
+			}
+		}
 		return;
 	}
 	if ( ! $text ) {
