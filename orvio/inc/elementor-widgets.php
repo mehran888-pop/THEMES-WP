@@ -656,12 +656,25 @@ class Orvio_Widget_Professional_Products extends Orvio_Widget_Products {
 	protected function register_controls() {
 		parent::register_controls();
 		$this->start_controls_section( 'orvio_professional_categories', array( 'label' => orvio_t( 'Category presentation', 'نمایش دسته‌بندی' ) ) );
+		$category_options = array();
+		if ( taxonomy_exists( 'product_cat' ) ) {
+			$available_categories = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false, 'parent' => 0, 'orderby' => 'name', 'order' => 'ASC', 'exclude' => array( (int) get_option( 'default_product_cat' ) ) ) );
+			if ( ! is_wp_error( $available_categories ) ) {
+				foreach ( $available_categories as $available_category ) {
+					$category_options[ (string) $available_category->term_id ] = $available_category->name;
+				}
+			}
+		}
+		$this->add_control( 'category_selection', array( 'label' => orvio_t( 'Choose categories', 'انتخاب دسته‌بندی‌ها' ), 'type' => \Elementor\Controls_Manager::SELECT2, 'options' => $category_options, 'multiple' => true, 'label_block' => true, 'description' => orvio_t( 'Leave empty to use the category limit and order below.', 'برای نمایش خودکار دسته‌ها، این گزینه را خالی بگذارید.' ) ) );
 		$this->add_control( 'category_layout', array( 'label' => orvio_t( 'Category layout', 'چیدمان دسته‌ها' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'rows', 'options' => array( 'rows' => orvio_t( 'Category rows', 'ردیف‌های دسته‌بندی' ), 'columns' => orvio_t( 'Category columns', 'ستون‌های دسته‌بندی' ) ) ) );
 		$this->add_control( 'category_product_view', array( 'label' => orvio_t( 'Products inside category', 'محصولات داخل دسته' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'carousel', 'options' => array( 'carousel' => orvio_t( 'Carousel / slide', 'کروسل / اسلاید' ), 'grid' => orvio_t( 'Grid', 'شبکه' ) ) ) );
 		$this->add_control( 'category_order', array( 'label' => orvio_t( 'Category order', 'ترتیب دسته‌ها' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'name', 'options' => array( 'name' => orvio_t( 'Name', 'نام' ), 'count' => orvio_t( 'Product count', 'تعداد محصول' ) ) ) );
-		$this->add_control( 'category_limit', array( 'label' => orvio_t( 'Category count', 'تعداد دسته‌ها' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 4, 'min' => 1, 'max' => 12 ) );
+		$this->add_control( 'category_limit', array( 'label' => orvio_t( 'Automatic category count', 'تعداد دسته‌ها در حالت خودکار' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 4, 'min' => 1, 'max' => 12 ) );
 		$this->add_control( 'category_columns', array( 'label' => orvio_t( 'Category columns', 'ستون‌های دسته‌بندی' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 2, 'min' => 1, 'max' => 4, 'condition' => array( 'category_layout' => 'columns' ) ) );
+		$this->add_control( 'category_row_gap', array( 'label' => orvio_t( 'Category row gap', 'فاصله ردیف دسته‌ها' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 28, 'min' => 0, 'max' => 80 ) );
+		$this->add_control( 'category_column_gap', array( 'label' => orvio_t( 'Category column gap', 'فاصله ستون دسته‌ها' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 18, 'min' => 0, 'max' => 80, 'condition' => array( 'category_layout' => 'columns' ) ) );
 		$this->add_control( 'category_products', array( 'label' => orvio_t( 'Products per category', 'محصول در هر دسته' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 4, 'min' => 2, 'max' => 12 ) );
+		$this->add_control( 'category_product_columns', array( 'label' => orvio_t( 'Product columns inside category', 'ستون محصولات داخل دسته' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 4, 'min' => 1, 'max' => 4, 'condition' => array( 'category_product_view' => 'grid' ) ) );
 		$this->add_control( 'category_carousel_columns', array( 'label' => orvio_t( 'Visible category slides', 'اسلاید قابل نمایش' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 3, 'min' => 1, 'max' => 5, 'condition' => array( 'category_product_view' => 'carousel' ) ) );
 		$this->add_control( 'category_carousel_gap', array( 'label' => orvio_t( 'Slide gap', 'فاصله اسلاید' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 14, 'min' => 0, 'max' => 40, 'condition' => array( 'category_product_view' => 'carousel' ) ) );
 		$this->add_control( 'category_carousel_auto', array( 'label' => orvio_t( 'Autoplay milliseconds', 'پخش خودکار (میلی‌ثانیه)' ), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 0, 'min' => 0, 'max' => 12000, 'condition' => array( 'category_product_view' => 'carousel' ) ) );
@@ -680,7 +693,25 @@ class Orvio_Widget_Professional_Products extends Orvio_Widget_Products {
 		$limit = max( 1, min( 12, (int) ( $s['category_limit'] ?? 4 ) ) );
 		$per_category = max( 2, min( 12, (int) ( $s['category_products'] ?? 4 ) ) );
 		$category_columns = max( 1, min( 4, (int) ( $s['category_columns'] ?? 2 ) ) );
-		$terms = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => true, 'parent' => 0, 'number' => $limit, 'orderby' => $order, 'order' => 'DESC', 'exclude' => array( (int) get_option( 'default_product_cat' ) ) ) );
+		$category_row_gap = max( 0, min( 80, (int) ( $s['category_row_gap'] ?? 28 ) ) );
+		$category_column_gap = max( 0, min( 80, (int) ( $s['category_column_gap'] ?? 18 ) ) );
+		$product_columns = max( 1, min( 4, (int) ( $s['category_product_columns'] ?? 4 ) ) );
+		$selected_categories = array();
+		if ( ! empty( $s['category_selection'] ) ) {
+			$selected_categories = is_array( $s['category_selection'] ) ? $s['category_selection'] : explode( ',', (string) $s['category_selection'] );
+			$selected_categories = array_values( array_filter( array_map( 'absint', $selected_categories ) ) );
+			$selected_categories = array_values( array_diff( $selected_categories, array( (int) get_option( 'default_product_cat' ) ) ) );
+		}
+		$term_args = array( 'taxonomy' => 'product_cat', 'hide_empty' => true, 'parent' => 0, 'order' => 'DESC' );
+		if ( $selected_categories ) {
+			$term_args['include'] = $selected_categories;
+			$term_args['orderby'] = 'include';
+		} else {
+			$term_args['number'] = $limit;
+			$term_args['orderby'] = $order;
+			$term_args['exclude'] = array( (int) get_option( 'default_product_cat' ) );
+		}
+		$terms = get_terms( $term_args );
 		if ( is_wp_error( $terms ) || empty( $terms ) ) {
 			echo '<p class="orvio-note">' . esc_html( orvio_t( 'Create product categories to use this display.', 'برای استفاده از این نمایش، دسته‌بندی محصول بسازید.' ) ) . '</p>';
 			return;
@@ -695,7 +726,7 @@ class Orvio_Widget_Professional_Products extends Orvio_Widget_Products {
 		if ( ! empty( $s['heading'] ) ) {
 			echo '<div class="orvio-section__head"><h2>' . esc_html( $s['heading'] ) . '</h2></div>';
 		}
-		echo '<div class="orvio-category-products" style="--category-cols:' . esc_attr( $category_columns ) . '">';
+		echo '<div class="orvio-category-products" style="--category-cols:' . esc_attr( $category_columns ) . ';--category-row-gap:' . esc_attr( $category_row_gap ) . 'px;--category-column-gap:' . esc_attr( $category_column_gap ) . 'px;">';
 		foreach ( $terms as $term ) {
 			$query = new WP_Query( array( 'post_type' => 'product', 'post_status' => 'publish', 'posts_per_page' => $per_category, 'orderby' => 'menu_order date', 'order' => 'DESC', 'tax_query' => array( array( 'taxonomy' => 'product_cat', 'field' => 'term_id', 'terms' => $term->term_id ) ) ) );
 			$products = array();
@@ -729,7 +760,7 @@ class Orvio_Widget_Professional_Products extends Orvio_Widget_Products {
 				}
 				echo '</div></div><div class="orvio-carousel__dots" data-dots></div></div>';
 			} else {
-				echo '<div class="orvio-category-products__items orvio-grid" style="--cols:' . esc_attr( min( 4, $per_category ) ) . '">';
+					echo '<div class="orvio-category-products__items orvio-grid" style="--cols:' . esc_attr( min( $product_columns, $per_category ) ) . '">';
 				foreach ( $products as $product ) {
 					orvio_wc_card( $product, array( 'card_content' => $card_content, 'atc_visual' => $atc_visual, 'atc_behavior' => $atc_behavior ) );
 				}

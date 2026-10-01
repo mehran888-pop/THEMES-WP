@@ -3492,8 +3492,8 @@ html[dir="rtl"] .orvio-image-poster__body h2 { letter-spacing: 0; line-height: 1
 }
 
 /* Professional product display: category-led rows and columns */
-.orvio-professional-products .orvio-category-products { display: grid; gap: 28px; }
-.orvio-professional-products.orvio-category-layout-columns .orvio-category-products { grid-template-columns: repeat(var(--category-cols, 2), minmax(0, 1fr)); align-items: start; gap: 18px; }
+.orvio-professional-products .orvio-category-products { display: grid; row-gap: var(--category-row-gap, 28px); column-gap: var(--category-column-gap, 18px); }
+.orvio-professional-products.orvio-category-layout-columns .orvio-category-products { grid-template-columns: repeat(var(--category-cols, 2), minmax(0, 1fr)); align-items: start; }
 .orvio-category-products__group { min-width: 0; padding: 18px; border: 1px solid var(--line); border-radius: 22px; background: var(--surface); }
 .orvio-category-layout-rows .orvio-category-products__group { padding: 20px 0 0; border-width: 1px 0 0; border-radius: 0; background: transparent; }
 .orvio-category-products__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
