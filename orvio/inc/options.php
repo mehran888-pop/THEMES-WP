@@ -813,6 +813,7 @@ function orvio_render_settings_page() {
 						</div>
 						<p class="description"><strong><?php echo esc_html( orvio_t( 'Webhook URL:', 'آدرس وب‌هوک:' ) ); ?></strong> <code><?php echo esc_html( $bale_webhook_url ); ?></code></p>
 						<p class="description"><?php echo esc_html( orvio_t( 'Add the bot as an administrator of the Bale channel. Enter your own Bale numeric user ID in the allowed list, separated by commas.', 'ربات را مدیر کانال بله کنید. شناسه عددی کاربر خودتان را در فهرست مجاز وارد کنید و چند شناسه را با ویرگول جدا کنید.' ) ); ?></p>
+						<p class="description"><strong><?php echo esc_html( orvio_t( 'Approval shortcut:', 'مسیر تأیید:' ) ); ?></strong> <?php echo esc_html( orvio_t( 'If the allowed list is empty, access requests are also sent to the configured channel. A channel administrator can approve or reject them after the bot is added as a channel administrator.', 'اگر فهرست کاربران مجاز خالی باشد، درخواست‌ها به کانال تنظیم‌شده نیز ارسال می‌شوند و مدیر کانال می‌تواند پس از مدیرکردن ربات، آن‌ها را تأیید یا رد کند.' ) ); ?></p>
 						<?php orvio_bale_render_access_requests(); ?>
 					</div>
 				</section>

@@ -77,6 +77,25 @@ function orvio_bale_is_admin( $user_id ) {
 	return $user_id && in_array( (string) $user_id, orvio_bale_admin_ids(), true );
 }
 
+function orvio_bale_is_channel_admin( $user_id ) {
+	$channel = (string) orvio_opt( 'bale_channel_id', '' );
+	if ( ! $channel || ! $user_id ) {
+		return false;
+	}
+	$result = orvio_bale_api( 'getChatMember', array( 'chat_id' => $channel, 'user_id' => (string) $user_id ) );
+	if ( is_wp_error( $result ) || empty( $result['result']['status'] ) ) {
+		return false;
+	}
+	return in_array( $result['result']['status'], array( 'administrator', 'creator', 'owner' ), true );
+}
+
+function orvio_bale_can_approve_access( $user_id, $callback_data = '' ) {
+	if ( orvio_bale_is_admin( $user_id ) ) {
+		return true;
+	}
+	return $callback_data && preg_match( '/^bale:access:(approve|reject):\d+$/', (string) $callback_data ) && orvio_bale_is_channel_admin( $user_id );
+}
+
 function orvio_bale_access_requests() {
 	$requests = get_option( 'orvio_bale_access_requests', array() );
 	return is_array( $requests ) ? $requests : array();
@@ -125,8 +144,13 @@ function orvio_bale_record_access_request( $from, $chat_id ) {
 			wp_mail( $admin_email, 'درخواست دسترسی ربات بله Orvio', "درخواست جدید دسترسی مدیریت ربات بله\nنام: {$display_name}\nشناسه: {$user_id}\nنام کاربری: @{$request['username']}\nبرای بررسی به پیشخوان Orvio > ربات بله بروید." );
 		}
 		$keyboard = orvio_bale_keyboard( array( array( orvio_bale_button( '✅ تأیید دسترسی', 'bale:access:approve:' . $user_id ), orvio_bale_button( '⛔ رد درخواست', 'bale:access:reject:' . $user_id ) ) ) );
-		foreach ( orvio_bale_admin_ids() as $admin_id ) {
-			orvio_bale_send_message( $admin_id, '🔐 درخواست دسترسی جدید\nنام: ' . $display_name . '\nشناسه: ' . $user_id . '\nنام کاربری: @' . $request['username'], $keyboard );
+		$recipients = orvio_bale_admin_ids();
+		$channel_id = (string) orvio_opt( 'bale_channel_id', '' );
+		if ( $channel_id && ! in_array( $channel_id, $recipients, true ) ) {
+			$recipients[] = $channel_id;
+		}
+		foreach ( $recipients as $admin_id ) {
+			orvio_bale_send_message( $admin_id, '🔐 درخواست دسترسی جدید\nنام: ' . $display_name . '\nشناسه: ' . $user_id . '\nنام کاربری: @' . $request['username'] . ( $channel_id === $admin_id ? '\nبرای تأیید، یکی از مدیران کانال روی دکمه کلیک کند.' : '' ), $keyboard );
 		}
 	}
 	return $request;
@@ -695,7 +719,7 @@ function orvio_bale_handle_callback( $callback ) {
 	$data    = (string) ( $callback['data'] ?? '' );
 	$chat_id = $callback['message']['chat']['id'] ?? ( $callback['from']['id'] ?? '' );
 	$user_id = $callback['from']['id'] ?? '';
-	if ( ! orvio_bale_is_admin( $user_id ) ) {
+	if ( ! orvio_bale_can_approve_access( $user_id, $data ) ) {
 		return;
 	}
 	if ( ! empty( $callback['id'] ) ) {
@@ -804,7 +828,7 @@ function orvio_bale_handle_update( $update ) {
 		orvio_bale_send_message( $chat_id, 'شناسه عددی کاربر بله شما: ' . $user_id . "\nاین عدد را در تنظیمات ربات، در فهرست کاربران مجاز وارد کنید." );
 		return;
 	}
-	if ( ! orvio_bale_is_admin( $user_id ) ) {
+	if ( ! orvio_bale_can_approve_access( $user_id, $callback['data'] ?? '' ) ) {
 		return;
 	}
 	if ( $callback ) {
