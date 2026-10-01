@@ -141,6 +141,7 @@ function orvio_bale_send_product( $product_id, $chat_id = '' ) {
 		$excerpt = wp_html_excerpt( wp_strip_all_tags( $product->get_description() ), 420, '…' );
 	}
 	$categories = wp_strip_all_tags( wc_get_product_category_list( $product->get_id(), '، ' ) );
+	$features   = orvio_bale_product_features_text( $product );
 	$status     = $product->is_in_stock() ? orvio_t( 'Available', 'موجود' ) : orvio_t( 'Out of stock', 'ناموجود' );
 	$lines      = array( '🛍️ ' . $product->get_name() );
 	if ( $excerpt ) {
@@ -154,6 +155,9 @@ function orvio_bale_send_product( $product_id, $chat_id = '' ) {
 	$lines[] = '📦 ' . $status;
 	if ( $categories ) {
 		$lines[] = '🗂️ ' . $categories;
+	}
+	if ( $features ) {
+		$lines[] = '✨ ' . orvio_t( 'Features', 'ویژگی‌ها' ) . ':' . "\n" . $features;
 	}
 	$lines[] = '';
 	$lines[] = orvio_t( 'For details and purchase:', 'برای مشاهده جزئیات و خرید:' );
@@ -170,6 +174,7 @@ function orvio_bale_send_product( $product_id, $chat_id = '' ) {
 			'{regular_price}'     => $regular,
 			'{stock}'             => $status,
 			'{category}'          => $categories,
+			'{features}'          => $features,
 			'{sku}'               => $product->get_sku(),
 			'{url}'               => $product->get_permalink(),
 			'{id}'                => (string) $product->get_id(),
@@ -229,6 +234,64 @@ function orvio_bale_image_urls( $value ) {
 	return array_values( array_filter( $urls ) );
 }
 
+function orvio_bale_product_features_text( $product ) {
+	$lines = array();
+	if ( ! $product || ! method_exists( $product, 'get_attributes' ) ) {
+		return '';
+	}
+	foreach ( $product->get_attributes() as $attribute ) {
+		$name = $attribute->is_taxonomy() ? wc_attribute_label( $attribute->get_name(), $product ) : $attribute->get_name();
+		$values = $attribute->is_taxonomy() ? wc_get_product_terms( $product->get_id(), $attribute->get_name(), array( 'fields' => 'names' ) ) : $attribute->get_options();
+		$values = array_filter( array_map( 'sanitize_text_field', (array) $values ) );
+		if ( $name && $values ) {
+			$lines[] = sanitize_text_field( $name ) . ': ' . implode( ' | ', $values );
+		}
+	}
+	return implode( "\n", $lines );
+}
+
+function orvio_bale_product_attributes( $value ) {
+	$attributes = array();
+	$lines = preg_split( '/\r\n|\r|\n|[;؛]+/', (string) $value );
+	foreach ( (array) $lines as $line ) {
+		$line = trim( sanitize_text_field( $line ) );
+		if ( ! $line ) {
+			continue;
+		}
+		$parts = preg_split( '/\s*[:：]\s*/u', $line, 2 );
+		$name  = trim( $parts[0] ?? '' );
+		$raw   = trim( $parts[1] ?? $parts[0] ?? '' );
+		if ( count( $parts ) < 2 ) {
+			$name = 'ویژگی';
+		}
+		if ( ! $name || ! $raw ) {
+			continue;
+		}
+		$options = preg_split( '/\s*[|،,]\s*/u', $raw );
+		$options = array_values( array_filter( array_map( 'sanitize_text_field', (array) $options ) ) );
+		if ( ! $options ) {
+			continue;
+		}
+		$key = sanitize_title( $name );
+		if ( ! $key ) {
+			$key = 'feature_' . md5( $name );
+		}
+		if ( isset( $attributes[ $key ] ) ) {
+			$old_options = $attributes[ $key ]->get_options();
+			$options = array_values( array_unique( array_merge( $old_options, $options ) ) );
+		}
+		$attribute = new WC_Product_Attribute();
+		$attribute->set_id( 0 );
+		$attribute->set_name( $name );
+		$attribute->set_options( $options );
+		$attribute->set_position( count( $attributes ) );
+		$attribute->set_visible( true );
+		$attribute->set_variation( false );
+		$attributes[ $key ] = $attribute;
+	}
+	return $attributes;
+}
+
 function orvio_bale_product_data( $product ) {
 	$category_names = wp_strip_all_tags( wc_get_product_category_list( $product->get_id(), ', ' ) );
 	$image_url      = $product->get_image_id() ? wp_get_attachment_image_url( $product->get_image_id(), 'large' ) : '';
@@ -248,6 +311,7 @@ function orvio_bale_product_data( $product ) {
 		'sku'               => $product->get_sku(),
 		'stock_quantity'    => $product->managing_stock() ? (string) $product->get_stock_quantity() : '',
 		'category'          => $category_names,
+		'features'          => orvio_bale_product_features_text( $product ),
 		'image'             => $image_url,
 		'gallery'           => implode( ' ', $gallery_urls ),
 		'status'            => $product->get_status(),
@@ -264,6 +328,7 @@ function orvio_bale_new_product_data() {
 		'sku'               => '',
 		'stock_quantity'    => '',
 		'category'          => '',
+		'features'          => '',
 		'image'             => '',
 		'gallery'           => '',
 		'status'            => 'draft',
@@ -280,6 +345,7 @@ function orvio_bale_field_labels() {
 		'sku'               => 'شناسه محصول SKU',
 		'stock_quantity'    => 'موجودی',
 		'category'          => 'دسته‌بندی‌ها',
+		'features'          => 'ویژگی‌ها',
 		'image'             => 'تصویر اصلی',
 		'gallery'           => 'تصاویر گالری',
 	);
@@ -293,6 +359,7 @@ function orvio_bale_prompt_product_field( $chat_id, $user_id, $field, $data, $ed
 		'sale_price'     => 'برای حذف قیمت تخفیف، «رد کردن» را بزنید.',
 		'stock_quantity' => 'عدد موجودی را وارد کنید؛ برای مدیریت‌نکردن موجودی، «رد کردن» را بزنید.',
 		'category'       => 'نام چند دسته را با ویرگول فارسی یا انگلیسی جدا کنید. دسته جدید خودکار ساخته می‌شود.',
+		'features'       => "هر ویژگی را در یک خط بنویسید؛ نمونه: رنگ: قرمز | مشکی\nجنس: چرم\nگارانتی: ۱۲ ماه",
 		'image'          => 'یک URL عمومی و مستقیم تصویر وارد کنید.',
 		'gallery'        => 'چند URL تصویر را با فاصله یا ویرگول جدا کنید.',
 	);
@@ -371,6 +438,7 @@ function orvio_bale_finish_product( $chat_id, $user_id, $session ) {
 			$product->set_stock_status( 'instock' );
 		}
 		$product->set_category_ids( orvio_bale_product_categories( $data['category'] ?? '' ) );
+		$product->set_attributes( orvio_bale_product_attributes( $data['features'] ?? '' ) );
 		$product->set_status( in_array( $data['status'] ?? 'draft', array( 'draft', 'publish' ), true ) ? $data['status'] : 'draft' );
 		$saved_id = $product->save();
 		if ( ! $saved_id ) {
@@ -480,6 +548,8 @@ function orvio_bale_process_value( $chat_id, $user_id, $session, $value ) {
 		$value = sanitize_text_field( $value );
 	} elseif ( 'category' === $field ) {
 		$value = sanitize_text_field( $value );
+	} elseif ( 'features' === $field ) {
+		$value = sanitize_textarea_field( $value );
 	} elseif ( in_array( $field, array( 'image', 'gallery' ), true ) ) {
 		$value = implode( ' ', orvio_bale_image_urls( $value ) );
 	}

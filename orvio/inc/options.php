@@ -207,7 +207,7 @@ function orvio_defaults() {
 		'bale_admin_ids'     => '',
 		'bale_webhook_secret'=> '',
 		'bale_auto_publish'  => 0,
-		'bale_product_template' => "🛍️ {title}\n\n{short_description}\n\n💳 {price}\n📦 {stock}\n\n{url}",
+		'bale_product_template' => "🛍️ {title}\n\n{short_description}\n\n💳 {price}\n📦 {stock}\n✨ {features}\n\n{url}",
 		'bale_support_enabled' => 0,
 		'bale_support_bot_token' => '',
 		'bale_support_admin_ids' => '',
@@ -804,7 +804,7 @@ function orvio_render_settings_page() {
 						orvio_field_text( 'bale_admin_ids', orvio_t( 'Allowed Bale user IDs', 'شناسه کاربران مجاز بله' ), $o );
 						orvio_field_password( 'bale_webhook_secret', orvio_t( 'Webhook secret', 'کلید امنیتی وب‌هوک' ), $o, 'Generated automatically' );
 						orvio_field_check( 'bale_auto_publish', orvio_t( 'Automatically send new published products to the channel', 'ارسال خودکار محصولات جدیدِ منتشرشده به کانال' ), $o );
-						orvio_field_textarea( 'bale_product_template', orvio_t( 'Channel template', 'قالب پیام کانال' ), $o, "{title}\n{short_description}\n{price}\n{stock}\n{url}" );
+						orvio_field_textarea( 'bale_product_template', orvio_t( 'Channel template', 'قالب پیام کانال' ), $o, "{title}\n{short_description}\n{price}\n{stock}\n{features}\n{url}" );
 						?>
 						<div class="orvio-bale-settings__actions">
 							<?php echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=orvio_bale_test' ), 'orvio_bale_action' ) ) . '">' . esc_html( orvio_t( 'Test bot connection', 'تست اتصال ربات' ) ) . '</a>'; ?>
