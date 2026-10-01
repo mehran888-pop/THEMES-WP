@@ -82,7 +82,7 @@ foreach ( $numeric_map as $setting => $variable ) {
 				break;
 			case 'categories':
 				$tag    = 'button';
-				$attrs  = ' type="button" data-open="menu" aria-controls="orvio-menu-drawer" aria-expanded="false"';
+				$attrs  = ' type="button" data-open="categories" aria-controls="orvio-category-drawer" aria-expanded="false"';
 				$active = function_exists( 'is_product_category' ) && is_product_category();
 				break;
 			case 'shop':

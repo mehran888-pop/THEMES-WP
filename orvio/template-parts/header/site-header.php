@@ -28,7 +28,8 @@ $cart_href  = ' href="' . esc_url( function_exists( 'wc_get_cart_url' ) ? wc_get
 <?php endif; ?>
 <header class="orvio-header orvio-header--<?php echo esc_attr( $header_layout ); ?>" data-header>
 	<div class="orvio-container orvio-header__row">
-		<button type="button" class="orvio-iconbtn orvio-burger" data-open="menu" aria-controls="orvio-menu-drawer" aria-expanded="false" aria-label="<?php echo esc_attr( orvio_t( 'Menu', 'منو' ) ); ?>"><?php echo orvio_icon( 'menu' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></button>
+		<button type="button" class="orvio-iconbtn orvio-burger" data-open="menu" aria-controls="orvio-menu-drawer" aria-expanded="false" aria-label="<?php echo esc_attr( orvio_t( 'Main menu', 'منوی اصلی' ) ); ?>"><?php echo orvio_icon( 'menu' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></button>
+		<button type="button" class="orvio-iconbtn orvio-category-toggle" data-open="categories" aria-controls="orvio-category-drawer" aria-expanded="false" aria-label="<?php echo esc_attr( orvio_t( 'Categories', 'دسته‌بندی‌ها' ) ); ?>"><?php echo orvio_icon( 'grid' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></button>
 		<?php if ( has_custom_logo() ) : ?>
 			<?php the_custom_logo(); ?>
 		<?php else : ?>

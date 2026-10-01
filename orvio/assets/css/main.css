@@ -215,6 +215,7 @@ html[dir="rtl"] .orvio-display {
   color: var(--ink);
 }
 .orvio-iconbtn svg, .orvio-tool svg, .orvio-search__icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.orvio-category-toggle { flex: none; }
 
 /* Announce */
 .orvio-announce {
@@ -685,10 +686,19 @@ body.orvio-header-layout-minimal .orvio-announce,
   transition: transform 0.38s var(--ease), visibility 0s linear 0.38s;
   box-shadow: var(--shadow);
 }
-.orvio-drawer--menu { inset-inline-start: 0; transform: translateX(-105%); }
-html[dir="rtl"] .orvio-drawer--menu { transform: translateX(105%); }
+.orvio-drawer--menu,
+.orvio-drawer--category { inset-inline-start: 0; transform: translateX(-105%); }
+html[dir="rtl"] .orvio-drawer--menu,
+html[dir="rtl"] .orvio-drawer--category { transform: translateX(105%); }
 .orvio-drawer--wish { inset-inline-end: 0; transform: translateX(105%); }
 html[dir="rtl"] .orvio-drawer--wish { transform: translateX(-105%); }
+/* The html[dir] selector is more specific than .is-open; repeat it here so RTL panels really slide into view. */
+.orvio-drawer--menu.is-open,
+.orvio-drawer--category.is-open,
+.orvio-drawer--wish.is-open,
+html[dir="rtl"] .orvio-drawer--menu.is-open,
+html[dir="rtl"] .orvio-drawer--category.is-open,
+html[dir="rtl"] .orvio-drawer--wish.is-open { transform: none; }
 /* Cart side is physical, not logical: RTL must not silently mirror the admin choice. */
 .orvio-drawer--cart {
   left: auto;
@@ -736,6 +746,10 @@ html[dir="rtl"] .orvio-drawer--wish { transform: translateX(-105%); }
 .orvio-drawer--cart .orvio-drawer__x { color: inherit; background: transparent; border-color: var(--line-strong, var(--line)); }
 .orvio-drawer--cart .orvio-btn--primary { background: var(--orvio-cart-drawer-accent, var(--accent-dark)); border-color: var(--orvio-cart-drawer-accent, var(--accent-dark)); }
 .orvio-drawer.is-open { transform: none; visibility: visible; pointer-events: auto; transition-delay: 0s; }
+@media (max-width: 980px) {
+  .orvio-drawer--menu,
+  .orvio-drawer--category { width: min(380px, calc(100vw - 24px)); max-width: calc(100vw - 24px); }
+}
 .orvio-drawer__head, .orvio-drawer__foot {
   display: flex;
   align-items: center;
@@ -767,6 +781,27 @@ html[dir="rtl"] .orvio-drawer--wish { transform: translateX(-105%); }
 .orvio-line__row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
 .orvio-line__remove { border: 0; background: transparent; color: var(--muted); font-size: 12px; text-decoration: underline; padding: 0; }
 .orvio-drawer__total { display: flex; justify-content: space-between; font-weight: 700; }
+.orvio-menu-category-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 48px;
+  margin-bottom: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+.orvio-menu-category-link > span:first-child { display: inline-flex; align-items: center; gap: 8px; }
+.orvio-menu-category-link svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.7; }
+.orvio-menu-category-link:hover,
+.orvio-menu-category-link:focus-visible { border-color: var(--accent); color: var(--accent-dark); }
+.orvio-category-all { display: flex; align-items: center; min-height: 42px; margin-bottom: 8px; padding: 8px 4px; }
 .orvio-menu-acc details { border-bottom: 1px solid var(--line); }
 .orvio-menu-acc summary {
   list-style: none;
@@ -2043,7 +2078,9 @@ body.orvio-checkout-layout-minimal .orvio-checkout .orvio-panel { background: tr
   .orvio-search { display: none; }
   .orvio-tool__meta, .orvio-logo__word small { display: none; }
   .orvio-catbar { display: none; }
-  .orvio-header__row { gap: 6px; min-height: 62px; }
+  .orvio-header__row,
+  .orvio-header--split .orvio-header__row,
+  .orvio-el-header-layout-split .orvio-header__row { display: flex; gap: 6px; min-height: 62px; }
   .orvio-logo { margin-inline-end: auto; }
   .orvio-h-centered .orvio-header__row { display: flex; }
   .orvio-h-centered .orvio-logo { grid-column: auto; margin-inline-end: auto; }

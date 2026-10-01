@@ -50,15 +50,9 @@ $render_category_children = function ( $parent_id ) use ( &$render_category_chil
 			<?php if ( class_exists( 'WooCommerce' ) ) : ?><input type="hidden" name="post_type" value="product"><?php endif; ?>
 			<button type="submit"><?php echo esc_html( orvio_t( 'Search', 'جستجو' ) ); ?></button>
 		</form>
-		<div class="orvio-menu-acc">
-			<?php if ( $terms ) : foreach ( $terms as $term ) : ?>
-				<details>
-					<summary><?php echo esc_html( $term->name ); ?></summary>
-					<a class="orvio-menu-all" href="<?php echo esc_url( get_term_link( $term ) ); ?>"><?php echo esc_html( orvio_t( 'View all', 'مشاهده همه' ) ); ?></a>
-					<?php $render_category_children( $term->term_id ); ?>
-				</details>
-			<?php endforeach; endif; ?>
-		</div>
+		<button type="button" class="orvio-menu-category-link" data-open="categories" aria-controls="orvio-category-drawer" aria-expanded="false">
+			<span><?php echo orvio_icon( 'grid' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><?php echo esc_html( orvio_t( 'Categories', 'دسته‌بندی‌ها' ) ); ?></span><span aria-hidden="true">←</span>
+		</button>
 		<div class="orvio-menu-links">
 			<a href="<?php echo esc_url( orvio_shop_url() ); ?>"><?php echo esc_html( orvio_t( 'Shop', 'فروشگاه' ) ); ?></a>
 			<a href="<?php echo esc_url( orvio_account_url() ); ?>"><?php echo esc_html( orvio_t( 'Account', 'حساب' ) ); ?></a>
@@ -72,6 +66,26 @@ $render_category_children = function ( $parent_id ) use ( &$render_category_chil
 				echo '<a href="' . esc_url( get_permalink( $contact ) ) . '">' . esc_html( orvio_t( 'Contact', 'ارتباط با ما' ) ) . '</a>';
 			}
 			?>
+		</div>
+	</div>
+</aside>
+<aside class="orvio-drawer orvio-drawer--category" id="orvio-category-drawer" data-drawer="categories" role="dialog" aria-modal="true" aria-labelledby="orvio-category-title" aria-hidden="true">
+	<div class="orvio-drawer__head">
+		<h2 id="orvio-category-title"><?php echo esc_html( orvio_t( 'Categories', 'دسته‌بندی‌ها' ) ); ?></h2>
+		<button type="button" class="orvio-drawer__x" data-close aria-label="<?php echo esc_attr( orvio_t( 'Close', 'بستن' ) ); ?>">×</button>
+	</div>
+	<div class="orvio-drawer__body">
+		<a class="orvio-menu-all orvio-category-all" href="<?php echo esc_url( orvio_shop_url() ); ?>"><?php echo esc_html( orvio_t( 'View all products', 'مشاهده همه محصولات' ) ); ?></a>
+		<div class="orvio-menu-acc">
+			<?php if ( $terms ) : foreach ( $terms as $term ) : ?>
+				<details>
+					<summary><?php echo esc_html( $term->name ); ?></summary>
+					<a class="orvio-menu-all" href="<?php echo esc_url( get_term_link( $term ) ); ?>"><?php echo esc_html( orvio_t( 'View all', 'مشاهده همه' ) ); ?></a>
+					<?php $render_category_children( $term->term_id ); ?>
+				</details>
+			<?php endforeach; else : ?>
+				<a href="<?php echo esc_url( orvio_shop_url() ); ?>"><?php echo esc_html( orvio_t( 'Shop', 'فروشگاه' ) ); ?></a>
+			<?php endif; ?>
 		</div>
 	</div>
 </aside>
