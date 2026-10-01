@@ -188,3 +188,11 @@ body.rtl #orvio-app { margin: 16px 0 40px 20px; }
 .orvio-bale-settings__actions .button { min-height: 36px; display: inline-flex; align-items: center; }
 .orvio-bale-settings code { display: block; max-width: 100%; overflow-wrap: anywhere; direction: ltr; text-align: left; margin-top: 6px; padding: 8px 10px; background: #f5f3ef; border-radius: 8px; }
 .orvio-bale-settings .orvio-admin__hint { max-width: 780px; color: #6e665e; line-height: 1.8; }
+
+.orvio-bale-access { margin-top: 22px; padding-top: 18px; border-top: 1px solid #e5ddd3; }
+.orvio-bale-access h3 { margin: 0 0 12px; font-size: 15px; }
+.orvio-bale-access__table { overflow-x: auto; }
+.orvio-bale-access table { width: 100%; min-width: 680px; border-collapse: collapse; font-size: 12px; }
+.orvio-bale-access th, .orvio-bale-access td { padding: 10px 8px; border-bottom: 1px solid #eee8e1; text-align: right; vertical-align: middle; }
+.orvio-bale-access th { color: #6e665e; font-size: 11px; font-weight: 700; }
+.orvio-bale-access td .button { margin: 2px 0; }

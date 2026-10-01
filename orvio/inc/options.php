@@ -813,6 +813,7 @@ function orvio_render_settings_page() {
 						</div>
 						<p class="description"><strong><?php echo esc_html( orvio_t( 'Webhook URL:', 'آدرس وب‌هوک:' ) ); ?></strong> <code><?php echo esc_html( $bale_webhook_url ); ?></code></p>
 						<p class="description"><?php echo esc_html( orvio_t( 'Add the bot as an administrator of the Bale channel. Enter your own Bale numeric user ID in the allowed list, separated by commas.', 'ربات را مدیر کانال بله کنید. شناسه عددی کاربر خودتان را در فهرست مجاز وارد کنید و چند شناسه را با ویرگول جدا کنید.' ) ); ?></p>
+						<?php orvio_bale_render_access_requests(); ?>
 					</div>
 				</section>
 				<section data-panel="support" class="orvio-panel">

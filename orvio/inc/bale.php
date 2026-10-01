@@ -77,6 +77,101 @@ function orvio_bale_is_admin( $user_id ) {
 	return $user_id && in_array( (string) $user_id, orvio_bale_admin_ids(), true );
 }
 
+function orvio_bale_access_requests() {
+	$requests = get_option( 'orvio_bale_access_requests', array() );
+	return is_array( $requests ) ? $requests : array();
+}
+
+function orvio_bale_save_access_requests( $requests ) {
+	return update_option( 'orvio_bale_access_requests', $requests, false );
+}
+
+function orvio_bale_access_request( $user_id ) {
+	$requests = orvio_bale_access_requests();
+	return $requests[ (string) $user_id ] ?? array();
+}
+
+function orvio_bale_record_access_request( $from, $chat_id ) {
+	$user_id = (string) ( $from['id'] ?? '' );
+	if ( ! $user_id ) {
+		return array();
+	}
+	if ( orvio_bale_is_admin( $user_id ) ) {
+		orvio_bale_main_menu( $chat_id, 'خوش آمدید. دسترسی مدیریت شما فعال است.' );
+		return array( 'status' => 'approved', 'user_id' => $user_id );
+	}
+	$requests = orvio_bale_access_requests();
+	$existing = $requests[ $user_id ] ?? array();
+	$request  = array(
+		'user_id'       => $user_id,
+		'chat_id'       => (string) $chat_id,
+		'username'      => sanitize_text_field( $from['username'] ?? '' ),
+		'first_name'    => sanitize_text_field( $from['first_name'] ?? '' ),
+		'last_name'     => sanitize_text_field( $from['last_name'] ?? '' ),
+		'language_code' => sanitize_text_field( $from['language_code'] ?? '' ),
+		'chat_type'     => sanitize_text_field( $from['chat_type'] ?? 'private' ),
+		'requested_at'  => $existing['requested_at'] ?? current_time( 'mysql' ),
+		'updated_at'    => current_time( 'mysql' ),
+		'status'        => 'pending',
+	);
+	$requests[ $user_id ] = $request;
+	orvio_bale_save_access_requests( $requests );
+	$display_name = trim( $request['first_name'] . ' ' . $request['last_name'] );
+	$display_name = $display_name ? $display_name : ( $request['username'] ? '@' . $request['username'] : 'کاربر بله' );
+	orvio_bale_send_message( $chat_id, 'سلام ' . $display_name . "\n\nدرخواست دسترسی شما ثبت شد. پس از تأیید مدیر سایت، دکمه‌های «تعریف کالا» و «ویرایش کالا» برای شما فعال می‌شود.\n\nشناسه کاربری شما: " . $user_id );
+	if ( empty( $existing ) || 'rejected' === ( $existing['status'] ?? '' ) ) {
+		$admin_email = sanitize_email( get_option( 'admin_email' ) );
+		if ( $admin_email ) {
+			wp_mail( $admin_email, 'درخواست دسترسی ربات بله Orvio', "درخواست جدید دسترسی مدیریت ربات بله\nنام: {$display_name}\nشناسه: {$user_id}\nنام کاربری: @{$request['username']}\nبرای بررسی به پیشخوان Orvio > ربات بله بروید." );
+		}
+		$keyboard = orvio_bale_keyboard( array( array( orvio_bale_button( '✅ تأیید دسترسی', 'bale:access:approve:' . $user_id ), orvio_bale_button( '⛔ رد درخواست', 'bale:access:reject:' . $user_id ) ) ) );
+		foreach ( orvio_bale_admin_ids() as $admin_id ) {
+			orvio_bale_send_message( $admin_id, '🔐 درخواست دسترسی جدید\nنام: ' . $display_name . '\nشناسه: ' . $user_id . '\nنام کاربری: @' . $request['username'], $keyboard );
+		}
+	}
+	return $request;
+}
+
+function orvio_bale_approve_access( $user_id ) {
+	$user_id = preg_replace( '/[^0-9]/', '', (string) $user_id );
+	if ( ! $user_id ) {
+		return false;
+	}
+	$settings = orvio_settings();
+	$ids = orvio_bale_admin_ids();
+	if ( ! in_array( $user_id, $ids, true ) ) {
+		$ids[] = $user_id;
+	}
+	$settings['bale_admin_ids'] = implode( ',', $ids );
+	$requests = orvio_bale_access_requests();
+	if ( isset( $requests[ $user_id ] ) ) {
+		$requests[ $user_id ]['status'] = 'approved';
+		$requests[ $user_id ]['updated_at'] = current_time( 'mysql' );
+		orvio_bale_save_access_requests( $requests );
+	}
+	update_option( 'orvio_settings', $settings );
+	$request = $requests[ $user_id ] ?? array();
+	if ( ! empty( $request['chat_id'] ) ) {
+		orvio_bale_main_menu( $request['chat_id'], '✅ دسترسی مدیریت شما تأیید شد. از منوی زیر برای تعریف یا ویرایش کالا استفاده کنید.' );
+	}
+	return true;
+}
+
+function orvio_bale_reject_access( $user_id ) {
+	$user_id = preg_replace( '/[^0-9]/', '', (string) $user_id );
+	$requests = orvio_bale_access_requests();
+	if ( empty( $requests[ $user_id ] ) ) {
+		return false;
+	}
+	$requests[ $user_id ]['status'] = 'rejected';
+	$requests[ $user_id ]['updated_at'] = current_time( 'mysql' );
+	orvio_bale_save_access_requests( $requests );
+	if ( ! empty( $requests[ $user_id ]['chat_id'] ) ) {
+		orvio_bale_send_message( $requests[ $user_id ]['chat_id'], 'درخواست دسترسی شما فعلاً تأیید نشد. برای بررسی دوباره /start را بزنید.' );
+	}
+	return true;
+}
+
 function orvio_bale_sessions() {
 	$sessions = get_option( 'orvio_bale_sessions', array() );
 	return is_array( $sessions ) ? $sessions : array();
@@ -533,7 +628,7 @@ function orvio_bale_list_products( $chat_id ) {
 			$rows[] = array( orvio_bale_button( '📣 ارسال به کانال', 'bale:send:' . $product->get_id() ) );
 		}
 	}
-	$rows[] = array( orvio_bale_button( '➕ محصول جدید', 'bale:new' ) );
+	$rows[] = array( orvio_bale_button( '➕ تعریف کالا', 'bale:new' ) );
 	orvio_bale_send_message( $chat_id, $text, orvio_bale_keyboard( $rows ) );
 }
 
@@ -546,7 +641,7 @@ function orvio_bale_main_menu( $chat_id, $text = '' ) {
 		$text,
 		orvio_bale_keyboard(
 			array(
-				array( orvio_bale_button( '➕ محصول جدید', 'bale:new' ), orvio_bale_button( '📋 محصولات', 'bale:list' ) ),
+				array( orvio_bale_button( '➕ تعریف کالا', 'bale:new' ), orvio_bale_button( '✏️ ویرایش کالا', 'bale:list' ) ),
 				array( orvio_bale_button( '❔ راهنما', 'bale:help' ) ),
 			)
 		)
@@ -654,6 +749,16 @@ function orvio_bale_handle_callback( $callback ) {
 		}
 		return;
 	}
+	if ( preg_match( '/^bale:access:(approve|reject):(\d+)$/', $data, $matches ) ) {
+		if ( 'approve' === $matches[1] ) {
+			orvio_bale_approve_access( $matches[2] );
+			orvio_bale_send_message( $chat_id, '✅ دسترسی کاربر ' . $matches[2] . ' تأیید شد.' );
+		} else {
+			orvio_bale_reject_access( $matches[2] );
+			orvio_bale_send_message( $chat_id, 'درخواست کاربر ' . $matches[2] . ' رد شد.' );
+		}
+		return;
+	}
 	if ( preg_match( '/^bale:(edit|send|delete|publish|confirm-delete):(\d+)$/', $data, $matches ) ) {
 		$action = $matches[1];
 		$id     = absint( $matches[2] );
@@ -689,6 +794,10 @@ function orvio_bale_handle_update( $update ) {
 	$chat_id  = $callback['message']['chat']['id'] ?? $message['chat']['id'] ?? $user_id;
 	$text     = trim( (string) ( $message['text'] ?? '' ) );
 	if ( ! $user_id ) {
+		return;
+	}
+	if ( ! $callback && preg_match( '/^\/(start|menu)$/i', $text ) ) {
+		orvio_bale_record_access_request( $from, $chat_id );
 		return;
 	}
 	if ( ! $callback && preg_match( '/^\/(id|whoami)$/i', $text ) ) {
@@ -727,7 +836,7 @@ function orvio_bale_handle_update( $update ) {
 		orvio_bale_main_menu( $chat_id, 'فرم لغو شد.' );
 		return;
 	}
-	if ( preg_match( '/^\/(start|menu)$/i', $text ) ) {
+	if ( preg_match( '/^\/menu$/i', $text ) ) {
 		orvio_bale_clear_session( $user_id );
 		orvio_bale_main_menu( $chat_id );
 		return;
@@ -810,6 +919,25 @@ function orvio_bale_webhook( WP_REST_Request $request ) {
 	return rest_ensure_response( array( 'ok' => true ) );
 }
 
+function orvio_bale_render_access_requests() {
+	$requests = orvio_bale_access_requests();
+	$pending = array_filter( $requests, function ( $request ) { return 'pending' === ( $request['status'] ?? '' ); } );
+	echo '<div class="orvio-bale-access"><h3>' . esc_html( orvio_t( 'Access requests', 'درخواست‌های دسترسی' ) ) . '</h3>';
+	if ( ! $pending ) {
+		echo '<p class="description">' . esc_html( orvio_t( 'No pending access requests.', 'درخواست دسترسی در انتظار بررسی وجود ندارد.' ) ) . '</p></div>';
+		return;
+	}
+	echo '<div class="orvio-bale-access__table"><table><thead><tr><th>نام</th><th>شناسه</th><th>نام کاربری</th><th>زمان</th><th>عملیات</th></tr></thead><tbody>';
+	foreach ( $pending as $request ) {
+		$user_id = (string) ( $request['user_id'] ?? '' );
+		$name = trim( ( $request['first_name'] ?? '' ) . ' ' . ( $request['last_name'] ?? '' ) );
+		$approve = wp_nonce_url( admin_url( 'admin-post.php?action=orvio_bale_access_approve&user_id=' . rawurlencode( $user_id ) ), 'orvio_bale_access_action' );
+		$reject  = wp_nonce_url( admin_url( 'admin-post.php?action=orvio_bale_access_reject&user_id=' . rawurlencode( $user_id ) ), 'orvio_bale_access_action' );
+		echo '<tr><td>' . esc_html( $name ?: 'کاربر بله' ) . '</td><td dir="ltr">' . esc_html( $user_id ) . '</td><td dir="ltr">' . esc_html( $request['username'] ? '@' . $request['username'] : '—' ) . '</td><td dir="ltr">' . esc_html( $request['requested_at'] ?? '' ) . '</td><td><a class="button button-primary" href="' . esc_url( $approve ) . '">تأیید</a> <a class="button" href="' . esc_url( $reject ) . '">رد</a></td></tr>';
+	}
+	echo '</tbody></table></div></div>';
+}
+
 function orvio_bale_admin_notice( $status ) {
 	$messages = array(
 		'test-ok'       => orvio_t( 'Bale bot connection is working.', 'اتصال ربات بله برقرار است.' ),
@@ -824,6 +952,8 @@ function orvio_bale_admin_notice( $status ) {
 		'support-webhook-error' => orvio_t( 'Support webhook could not be registered.', 'ثبت وب‌هوک پشتیبانی ناموفق بود.' ),
 		'support-delete-ok'     => orvio_t( 'Support webhook disabled.', 'وب‌هوک پشتیبانی غیرفعال شد.' ),
 		'support-delete-error'  => orvio_t( 'Support webhook could not be disabled.', 'غیرفعال‌کردن وب‌هوک پشتیبانی ناموفق بود.' ),
+		'access-approved'       => orvio_t( 'Bale user access approved.', 'دسترسی کاربر بله تأیید شد.' ),
+		'access-rejected'       => orvio_t( 'Bale user access rejected.', 'دسترسی کاربر بله رد شد.' ),
 	);
 
 	return $messages[ $status ] ?? orvio_t( 'Bale action completed.', 'عملیات بله انجام شد.' );
@@ -833,6 +963,26 @@ function orvio_bale_admin_redirect( $status ) {
 	$url = add_query_arg( array( 'page' => 'orvio-settings', 'orvio-tab' => 'bale', 'orvio-bale' => $status ), admin_url( 'admin.php' ) );
 	wp_safe_redirect( $url );
 	exit;
+}
+
+add_action( 'admin_post_orvio_bale_access_approve', 'orvio_bale_admin_approve_access' );
+function orvio_bale_admin_approve_access() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( esc_html__( 'Unauthorized', 'orvio' ), '', array( 'response' => 403 ) );
+	}
+	check_admin_referer( 'orvio_bale_access_action' );
+	orvio_bale_approve_access( sanitize_text_field( wp_unslash( $_GET['user_id'] ?? '' ) ) );
+	orvio_bale_admin_redirect( 'access-approved' );
+}
+
+add_action( 'admin_post_orvio_bale_access_reject', 'orvio_bale_admin_reject_access' );
+function orvio_bale_admin_reject_access() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( esc_html__( 'Unauthorized', 'orvio' ), '', array( 'response' => 403 ) );
+	}
+	check_admin_referer( 'orvio_bale_access_action' );
+	orvio_bale_reject_access( sanitize_text_field( wp_unslash( $_GET['user_id'] ?? '' ) ) );
+	orvio_bale_admin_redirect( 'access-rejected' );
 }
 
 add_action( 'admin_post_orvio_bale_test', 'orvio_bale_admin_test' );
