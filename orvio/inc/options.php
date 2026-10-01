@@ -97,6 +97,8 @@ function orvio_defaults() {
 		'mobile_header_wishlist_enabled'   => 1,
 		'mobile_header_cart_enabled'       => 1,
 		'mobile_header_announcement_enabled' => 1,
+		'mobile_search_mode'        => 'icon',
+		'mobile_search_style'       => 'pill',
 		'show_pagehead'      => 1,
 		'show_woocommerce_breadcrumb' => 1,
 		'announcement'       => 'ارسال رایگان برای سفارش‌های بالای ۲ میلیون تومان  ·  بازگشت آسان تا ۳۰ روز',
@@ -393,6 +395,10 @@ function orvio_sanitize_settings( $input ) {
 	foreach ( $toggles as $key ) {
 		$clean[ $key ] = empty( $input[ $key ] ) ? 0 : 1;
 	}
+	$mobile_search_modes  = array( 'icon', 'bar' );
+	$mobile_search_styles = array( 'pill', 'soft', 'outline', 'minimal', 'dark' );
+	$clean['mobile_search_mode']  = in_array( $input['mobile_search_mode'] ?? '', $mobile_search_modes, true ) ? $input['mobile_search_mode'] : 'icon';
+	$clean['mobile_search_style'] = in_array( $input['mobile_search_style'] ?? '', $mobile_search_styles, true ) ? $input['mobile_search_style'] : 'pill';
 	$text = array( 'announcement', 'announcement_en', 'phone', 'email', 'address', 'hours', 'footer_about', 'copyright', 'instagram', 'telegram', 'whatsapp' );
 	foreach ( $text as $key ) {
 		$clean[ $key ] = sanitize_text_field( $input[ $key ] ?? '' );
@@ -619,6 +625,13 @@ function orvio_render_settings_page() {
 						orvio_field_check( 'mobile_header_wishlist_enabled', orvio_t( 'Wishlist', 'علاقه‌مندی' ), $o );
 						orvio_field_check( 'mobile_header_cart_enabled', orvio_t( 'Cart', 'سبد خرید' ), $o );
 						orvio_field_check( 'mobile_header_announcement_enabled', orvio_t( 'Announcement bar', 'نوار اعلان' ), $o );
+						?>
+					</div>
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Mobile search', 'جستجوی موبایل' ) ); ?></h2>
+						<p class="orvio-admin__hint"><?php echo esc_html( orvio_t( 'Choose whether search is an icon that expands or a full search bar in the mobile header, then select its visual style.', 'مشخص کنید جستجو در موبایل به‌صورت آیکن بازشونده باشد یا نوار کامل؛ سپس استایل آن را انتخاب کنید.' ) ); ?></p>
+						<?php
+						orvio_field_select( 'mobile_search_mode', orvio_t( 'Search mode', 'حالت جستجو' ), $o, array( 'icon' => orvio_t( 'Icon with expandable panel', 'آیکن با پنل بازشونده' ), 'bar' => orvio_t( 'Full bar in header', 'نوار کامل در هدر' ) ) );
+						orvio_field_select( 'mobile_search_style', orvio_t( 'Search style', 'استایل جستجو' ), $o, array( 'pill' => orvio_t( 'Pill', 'کپسولی' ), 'soft' => orvio_t( 'Soft surface', 'سطح نرم' ), 'outline' => orvio_t( 'Outline', 'خطی' ), 'minimal' => orvio_t( 'Minimal underline', 'مینیمال زیرخط' ), 'dark' => orvio_t( 'Dark', 'تیره' ) ) );
 						?>
 					</div>
 				</section>
@@ -1146,6 +1159,10 @@ function orvio_body_classes( $classes ) {
 			$classes[] = 'orvio-mobile-header-hide-' . $class_suffix;
 		}
 	}
+	$mobile_search_modes  = array( 'icon', 'bar' );
+	$mobile_search_styles = array( 'pill', 'soft', 'outline', 'minimal', 'dark' );
+	$classes[] = 'orvio-mobile-search-mode-' . ( in_array( $o['mobile_search_mode'] ?? 'icon', $mobile_search_modes, true ) ? $o['mobile_search_mode'] : 'icon' );
+	$classes[] = 'orvio-mobile-search-style-' . ( in_array( $o['mobile_search_style'] ?? 'pill', $mobile_search_styles, true ) ? $o['mobile_search_style'] : 'pill' );
 	if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() || is_product_category() || is_product_tag() ) ) {
 		$shop_layouts = array( 'sidebar-grid', 'wide-grid', 'list', 'masonry', 'minimal' );
 		$classes[] = 'orvio-shop-layout-' . ( in_array( $o['shop_layout'], $shop_layouts, true ) ? $o['shop_layout'] : 'sidebar-grid' );

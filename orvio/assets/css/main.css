@@ -2089,6 +2089,54 @@ body.orvio-checkout-layout-minimal .orvio-checkout .orvio-panel { background: tr
   body.orvio-mobile-header-hide-search .orvio-header .orvio-search,
   body.orvio-mobile-header-hide-search .orvio-header .orvio-search-toggle,
   body.orvio-mobile-header-hide-search .orvio-header .orvio-searchpanel { display: none !important; }
+  body.orvio-mobile-search-mode-bar .orvio-header__row { flex-wrap: wrap; padding-bottom: 8px; }
+  body.orvio-mobile-search-mode-bar .orvio-header__row > .orvio-search {
+    order: 20;
+    display: flex;
+    flex: 1 0 100%;
+    width: 100%;
+    max-width: none;
+    margin-top: 2px;
+  }
+  body.orvio-mobile-search-mode-bar .orvio-search-toggle,
+  body.orvio-mobile-search-mode-bar .orvio-searchpanel { display: none !important; }
+  body.orvio-mobile-search-mode-icon .orvio-header__row > .orvio-search { display: none !important; }
+  body.orvio-mobile-search-style-pill .orvio-header__row > .orvio-search,
+  body.orvio-mobile-search-style-pill .orvio-searchpanel .orvio-search {
+    border-color: transparent;
+    border-radius: 999px;
+    background: var(--bg-2);
+  }
+  body.orvio-mobile-search-style-soft .orvio-header__row > .orvio-search,
+  body.orvio-mobile-search-style-soft .orvio-searchpanel .orvio-search {
+    border-color: var(--line);
+    border-radius: 14px;
+    background: var(--bg);
+  }
+  body.orvio-mobile-search-style-outline .orvio-header__row > .orvio-search,
+  body.orvio-mobile-search-style-outline .orvio-searchpanel .orvio-search {
+    border-color: var(--line-strong);
+    border-radius: 14px;
+    background: var(--surface);
+  }
+  body.orvio-mobile-search-style-minimal .orvio-header__row > .orvio-search,
+  body.orvio-mobile-search-style-minimal .orvio-searchpanel .orvio-search {
+    border-color: var(--line-strong);
+    border-radius: 0;
+    background: transparent;
+    padding-inline: 0;
+  }
+  body.orvio-mobile-search-style-dark .orvio-header__row > .orvio-search,
+  body.orvio-mobile-search-style-dark .orvio-searchpanel .orvio-search {
+    border-color: var(--ink);
+    border-radius: 14px;
+    background: var(--ink);
+    color: #fff;
+  }
+  body.orvio-mobile-search-style-dark .orvio-header__row > .orvio-search input,
+  body.orvio-mobile-search-style-dark .orvio-searchpanel .orvio-search input { color: #fff; }
+  body.orvio-mobile-search-style-dark .orvio-header__row > .orvio-search input::placeholder,
+  body.orvio-mobile-search-style-dark .orvio-searchpanel .orvio-search input::placeholder { color: rgba(255,255,255,.68); }
   .orvio-header__row,
   .orvio-header--split .orvio-header__row,
   .orvio-el-header-layout-split .orvio-header__row { display: flex; gap: 6px; min-height: 62px; }
