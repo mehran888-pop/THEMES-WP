@@ -838,6 +838,86 @@ class Orvio_Widget_Professional_Poster extends Orvio_Widget_Base {
 	}
 }
 
+class Orvio_Widget_Image_Poster extends Orvio_Widget_Base {
+	public function get_name() { return 'orvio-image-poster'; }
+	public function get_title() { return orvio_t( 'Product image poster', 'پوستر تصویری محصول' ); }
+	public function get_icon() { return 'eicon-image-rollover'; }
+	protected function register_controls() {
+		$this->start_controls_section( 'orvio_image_poster_content', array( 'label' => orvio_t( 'Image poster', 'پوستر تصویری' ) ) );
+		$this->add_control( 'source', array( 'label' => orvio_t( 'Content source', 'منبع محتوا' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'manual', 'options' => array( 'manual' => orvio_t( 'Manual content', 'محتوای دستی' ), 'product' => orvio_t( 'Connect to product', 'اتصال به محصول' ) ) ) );
+		$product_options = array( '' => orvio_t( 'Choose a product', 'انتخاب محصول' ) );
+		if ( function_exists( 'wc_get_products' ) ) {
+			foreach ( wc_get_products( array( 'status' => 'publish', 'limit' => 100, 'return' => 'objects' ) ) as $product ) {
+				$product_options[ (string) $product->get_id() ] = $product->get_name();
+			}
+		}
+		$this->add_control( 'product_id', array( 'label' => orvio_t( 'Product', 'محصول' ), 'type' => \Elementor\Controls_Manager::SELECT2, 'options' => $product_options, 'condition' => array( 'source' => 'product' ) ) );
+		$this->add_control( 'visual_style', array( 'label' => orvio_t( 'Visual style', 'استایل بصری' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'saas', 'options' => array( 'saas' => orvio_t( 'SaaS campaign', 'کمپین SaaS' ), 'editorial' => orvio_t( 'Editorial', 'ادیتوریال' ), 'dark' => orvio_t( 'Dark premium', 'پریمیوم تیره' ) ) ) );
+		$this->add_control( 'effect', array( 'label' => orvio_t( 'Creative image effect', 'افکت خلاق تصویر' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'kenburns', 'options' => array( 'none' => orvio_t( 'None', 'بدون افکت' ), 'zoom' => orvio_t( 'Zoom reveal', 'زوم در هاور' ), 'kenburns' => orvio_t( 'Ken Burns', 'حرکت سینمایی' ), 'slide' => orvio_t( 'Parallax slide', 'حرکت پارالاکس' ), 'duotone' => orvio_t( 'Duotone', 'دو رنگ' ), 'glass' => orvio_t( 'Glass content', 'محتوای شیشه‌ای' ) ) ) );
+		$this->add_control( 'overlay', array( 'label' => orvio_t( 'Overlay', 'روکش تصویر' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'gradient', 'options' => array( 'gradient' => orvio_t( 'Gradient', 'گرادیان' ), 'solid' => orvio_t( 'Solid', 'پر' ), 'soft' => orvio_t( 'Soft', 'نرم' ), 'none' => orvio_t( 'None', 'بدون روکش' ) ) ) );
+		$this->add_control( 'layout', array( 'label' => orvio_t( 'Content position', 'جایگاه محتوا' ), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'bottom', 'options' => array( 'bottom' => orvio_t( 'Bottom', 'پایین' ), 'center' => orvio_t( 'Center', 'وسط' ), 'split' => orvio_t( 'Split panel', 'پنل جدا' ) ) ) );
+		$this->add_control( 'image', array( 'label' => orvio_t( 'Poster image', 'تصویر پوستر' ), 'type' => \Elementor\Controls_Manager::MEDIA, 'condition' => array( 'source' => 'manual' ) ) );
+		$this->add_control( 'eyebrow', array( 'label' => orvio_t( 'Eyebrow', 'برچسب بالا' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'Featured selection', 'انتخاب ویژه' ) ) );
+		$this->add_control( 'title', array( 'label' => orvio_t( 'Title', 'عنوان' ), 'type' => \Elementor\Controls_Manager::TEXTAREA, 'default' => orvio_t( 'Designed to be remembered', 'برای ماندن در ذهن طراحی شده' ) ) );
+		$this->add_control( 'text', array( 'label' => orvio_t( 'Description', 'توضیح' ), 'type' => \Elementor\Controls_Manager::TEXTAREA, 'default' => orvio_t( 'A visual statement for your most important story.', 'یک تصویر ماندگار برای مهم‌ترین داستان شما.' ) ) );
+		$this->add_control( 'badge', array( 'label' => orvio_t( 'Badge', 'نشان' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'New', 'جدید' ) ) );
+		$this->add_control( 'button', array( 'label' => orvio_t( 'Button', 'دکمه' ), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => orvio_t( 'View product', 'مشاهده محصول' ) ) );
+		$this->add_control( 'show_price', array( 'label' => orvio_t( 'Show connected price', 'نمایش قیمت محصول' ), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => array( 'source' => 'product' ) ) );
+		$this->add_control( 'link', array( 'label' => orvio_t( 'Manual link', 'پیوند دستی' ), 'type' => \Elementor\Controls_Manager::URL, 'default' => array( 'url' => '#' ), 'condition' => array( 'source' => 'manual' ) ) );
+		$this->add_responsive_control( 'height', array( 'label' => orvio_t( 'Poster height', 'ارتفاع پوستر' ), 'type' => \Elementor\Controls_Manager::SLIDER, 'size_units' => array( 'px', 'vh' ), 'range' => array( 'px' => array( 'min' => 300, 'max' => 900 ), 'vh' => array( 'min' => 35, 'max' => 90 ) ), 'selectors' => array( '{{WRAPPER}} .orvio-image-poster' => 'min-height: {{SIZE}}{{UNIT}};' ) ) );
+		$this->end_controls_section();
+		$this->orvio_register_style( '{{WRAPPER}} .orvio-image-poster' );
+		$this->orvio_register_part( 'image_poster_title', orvio_t( 'Poster title', 'عنوان پوستر' ), '{{WRAPPER}} .orvio-image-poster__body h2' );
+	}
+	protected function render() {
+		$s = $this->get_settings_for_display();
+		$source = 'product' === ( $s['source'] ?? '' ) ? 'product' : 'manual';
+		$style = in_array( $s['visual_style'] ?? '', array( 'saas', 'editorial', 'dark' ), true ) ? $s['visual_style'] : 'saas';
+		$effect = in_array( $s['effect'] ?? '', array( 'none', 'zoom', 'kenburns', 'slide', 'duotone', 'glass' ), true ) ? $s['effect'] : 'kenburns';
+		$overlay = in_array( $s['overlay'] ?? '', array( 'gradient', 'solid', 'soft', 'none' ), true ) ? $s['overlay'] : 'gradient';
+		$layout = in_array( $s['layout'] ?? '', array( 'bottom', 'center', 'split' ), true ) ? $s['layout'] : 'bottom';
+		$image = ! empty( $s['image']['url'] ) ? $s['image']['url'] : ORVIO_URI . '/assets/images/banners/living.jpg';
+		$url = ! empty( $s['link']['url'] ) ? $s['link']['url'] : '#';
+		$title = $s['title'] ?? '';
+		$text = $s['text'] ?? '';
+		$price = '';
+		if ( 'product' === $source && ! empty( $s['product_id'] ) && function_exists( 'wc_get_product' ) ) {
+			$product = wc_get_product( (int) $s['product_id'] );
+			if ( $product ) {
+				$image = wp_get_attachment_image_url( $product->get_image_id(), 'large' ) ?: $image;
+				$url = $product->get_permalink();
+				$title = $product->get_name();
+				if ( ! empty( $s['show_price'] ) ) {
+					$price = $product->get_price_html();
+				}
+				if ( empty( $s['text'] ) ) {
+					$text = wp_trim_words( wp_strip_all_tags( $product->get_short_description() ), 22 );
+				}
+			}
+		}
+		$classes = 'orvio-image-poster orvio-image-poster--style-' . sanitize_html_class( $style ) . ' orvio-image-poster--effect-' . sanitize_html_class( $effect ) . ' orvio-image-poster--overlay-' . sanitize_html_class( $overlay ) . ' orvio-image-poster--layout-' . sanitize_html_class( $layout );
+		echo '<article class="' . esc_attr( $classes ) . '"><div class="orvio-image-poster__media"><img src="' . esc_url( $image ) . '" alt=""><span class="orvio-image-poster__wash" aria-hidden="true"></span></div>';
+		if ( ! empty( $s['badge'] ) ) {
+			echo '<span class="orvio-image-poster__badge">' . esc_html( $s['badge'] ) . '</span>';
+		}
+		echo '<div class="orvio-image-poster__body">';
+		if ( ! empty( $s['eyebrow'] ) ) {
+			echo '<p class="orvio-image-poster__eyebrow">' . esc_html( $s['eyebrow'] ) . '</p>';
+		}
+		echo '<h2>' . esc_html( $title ) . '</h2>';
+		if ( ! empty( $text ) ) {
+			echo '<p>' . esc_html( $text ) . '</p>';
+		}
+		if ( $price ) {
+			echo '<div class="orvio-image-poster__price">' . wp_kses_post( $price ) . '</div>';
+		}
+		if ( ! empty( $s['button'] ) ) {
+			echo '<a class="orvio-btn orvio-btn--primary" href="' . esc_url( $url ) . '">' . esc_html( $s['button'] ) . '</a>';
+		}
+		echo '</div></article>';
+	}
+}
+
 class Orvio_Widget_Contact extends Orvio_Widget_Base {
 	public function get_name() { return 'orvio-contact'; }
 	public function get_title() { return orvio_t( 'Contact', 'ارتباط با ما' ); }
@@ -1305,6 +1385,7 @@ function orvio_elementor_widget_list() {
 		'Orvio_Widget_Banner',
 		'Orvio_Widget_Professional_Banner',
 		'Orvio_Widget_Professional_Poster',
+		'Orvio_Widget_Image_Poster',
 		'Orvio_Widget_Contact',
 		'Orvio_Widget_About',
 		'Orvio_Widget_Cart_Button',
