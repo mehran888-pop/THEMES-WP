@@ -2089,15 +2089,24 @@ body.orvio-checkout-layout-minimal .orvio-checkout .orvio-panel { background: tr
   body.orvio-mobile-header-hide-search .orvio-header .orvio-search,
   body.orvio-mobile-header-hide-search .orvio-header .orvio-search-toggle,
   body.orvio-mobile-header-hide-search .orvio-header .orvio-searchpanel { display: none !important; }
-  body.orvio-mobile-search-mode-bar .orvio-header__row { flex-wrap: wrap; padding-bottom: 8px; }
+  body.orvio-mobile-search-mode-bar .orvio-header__row { flex-wrap: nowrap; padding-bottom: 0; }
   body.orvio-mobile-search-mode-bar .orvio-header__row > .orvio-search {
-    order: 20;
+    order: 2;
     display: flex;
-    flex: 1 0 100%;
-    width: 100%;
+    flex: 1 1 140px;
+    width: auto;
+    min-width: 72px;
     max-width: none;
-    margin-top: 2px;
+    margin-top: 0;
   }
+  /* Keep the mobile header in one row: menu, search, logo, then optional tools. */
+  .orvio-header__row > .orvio-burger { order: 1; }
+  .orvio-header__row > .orvio-search-toggle,
+  .orvio-header__row > .orvio-search { order: 2; }
+  .orvio-header__row > .orvio-logo,
+  .orvio-header__row > .custom-logo-link { order: 3; }
+  .orvio-header__row > .orvio-category-toggle { order: 4; }
+  .orvio-header__row > .orvio-tools { order: 5; }
   body.orvio-mobile-search-mode-bar .orvio-search-toggle,
   body.orvio-mobile-search-mode-bar .orvio-searchpanel { display: none !important; }
   body.orvio-mobile-search-mode-icon .orvio-header__row > .orvio-search { display: none !important; }
