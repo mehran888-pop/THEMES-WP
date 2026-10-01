@@ -3344,3 +3344,133 @@ body.orvio-summary-static .orvio-product--premium .orvio-summary { position: sta
   .orvio-product-after .woocommerce-tabs { padding: 12px; border-radius: 14px; }
   .orvio-lightbox { padding: 14px; }
 }
+
+/* Global SaaS interface preset */
+body.orvio-site-style-saas {
+  --saas-bg: #F5F7FB;
+  --saas-surface: #FFFFFF;
+  --saas-line: #E4E9F2;
+  --saas-text: #172033;
+  --saas-muted: #758197;
+  --saas-primary: #4F6FE3;
+  --saas-primary-dark: #3857C5;
+  background: var(--saas-bg);
+  color: var(--saas-text);
+}
+body.orvio-site-style-saas .orvio-header,
+body.orvio-site-style-saas .orvio-catbar { background: var(--saas-surface); border-color: var(--saas-line); }
+body.orvio-site-style-saas .orvio-card,
+body.orvio-site-style-saas .orvio-post,
+body.orvio-site-style-saas .orvio-suggest,
+body.orvio-site-style-saas .orvio-product__buybox,
+body.orvio-site-style-saas .orvio-product-after .woocommerce-tabs {
+  background: var(--saas-surface);
+  border-color: var(--saas-line);
+  box-shadow: 0 10px 30px rgba(35, 52, 86, .06);
+}
+body.orvio-site-style-saas .orvio-section__head p,
+body.orvio-site-style-saas .orvio-card__cat,
+body.orvio-site-style-saas .orvio-lead { color: var(--saas-muted); }
+body.orvio-site-style-saas .orvio-btn--primary,
+body.orvio-site-style-saas .woocommerce a.button,
+body.orvio-site-style-saas .woocommerce button.button,
+body.orvio-site-style-saas .woocommerce input.button { background: var(--saas-primary); color: #fff; }
+body.orvio-site-style-saas .orvio-btn--primary:hover,
+body.orvio-site-style-saas .woocommerce a.button:hover,
+body.orvio-site-style-saas .woocommerce button.button:hover { background: var(--saas-primary-dark); }
+body.orvio-site-style-saas .orvio-pagehead { color: var(--saas-text); }
+
+/* Professional Elementor banner */
+.orvio-pro-banner,
+.orvio-pro-poster {
+  position: relative;
+  isolation: isolate;
+  font-family: var(--font);
+}
+.orvio-pro-banner {
+  display: grid;
+  grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+  min-height: 390px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
+.orvio-pro-banner__media { position: relative; min-height: 300px; overflow: hidden; background: var(--bg-2); }
+.orvio-pro-banner__media img { width: 100%; height: 100%; min-height: 300px; object-fit: cover; transition: transform var(--motion) var(--ease); }
+.orvio-pro-banner:hover .orvio-pro-banner__media img { transform: scale(1.035); }
+.orvio-pro-banner__body { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 14px; padding: clamp(28px, 5vw, 72px); }
+.orvio-pro-banner__eyebrow,
+.orvio-pro-poster__eyebrow { margin: 0; color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.orvio-pro-banner__body h2 { max-width: 12ch; margin: 0; font-size: clamp(30px, 4vw, 58px); line-height: 1.03; letter-spacing: -.04em; }
+html[dir="rtl"] .orvio-pro-banner__body h2 { letter-spacing: 0; line-height: 1.25; }
+.orvio-pro-banner__body > p:not(.orvio-pro-banner__eyebrow) { max-width: 48ch; margin: 0; color: var(--muted); line-height: 1.8; }
+.orvio-pro-banner__badge,
+.orvio-pro-poster__badge { position: absolute; z-index: 2; inset-block-start: 20px; inset-inline-start: 20px; padding: 8px 12px; border: 1px solid rgba(255,255,255,.45); border-radius: 999px; background: rgba(255,252,248,.9); color: var(--ink); font-size: 11px; font-weight: 800; box-shadow: var(--shadow-sm); }
+.orvio-pro-banner__actions,
+.orvio-pro-poster__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 6px; }
+.orvio-pro-banner__metrics { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+.orvio-pro-banner__metrics strong { display: block; color: var(--ink); font-size: 20px; line-height: 1; }
+.orvio-pro-banner__metrics span { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; }
+.orvio-pro-banner--layout-image-left .orvio-pro-banner__media { order: -1; }
+.orvio-pro-banner--layout-centered { display: block; min-height: 460px; }
+.orvio-pro-banner--layout-centered .orvio-pro-banner__media { position: absolute; inset: 0; }
+.orvio-pro-banner--layout-centered .orvio-pro-banner__media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(17,24,39,.78), rgba(17,24,39,.08) 76%); }
+.orvio-pro-banner--layout-centered .orvio-pro-banner__body { position: relative; z-index: 1; min-height: 460px; max-width: 720px; color: #fff; }
+.orvio-pro-banner--layout-centered .orvio-pro-banner__body > p:not(.orvio-pro-banner__eyebrow),
+.orvio-pro-banner--layout-centered .orvio-pro-banner__metrics span { color: rgba(255,255,255,.78); }
+.orvio-pro-banner--layout-centered .orvio-pro-banner__metrics { border-color: rgba(255,255,255,.28); }
+.orvio-pro-banner--layout-centered .orvio-pro-banner__metrics strong { color: #fff; }
+.orvio-pro-banner--style-saas { border-color: var(--saas-line, var(--line)); background: var(--saas-surface, var(--surface)); box-shadow: 0 18px 50px rgba(35,52,86,.08); }
+.orvio-pro-banner--style-saas .orvio-pro-banner__eyebrow { color: var(--saas-primary, #4F6FE3); }
+.orvio-pro-banner--style-saas .orvio-pro-banner__body > p:not(.orvio-pro-banner__eyebrow),
+.orvio-pro-banner--style-saas .orvio-pro-banner__metrics span { color: var(--saas-muted, var(--muted)); }
+.orvio-pro-banner--style-dark { background: #172033; color: #fff; border-color: #172033; }
+.orvio-pro-banner--style-dark .orvio-pro-banner__body > p:not(.orvio-pro-banner__eyebrow),
+.orvio-pro-banner--style-dark .orvio-pro-banner__metrics span { color: rgba(255,255,255,.72); }
+.orvio-pro-banner--style-dark .orvio-pro-banner__metrics { border-color: rgba(255,255,255,.2); }
+.orvio-pro-banner--style-dark .orvio-pro-banner__metrics strong { color: #fff; }
+
+/* Professional poster Elementor element */
+.orvio-pro-poster {
+  min-height: 520px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  background: var(--dark);
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+.orvio-pro-poster__media { position: absolute; inset: 0; z-index: 0; }
+.orvio-pro-poster__media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--motion) var(--ease); }
+.orvio-pro-poster:hover .orvio-pro-poster__media img { transform: scale(1.03); }
+.orvio-pro-poster__media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(10,17,31,.9), rgba(10,17,31,.08) 72%); }
+.orvio-pro-poster__body { position: relative; z-index: 1; width: min(680px, 100%); display: flex; flex-direction: column; align-items: flex-start; gap: 13px; padding: clamp(28px, 6vw, 80px); }
+.orvio-pro-poster__body h2 { max-width: 11ch; margin: 0; color: #fff; font-size: clamp(36px, 6vw, 78px); line-height: .98; letter-spacing: -.05em; }
+html[dir="rtl"] .orvio-pro-poster__body h2 { letter-spacing: 0; line-height: 1.2; }
+.orvio-pro-poster__body > p:not(.orvio-pro-poster__eyebrow) { max-width: 46ch; margin: 0; color: rgba(255,255,255,.8); line-height: 1.8; }
+.orvio-pro-poster--align-center { align-items: center; justify-content: center; text-align: center; }
+.orvio-pro-poster--align-center .orvio-pro-poster__body { align-items: center; }
+.orvio-pro-poster--align-center .orvio-pro-poster__body h2 { max-width: 14ch; }
+.orvio-pro-poster--align-right { justify-content: flex-end; }
+.orvio-pro-poster--style-saas { min-height: 500px; border-color: var(--saas-line, var(--line)); box-shadow: 0 20px 60px rgba(35,52,86,.14); }
+.orvio-pro-poster--style-saas .orvio-pro-poster__media::after { background: linear-gradient(0deg, rgba(23,32,51,.88), rgba(79,111,227,.06) 75%); }
+.orvio-pro-poster--style-saas .orvio-pro-poster__eyebrow { color: #AFC0FF; }
+.orvio-pro-poster--style-minimal { min-height: 420px; border-radius: 22px; }
+.orvio-pro-poster--style-minimal .orvio-pro-poster__media::after { background: linear-gradient(0deg, rgba(10,17,31,.72), transparent 80%); }
+
+@media (max-width: 760px) {
+  .orvio-pro-banner { display: block; min-height: 0; }
+  .orvio-pro-banner__media { min-height: 230px; }
+  .orvio-pro-banner__media img { min-height: 230px; }
+  .orvio-pro-banner__body { padding: 28px 22px; }
+  .orvio-pro-banner--layout-centered { min-height: 540px; }
+  .orvio-pro-banner--layout-centered .orvio-pro-banner__body { min-height: 540px; }
+  .orvio-pro-poster,
+  .orvio-pro-poster--style-saas { min-height: 480px; border-radius: 22px; }
+  .orvio-pro-poster__body { padding: 28px 22px; }
+}

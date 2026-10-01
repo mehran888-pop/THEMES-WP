@@ -74,6 +74,7 @@ function orvio_defaults() {
 		'atc_visual'         => 'text',
 		'body_font'          => 'vazirmatn',
 		'heading_font'       => 'vazirmatn',
+		'site_style'         => 'editorial',
 		'font_size'          => 15,
 		'header_layout'      => 'classic',
 		'footer_layout'      => 'classic',
@@ -247,6 +248,7 @@ function orvio_sanitize_settings( $input ) {
 	$fonts                      = array( 'vazirmatn', 'instrument', 'fraunces', 'system' );
 	$clean['body_font']         = in_array( $input['body_font'] ?? '', $fonts, true ) ? $input['body_font'] : 'vazirmatn';
 	$clean['heading_font']      = in_array( $input['heading_font'] ?? '', $fonts, true ) ? $input['heading_font'] : 'vazirmatn';
+	$clean['site_style']        = in_array( $input['site_style'] ?? '', array( 'editorial', 'saas' ), true ) ? $input['site_style'] : 'editorial';
 	$header_layouts              = array( 'classic', 'centered', 'split', 'minimal' );
 	$clean['header_layout']       = in_array( $input['header_layout'] ?? '', $header_layouts, true ) ? $input['header_layout'] : 'classic';
 	$footer_layouts              = array( 'classic', 'centered', 'minimal', 'editorial' );
@@ -504,6 +506,7 @@ function orvio_render_settings_page() {
 						<?php
 						orvio_field_select( 'body_font', orvio_t( 'Body font', 'فونت متن' ), $o, orvio_font_choices() );
 						orvio_field_select( 'heading_font', orvio_t( 'Heading font', 'فونت عنوان' ), $o, orvio_font_choices() );
+						orvio_field_select( 'site_style', orvio_t( 'Global visual style', 'استایل بصری کلی' ), $o, array( 'editorial' => orvio_t( 'Orvio editorial', 'ادیتوریال Orvio' ), 'saas' => orvio_t( 'SaaS interface', 'رابط SaaS' ) ) );
 						orvio_field_number( 'font_size', orvio_t( 'Base size', 'اندازه پایه' ), $o, 13, 20 );
 						orvio_field_number( 'radius', orvio_t( 'Corner radius', 'گردی گوشه‌ها' ), $o, 0, 28 );
 						orvio_field_select( 'site_layout', orvio_t( 'Site width', 'عرض سایت' ), $o, array(
@@ -944,7 +947,7 @@ function orvio_print_css_vars() {
 	$shadow_sm_presets = array( 'none' => 'none', 'soft' => '0 8px 24px rgba(28,25,22,.06)', 'medium' => '0 10px 30px rgba(28,25,22,.10)', 'strong' => '0 14px 40px rgba(28,25,22,.16)' );
 	$shadow_key = $o['global_shadow'] ?? 'soft';
 	$css .= ':root{--bg-2:' . $o['bg_2'] . ';--surface:' . $o['surface'] . ';--muted:' . $o['muted'] . ';--faint:' . $o['faint'] . ';--line:' . $o['line'] . ';--line-strong:' . $o['line_strong'] . ';--accent-dark:' . $o['accent_dark'] . ';--accent-soft:' . $o['accent_soft'] . ';--forest:' . $o['forest'] . ';--sale:' . $o['sale'] . ';--star:' . $o['star'] . ';--dark-2:' . $o['dark_2'] . ';--ok:' . $o['ok'] . ';--warn:' . $o['warn'] . ';--info:' . $o['info'] . ';--button-bg:' . $o['button_bg'] . ';--button-text:' . $o['button_text'] . ';--button-hover:' . $o['button_hover'] . ';--button-hover-text:' . $o['button_hover_text'] . ';--focus-color:' . $o['focus_color'] . ';--selection-bg:' . $o['selection_bg'] . ';--shadow:' . ( $shadow_presets[ $shadow_key ] ?? $shadow_presets['soft'] ) . ';--shadow-sm:' . ( $shadow_sm_presets[ $shadow_key ] ?? $shadow_sm_presets['soft'] ) . ';--control-height:' . intval( $o['global_control_height'] ) . 'px;--section-spacing:' . intval( $o['global_section_spacing'] ) . 'px;--motion:' . intval( $o['global_transition'] ) . 'ms;}';
-	$css .= 'body{font-size:' . intval( $o['font_size'] ) . 'px;color:var(--ink);background:var(--bg);}';
+	$css .= 'body{font-size:' . intval( $o['font_size'] ) . 'px;color:var(--ink);background:var(--bg);} body.orvio-site-style-saas{background:var(--saas-bg);color:var(--saas-text);}';
 	$css .= '::selection{background:var(--selection-bg);color:var(--ink);} :focus-visible{outline-color:var(--focus-color);}';
 	$css .= 'a:hover{color:var(--accent-dark);} .orvio-btn{min-height:var(--control-height);transition-duration:var(--motion);} .orvio-search input,.orvio-select,.orvio-field input,.orvio-field select,.woocommerce form .form-row input.input-text,.woocommerce form .form-row select{min-height:var(--control-height);} .orvio-panel,.orvio-card{border-color:var(--line);} .orvio-surface{border-color:var(--line);background-color:var(--surface);} .orvio-btn--dark{background:var(--dark);color:var(--button-text);}';
 	$css .= 'h1,h2,h3,h4,.orvio-logo__word strong{font-family:var(--display);}';
@@ -986,6 +989,8 @@ function orvio_print_css_vars() {
 add_filter( 'body_class', 'orvio_body_classes' );
 function orvio_body_classes( $classes ) {
 	$o = orvio_settings();
+	$site_styles = array( 'editorial', 'saas' );
+	$classes[] = 'orvio-site-style-' . ( in_array( $o['site_style'] ?? 'editorial', $site_styles, true ) ? $o['site_style'] : 'editorial' );
 	$header_layout = in_array( $o['header_layout'], array( 'classic', 'centered', 'split', 'minimal' ), true ) ? $o['header_layout'] : 'classic';
 	$classes[] = 'orvio-header-layout-' . $header_layout;
 	if ( 'centered' === $header_layout ) {
