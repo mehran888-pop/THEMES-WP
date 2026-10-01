@@ -88,12 +88,15 @@ function orvio_account_avatar_html( $user_id = 0, $size = 128 ) {
 }
 
 function orvio_breadcrumb() {
-	if ( function_exists( 'woocommerce_breadcrumb' ) && ( is_woocommerce() || is_cart() || is_checkout() || is_account_page() ) ) {
-		woocommerce_breadcrumb( array(
-			'delimiter'   => '<span class="orvio-crumb__sep">/</span>',
-			'wrap_before' => '<nav class="orvio-crumb" aria-label="Breadcrumb">',
-			'wrap_after'  => '</nav>',
-		) );
+	$is_wc_context = function_exists( 'is_woocommerce' ) && ( is_woocommerce() || is_cart() || is_checkout() || is_account_page() );
+	if ( $is_wc_context ) {
+		if ( function_exists( 'woocommerce_breadcrumb' ) && ! empty( orvio_opt( 'show_woocommerce_breadcrumb', 1 ) ) ) {
+			woocommerce_breadcrumb( array(
+				'delimiter'   => '<span class="orvio-crumb__sep">/</span>',
+				'wrap_before' => '<nav class="orvio-crumb" aria-label="Breadcrumb">',
+				'wrap_after'  => '</nav>',
+			) );
+		}
 		return;
 	}
 
@@ -129,7 +132,7 @@ function orvio_breadcrumb() {
  */
 function orvio_pagehead_once() {
 	static $rendered = false;
-	if ( $rendered ) {
+	if ( empty( orvio_opt( 'show_pagehead', 1 ) ) || $rendered ) {
 		return false;
 	}
 	$rendered = true;

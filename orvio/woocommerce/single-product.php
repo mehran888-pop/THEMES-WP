@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 get_header( 'shop' );
 do_action( 'woocommerce_before_main_content' );
-if ( orvio_pagehead_once() ) {
+if ( ! empty( orvio_opt( 'show_woocommerce_breadcrumb', 1 ) ) && orvio_pagehead_once() ) {
 	echo '<div class="orvio-pagehead">';
 	orvio_breadcrumb();
 	echo '</div>';

@@ -88,6 +88,8 @@ function orvio_defaults() {
 		'show_cart'          => 1,
 		'show_catbar'        => 1,
 		'show_announcement'  => 1,
+		'show_pagehead'      => 1,
+		'show_woocommerce_breadcrumb' => 1,
 		'announcement'       => 'ارسال رایگان برای سفارش‌های بالای ۲ میلیون تومان  ·  بازگشت آسان تا ۳۰ روز',
 		'announcement_en'    => 'Free shipping over the threshold · Easy 30-day returns',
 		'free_shipping'      => 2000000,
@@ -364,7 +366,7 @@ function orvio_sanitize_settings( $input ) {
 		$mode = $input['billing_fields'][ $field ] ?? $default_mode;
 		$clean['billing_fields'][ $field ] = in_array( $mode, $billing_modes, true ) ? $mode : $default_mode;
 	}
-	$toggles                    = array( 'sticky_header', 'mobile_nav_enabled', 'show_announcement', 'shop_sidebar', 'sticky_summary', 'enable_wishlist', 'enable_quick_view', 'show_search', 'show_account', 'show_cart', 'show_catbar' );
+	$toggles                    = array( 'sticky_header', 'mobile_nav_enabled', 'show_announcement', 'show_pagehead', 'show_woocommerce_breadcrumb', 'shop_sidebar', 'sticky_summary', 'enable_wishlist', 'enable_quick_view', 'show_search', 'show_account', 'show_cart', 'show_catbar' );
 	foreach ( $toggles as $key ) {
 		$clean[ $key ] = empty( $input[ $key ] ) ? 0 : 1;
 	}
@@ -490,6 +492,12 @@ function orvio_render_settings_page() {
 						orvio_field_number( 'global_control_height', orvio_t( 'Control height (px)', 'ارتفاع کنترل‌ها (پیکسل)' ), $o, 36, 68 );
 						orvio_field_number( 'global_section_spacing', orvio_t( 'Section spacing (px)', 'فاصله بخش‌ها (پیکسل)' ), $o, 16, 120 );
 						orvio_field_number( 'global_transition', orvio_t( 'Motion speed (ms)', 'سرعت حرکت (میلی‌ثانیه)' ), $o, 80, 600 );
+						?>
+					</div>
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Page chrome', 'اجزای بالای محتوا' ) ); ?></h2>
+						<?php
+						orvio_field_check( 'show_pagehead', orvio_t( 'Orvio page heading', 'سربرگ صفحه Orvio' ), $o );
+						orvio_field_check( 'show_woocommerce_breadcrumb', orvio_t( 'WooCommerce breadcrumb', 'بردکرامب ووکامرس' ), $o );
 						?>
 					</div>
 					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Type', 'فونت' ) ); ?></h2>
