@@ -208,6 +208,11 @@ function orvio_defaults() {
 		'bale_webhook_secret'=> '',
 		'bale_auto_publish'  => 0,
 		'bale_product_template' => "🛍️ {title}\n\n{short_description}\n\n💳 {price}\n📦 {stock}\n\n{url}",
+		'bale_support_enabled' => 0,
+		'bale_support_bot_token' => '',
+		'bale_support_admin_ids' => '',
+		'bale_support_secret' => '',
+		'bale_support_greeting' => 'سلام! پیام شما برای پشتیبانی ارسال شد. همکاران ما به‌زودی پاسخ می‌دهند.',
 		'enable_wishlist'    => 1,
 		'enable_quick_view'  => 1,
 	);
@@ -393,6 +398,13 @@ function orvio_sanitize_settings( $input ) {
 	$clean['bale_webhook_secret'] = $posted_bale_secret ? $posted_bale_secret : ( is_array( $existing_settings ) ? sanitize_key( $existing_settings['bale_webhook_secret'] ?? '' ) : '' );
 	$clean['bale_auto_publish'] = empty( $input['bale_auto_publish'] ) ? 0 : 1;
 	$clean['bale_product_template'] = sanitize_textarea_field( $input['bale_product_template'] ?? $defaults['bale_product_template'] );
+	$clean['bale_support_enabled'] = empty( $input['bale_support_enabled'] ) ? 0 : 1;
+	$clean['bale_support_bot_token'] = sanitize_text_field( $input['bale_support_bot_token'] ?? '' );
+	$clean['bale_support_admin_ids'] = preg_replace( '/[^0-9,;\s-]/', '', (string) ( $input['bale_support_admin_ids'] ?? '' ) );
+	$existing_support_secret = is_array( $existing_settings ) ? sanitize_key( $existing_settings['bale_support_secret'] ?? '' ) : '';
+	$posted_support_secret = sanitize_key( $input['bale_support_secret'] ?? '' );
+	$clean['bale_support_secret'] = $posted_support_secret ? $posted_support_secret : $existing_support_secret;
+	$clean['bale_support_greeting'] = sanitize_textarea_field( $input['bale_support_greeting'] ?? $defaults['bale_support_greeting'] );
 	return $clean;
 	return $clean;
 }
@@ -428,6 +440,7 @@ function orvio_render_settings_page() {
 	}
 	$o = orvio_settings();
 	$bale_webhook_url = function_exists( 'orvio_bale_webhook_url' ) ? orvio_bale_webhook_url() : '';
+	$bale_support_webhook_url = function_exists( 'orvio_bale_support_webhook_url' ) ? orvio_bale_support_webhook_url() : '';
 	$o = orvio_settings();
 	$cart_choices = orvio_cart_layout_choices();
 	if ( ! isset( $cart_choices[ $o['cart_layout'] ?? '' ] ) ) {
@@ -445,6 +458,7 @@ function orvio_render_settings_page() {
 		'checkout' => orvio_t( 'Checkout', 'صورتحساب' ),
 		'account'  => orvio_t( 'Account', 'حساب کاربری' ),
 		'bale'     => orvio_t( 'Bale bot', 'ربات بله' ),
+		'support'  => orvio_t( 'Live support', 'پشتیبانی آنلاین' ),
 		'contact'  => orvio_t( 'Contact', 'ارتباط' ),
 		'home'     => orvio_t( 'Homepage', 'صفحه اول' ),
 	);
@@ -799,6 +813,25 @@ function orvio_render_settings_page() {
 						</div>
 						<p class="description"><strong><?php echo esc_html( orvio_t( 'Webhook URL:', 'آدرس وب‌هوک:' ) ); ?></strong> <code><?php echo esc_html( $bale_webhook_url ); ?></code></p>
 						<p class="description"><?php echo esc_html( orvio_t( 'Add the bot as an administrator of the Bale channel. Enter your own Bale numeric user ID in the allowed list, separated by commas.', 'ربات را مدیر کانال بله کنید. شناسه عددی کاربر خودتان را در فهرست مجاز وارد کنید و چند شناسه را با ویرگول جدا کنید.' ) ); ?></p>
+					</div>
+				</section>
+				<section data-panel="support" class="orvio-panel">
+					<div class="orvio-card orvio-bale-settings"><h2><?php echo esc_html( orvio_t( 'Live support chat', 'چت آنلاین پشتیبانی' ) ); ?></h2>
+						<p class="orvio-admin__hint"><?php echo esc_html( orvio_t( 'Visitors can chat with your support team from the website. Every message is delivered to the separate Bale support bot, and agent replies return to the website chat in real time.', 'بازدیدکننده از سایت چت می‌کند، پیام برای ربات جداگانه پشتیبانی در بله ارسال می‌شود و پاسخ پشتیبان به‌صورت آنلاین به همان چت برمی‌گردد.' ) ); ?></p>
+						<?php
+						orvio_field_check( 'bale_support_enabled', orvio_t( 'Enable online support chat', 'فعال‌سازی چت آنلاین پشتیبانی' ), $o );
+						orvio_field_password( 'bale_support_bot_token', orvio_t( 'Support Bale bot token', 'توکن ربات پشتیبانی بله' ), $o, '123456789:your-support-token' );
+						orvio_field_text( 'bale_support_admin_ids', orvio_t( 'Support agent Bale IDs', 'شناسه کاربران پشتیبان در بله' ), $o );
+						orvio_field_password( 'bale_support_secret', orvio_t( 'Support webhook secret', 'کلید وب‌هوک پشتیبانی' ), $o, 'Generated automatically' );
+						orvio_field_textarea( 'bale_support_greeting', orvio_t( 'Chat greeting', 'پیام خوش‌آمد چت' ), $o, 'سلام! چطور می‌توانیم کمک کنیم؟' );
+						?>
+						<div class="orvio-bale-settings__actions">
+							<?php echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=orvio_bale_support_test' ), 'orvio_bale_support_action' ) ) . '">' . esc_html( orvio_t( 'Test support bot', 'تست ربات پشتیبانی' ) ) . '</a>'; ?>
+							<?php echo '<a class="button" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=orvio_bale_support_set_webhook' ), 'orvio_bale_support_action' ) ) . '">' . esc_html( orvio_t( 'Register support webhook', 'ثبت وب‌هوک پشتیبانی' ) ) . '</a>'; ?>
+							<?php echo '<a class="button" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=orvio_bale_support_delete_webhook' ), 'orvio_bale_support_action' ) ) . '">' . esc_html( orvio_t( 'Disable support webhook', 'غیرفعال‌کردن وب‌هوک پشتیبانی' ) ) . '</a>'; ?>
+						</div>
+						<p class="description"><strong><?php echo esc_html( orvio_t( 'Support webhook URL:', 'آدرس وب‌هوک پشتیبانی:' ) ); ?></strong> <code><?php echo esc_html( $bale_support_webhook_url ); ?></code></p>
+						<p class="description"><?php echo esc_html( orvio_t( 'Add the support bot to the support agents private chat. Agents reply by clicking the reply button under a customer message, then sending their answer.', 'ربات پشتیبانی را به گفت‌وگوی خصوصی پشتیبان‌ها اضافه کنید. پشتیبان با زدن دکمه پاسخ زیر پیام مشتری و ارسال متن پاسخ می‌دهد.' ) ); ?></p>
 					</div>
 				</section>
 				<section data-panel="contact" class="orvio-panel">

@@ -696,7 +696,14 @@ function orvio_bale_admin_notice( $status ) {
 		'webhook-error' => orvio_t( 'Bale webhook could not be registered.', 'ثبت وب‌هوک بله ناموفق بود.' ),
 		'delete-ok'     => orvio_t( 'Bale webhook disabled.', 'وب‌هوک بله غیرفعال شد.' ),
 		'delete-error'  => orvio_t( 'Bale webhook could not be disabled.', 'غیرفعال‌کردن وب‌هوک بله ناموفق بود.' ),
+		'support-test-ok'       => orvio_t( 'Support Bale bot connection is working.', 'اتصال ربات پشتیبانی بله برقرار است.' ),
+		'support-test-error'    => orvio_t( 'Support Bale bot connection failed.', 'اتصال ربات پشتیبانی بله ناموفق بود.' ),
+		'support-webhook-ok'    => orvio_t( 'Support webhook registered.', 'وب‌هوک پشتیبانی با موفقیت ثبت شد.' ),
+		'support-webhook-error' => orvio_t( 'Support webhook could not be registered.', 'ثبت وب‌هوک پشتیبانی ناموفق بود.' ),
+		'support-delete-ok'     => orvio_t( 'Support webhook disabled.', 'وب‌هوک پشتیبانی غیرفعال شد.' ),
+		'support-delete-error'  => orvio_t( 'Support webhook could not be disabled.', 'غیرفعال‌کردن وب‌هوک پشتیبانی ناموفق بود.' ),
 	);
+
 	return $messages[ $status ] ?? orvio_t( 'Bale action completed.', 'عملیات بله انجام شد.' );
 }
 

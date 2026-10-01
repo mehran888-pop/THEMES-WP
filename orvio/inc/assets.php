@@ -24,6 +24,17 @@ function orvio_enqueue() {
 	wp_enqueue_style( 'orvio', ORVIO_URI . '/assets/css/main.css', $deps, file_exists( $css ) ? filemtime( $css ) : ORVIO_VERSION );
 	wp_enqueue_style( 'orvio-style', get_stylesheet_uri(), array( 'orvio' ), ORVIO_VERSION );
 	wp_enqueue_script( 'orvio', ORVIO_URI . '/assets/js/theme.js', $js_deps, file_exists( $js ) ? filemtime( $js ) : ORVIO_VERSION, true );
+	if ( orvio_opt( 'bale_support_enabled', 0 ) && orvio_opt( 'bale_support_bot_token', '' ) ) {
+		$support_css = ORVIO_DIR . '/assets/css/support.css';
+		$support_js  = ORVIO_DIR . '/assets/js/support.js';
+		wp_enqueue_style( 'orvio-support', ORVIO_URI . '/assets/css/support.css', array( 'orvio' ), file_exists( $support_css ) ? filemtime( $support_css ) : ORVIO_VERSION );
+		wp_enqueue_script( 'orvio-support', ORVIO_URI . '/assets/js/support.js', array(), file_exists( $support_js ) ? filemtime( $support_js ) : ORVIO_VERSION, true );
+		wp_localize_script( 'orvio-support', 'OrvioSupport', array(
+			'ajax'  => admin_url( 'admin-ajax.php' ),
+			'nonce' => wp_create_nonce( 'orvio_support' ),
+			'i18n'  => array( 'error' => orvio_t( 'Could not send the message. Please try again.', 'ارسال پیام انجام نشد. دوباره تلاش کنید.' ) ),
+		) );
+	}
 	wp_localize_script( 'orvio', 'OrvioData', array(
 		'ajax'     => admin_url( 'admin-ajax.php' ),
 		'nonce'    => wp_create_nonce( 'orvio' ),
