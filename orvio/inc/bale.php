@@ -244,6 +244,20 @@ function orvio_bale_send_message( $chat_id, $text, $keyboard = array() ) {
 	return orvio_bale_api( 'sendMessage', $params );
 }
 
+function orvio_bale_currency_label( $currency = '' ) {
+	$currency = $currency ? $currency : orvio_opt( 'bale_price_currency', 'toman' );
+	return 'rial' === $currency ? 'ریال' : 'تومان';
+}
+
+function orvio_bale_price_text( $value, $currency = '' ) {
+	if ( '' === (string) $value || null === $value ) {
+		return '';
+	}
+	$number = (float) $value;
+	$decimals = floor( $number ) === $number ? 0 : 2;
+	return number_format_i18n( $number, $decimals ) . ' ' . orvio_bale_currency_label( $currency );
+}
+
 function orvio_bale_send_product( $product_id, $chat_id = '' ) {
 	if ( ! function_exists( 'wc_get_product' ) ) {
 		return new WP_Error( 'orvio_bale_woocommerce', orvio_t( 'WooCommerce is required.', 'ووکامرس لازم است.' ) );
@@ -253,8 +267,9 @@ function orvio_bale_send_product( $product_id, $chat_id = '' ) {
 	if ( ! $product || ! $chat_id ) {
 		return new WP_Error( 'orvio_bale_product_channel', orvio_t( 'Product or Bale channel is missing.', 'محصول یا کانال بله تنظیم نشده است.' ) );
 	}
-	$regular = wp_strip_all_tags( wc_price( (float) $product->get_regular_price() ) );
-	$current = wp_strip_all_tags( $product->get_price_html() );
+	$currency = $product->get_meta( '_orvio_bale_price_currency', true ) ?: orvio_opt( 'bale_price_currency', 'toman' );
+	$regular = orvio_bale_price_text( $product->get_regular_price(), $currency );
+	$current = orvio_bale_price_text( $product->get_price(), $currency );
 	$excerpt = wp_html_excerpt( wp_strip_all_tags( $product->get_short_description() ), 420, '…' );
 	if ( ! $excerpt ) {
 		$excerpt = wp_html_excerpt( wp_strip_all_tags( $product->get_description() ), 420, '…' );
@@ -343,6 +358,43 @@ function orvio_bale_attach_image( $url, $product_id ) {
 	require_once ABSPATH . 'wp-admin/includes/file.php';
 	require_once ABSPATH . 'wp-admin/includes/media.php';
 	require_once ABSPATH . 'wp-admin/includes/image.php';
+	$max_bytes = 20 * ( defined( 'MB_IN_BYTES' ) ? MB_IN_BYTES : 1048576 );
+	$response = wp_remote_get( $url, array( 'timeout' => 30, 'redirection' => 3, 'sslverify' => true, 'limit_response_size' => $max_bytes + 1 ) );
+	if ( ! is_wp_error( $response ) ) {
+		$body = wp_remote_retrieve_body( $response );
+		$mime = strtolower( trim( explode( ';', (string) wp_remote_retrieve_header( $response, 'content-type' ) )[0] ) );
+		$extensions = array( 'image/jpeg' => 'jpg', 'image/jpg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'image/gif' => 'gif' );
+		if ( $body && ! isset( $extensions[ $mime ] ) && function_exists( 'getimagesizefromstring' ) ) {
+			$image_info = @getimagesizefromstring( $body );
+			$mime = strtolower( (string) ( $image_info['mime'] ?? '' ) );
+		}
+		if ( $body && strlen( $body ) <= $max_bytes && isset( $extensions[ $mime ] ) ) {
+			$path = (string) ( parse_url( $url, PHP_URL_PATH ) ?? '' );
+			$name = sanitize_file_name( basename( $path ) );
+			$extension = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
+			if ( ! $name || ! in_array( $extension, array_values( $extensions ), true ) ) {
+				$name = 'orvio-bale-' . wp_generate_password( 8, false, false ) . '.' . $extensions[ $mime ];
+			}
+			$upload = wp_upload_bits( $name, null, $body );
+			if ( empty( $upload['error'] ) && ! empty( $upload['file'] ) ) {
+				$filetype = wp_check_filetype( basename( $upload['file'] ), null );
+				$attachment = array(
+					'post_mime_type' => $filetype['type'] ?: $mime,
+					'post_title'     => sanitize_text_field( pathinfo( basename( $upload['file'] ), PATHINFO_FILENAME ) ),
+					'post_content'   => '',
+					'post_status'    => 'inherit',
+				);
+				$attachment_id = wp_insert_attachment( $attachment, $upload['file'], $product_id );
+				if ( ! is_wp_error( $attachment_id ) && $attachment_id ) {
+					$metadata = wp_generate_attachment_metadata( $attachment_id, $upload['file'] );
+					if ( $metadata ) {
+						wp_update_attachment_metadata( $attachment_id, $metadata );
+					}
+					return (int) $attachment_id;
+				}
+			}
+		}
+	}
 	$attachment_id = media_sideload_image( $url, $product_id, '', 'id' );
 	return is_wp_error( $attachment_id ) ? 0 : (int) $attachment_id;
 }
@@ -438,6 +490,7 @@ function orvio_bale_product_data( $product ) {
 		'title'             => $product->get_name(),
 		'short_description' => $product->get_short_description(),
 		'description'       => $product->get_description(),
+		'price_currency'    => $product->get_meta( '_orvio_bale_price_currency', true ) ?: orvio_opt( 'bale_price_currency', 'toman' ),
 		'regular_price'     => $product->get_regular_price(),
 		'sale_price'        => $product->get_sale_price(),
 		'sku'               => $product->get_sku(),
@@ -457,6 +510,7 @@ function orvio_bale_new_product_data() {
 		'title'             => '',
 		'short_description' => '',
 		'description'       => '',
+		'price_currency'    => orvio_opt( 'bale_price_currency', 'toman' ),
 		'regular_price'     => '',
 		'sale_price'        => '',
 		'sku'               => '',
@@ -476,6 +530,7 @@ function orvio_bale_field_labels() {
 		'title'             => 'نام محصول',
 		'short_description' => 'توضیح کوتاه',
 		'description'       => 'توضیح کامل',
+		'price_currency'    => 'واحد قیمت',
 		'regular_price'     => 'قیمت اصلی',
 		'sale_price'        => 'قیمت تخفیف',
 		'sku'               => 'شناسه محصول SKU',
@@ -499,11 +554,21 @@ function orvio_bale_prompt_product_field( $chat_id, $user_id, $field, $data, $ed
 		'image'          => 'یک URL عمومی و مستقیم تصویر وارد کنید.',
 		'gallery'        => 'چند URL تصویر را با فاصله یا ویرگول جدا کنید.',
 	);
+	$price_currency = $data['price_currency'] ?? '';
+	$hints['regular_price'] = 'مبلغ را فقط به عدد و بر اساس واحد «' . orvio_bale_currency_label( $price_currency ) . '» وارد کنید.';
+	$hints['sale_price'] = 'مبلغ تخفیف را به «' . orvio_bale_currency_label( $price_currency ) . '» وارد کنید؛ برای حذف، «رد کردن» را بزنید.';
 	$text = '🧩 ' . ( $editing ? 'ویرایش محصول' : 'محصول جدید' ) . "\n\n" . $label . ' را وارد کنید.' . $current;
 	if ( ! empty( $hints[ $field ] ) ) {
 		$text .= "\n" . $hints[ $field ];
 	}
 	$rows = array();
+	if ( 'price_currency' === $field ) {
+		$session = orvio_bale_get_session( $user_id );
+		$session['field'] = $field;
+		orvio_bale_set_session( $user_id, $session );
+		orvio_bale_send_message( $chat_id, 'واحد قیمت این محصول را انتخاب کنید.', orvio_bale_keyboard( array( array( orvio_bale_button( 'تومان', 'bale:currency:toman' ), orvio_bale_button( 'ریال', 'bale:currency:rial' ) ), array( orvio_bale_button( '✖ لغو', 'bale:cancel' ) ) ) ) );
+		return;
+	}
 	if ( 'gallery' === $field ) {
 		$rows[] = array( orvio_bale_button( '✅ پایان گالری', 'bale:photos-done' ) );
 	}
@@ -578,8 +643,12 @@ function orvio_bale_finish_product( $chat_id, $user_id, $session ) {
 		}
 		$product->set_category_ids( orvio_bale_product_categories( $data['category'] ?? '' ) );
 		$product->set_attributes( orvio_bale_product_attributes( $data['features'] ?? '' ) );
+		$price_currency = in_array( $data['price_currency'] ?? '', array( 'toman', 'rial' ), true ) ? $data['price_currency'] : orvio_opt( 'bale_price_currency', 'toman' );
 		$product->set_status( in_array( $data['status'] ?? 'draft', array( 'draft', 'publish' ), true ) ? $data['status'] : 'draft' );
 		$saved_id = $product->save();
+		if ( $saved_id ) {
+			update_post_meta( $saved_id, '_orvio_bale_price_currency', $price_currency );
+		}
 		if ( ! $saved_id ) {
 			throw new Exception( 'Product could not be saved.' );
 		}
@@ -673,7 +742,7 @@ function orvio_bale_main_menu( $chat_id, $text = '' ) {
 }
 
 function orvio_bale_help( $chat_id ) {
-	orvio_bale_send_message( $chat_id, "راهنمای مدیریت محصول\n\n/new — ساخت محصول کامل\n/products — فهرست محصولات\n/edit 123 — ویرایش محصول\n/publish 123 — انتشار در سایت\n/send 123 — ارسال قالب حرفه‌ای به کانال\n/delete 123 — انتقال به زباله‌دان\n/cancel — لغو فرم فعلی\n\nدر فرم ساخت، نام، توضیح کوتاه و کامل، قیمت، تخفیف، SKU، موجودی، دسته‌بندی، تصویر، گالری و وضعیت محصول دریافت می‌شود." );
+	orvio_bale_send_message( $chat_id, "راهنمای مدیریت محصول\n\n/new — ساخت محصول کامل\n/products — فهرست محصولات\n/edit 123 — ویرایش محصول\n/publish 123 — انتشار در سایت\n/send 123 — ارسال قالب حرفه‌ای به کانال\n/delete 123 — انتقال به زباله‌دان\n/cancel — لغو فرم فعلی\n\nدر فرم ساخت، نام، توضیح کوتاه و کامل، قیمت، تخفیف، SKU، موجودی، دسته‌بندی، ویژگی‌ها، تصویر، گالری و وضعیت محصول دریافت می‌شود. در مرحله تصویر می‌توانید عکس را مستقیم در بله بفرستید. واحد قیمت فعلی: " . orvio_bale_currency_label() );
 }
 
 function orvio_bale_process_value( $chat_id, $user_id, $session, $value ) {
@@ -687,6 +756,8 @@ function orvio_bale_process_value( $chat_id, $user_id, $session, $value ) {
 		$value = sanitize_text_field( $value );
 	} elseif ( in_array( $field, array( 'short_description', 'description' ), true ) ) {
 		$value = sanitize_textarea_field( $value );
+	} elseif ( 'price_currency' === $field ) {
+		$value = in_array( $value, array( 'toman', 'rial' ), true ) ? $value : orvio_opt( 'bale_price_currency', 'toman' );
 	} elseif ( in_array( $field, array( 'regular_price', 'sale_price' ), true ) ) {
 		$value = $value ? wc_format_decimal( $value ) : '';
 	} elseif ( 'stock_quantity' === $field ) {
@@ -762,6 +833,13 @@ function orvio_bale_handle_callback( $callback ) {
 		$session = orvio_bale_get_session( $user_id );
 		if ( ! empty( $session['action'] ) && 'product' === $session['action'] ) {
 			orvio_bale_process_value( $chat_id, $user_id, $session, '' );
+		}
+		return;
+	}
+	if ( preg_match( '/^bale:currency:(toman|rial)$/', $data, $matches ) ) {
+		$session = orvio_bale_get_session( $user_id );
+		if ( ! empty( $session['action'] ) && 'product' === $session['action'] && 'price_currency' === ( $session['field'] ?? '' ) ) {
+			orvio_bale_process_value( $chat_id, $user_id, $session, $matches[1] );
 		}
 		return;
 	}
@@ -849,6 +927,8 @@ function orvio_bale_handle_update( $update ) {
 				orvio_bale_set_session( $user_id, $session );
 				orvio_bale_send_message( $chat_id, '✅ تصویر گالری دریافت شد. تصویر بعدی را بفرستید یا روی «پایان گالری» بزنید.', orvio_bale_keyboard( array( array( orvio_bale_button( '✅ پایان گالری', 'bale:photos-done' ) ), array( orvio_bale_button( '✖ لغو', 'bale:cancel' ) ) ) ) );
 			}
+		} else {
+			orvio_bale_send_message( $chat_id, '❌ دریافت تصویر از بله ناموفق بود. دوباره عکس را ارسال کنید.' );
 		}
 		return;
 	}

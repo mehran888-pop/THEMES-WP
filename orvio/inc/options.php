@@ -208,6 +208,7 @@ function orvio_defaults() {
 		'bale_webhook_secret'=> '',
 		'bale_auto_publish'  => 0,
 		'bale_product_template' => "🛍️ {title}\n\n{short_description}\n\n💳 {price}\n📦 {stock}\n✨ {features}\n\n{url}",
+		'bale_price_currency' => 'toman',
 		'bale_support_enabled' => 0,
 		'bale_support_bot_token' => '',
 		'bale_support_admin_ids' => '',
@@ -398,6 +399,7 @@ function orvio_sanitize_settings( $input ) {
 	$clean['bale_webhook_secret'] = $posted_bale_secret ? $posted_bale_secret : ( is_array( $existing_settings ) ? sanitize_key( $existing_settings['bale_webhook_secret'] ?? '' ) : '' );
 	$clean['bale_auto_publish'] = empty( $input['bale_auto_publish'] ) ? 0 : 1;
 	$clean['bale_product_template'] = sanitize_textarea_field( $input['bale_product_template'] ?? $defaults['bale_product_template'] );
+	$clean['bale_price_currency'] = in_array( $input['bale_price_currency'] ?? '', array( 'toman', 'rial' ), true ) ? $input['bale_price_currency'] : 'toman';
 	$clean['bale_support_enabled'] = empty( $input['bale_support_enabled'] ) ? 0 : 1;
 	$clean['bale_support_bot_token'] = sanitize_text_field( $input['bale_support_bot_token'] ?? '' );
 	$clean['bale_support_admin_ids'] = preg_replace( '/[^0-9,;\s-]/', '', (string) ( $input['bale_support_admin_ids'] ?? '' ) );
@@ -805,6 +807,7 @@ function orvio_render_settings_page() {
 						orvio_field_password( 'bale_webhook_secret', orvio_t( 'Webhook secret', 'کلید امنیتی وب‌هوک' ), $o, 'Generated automatically' );
 						orvio_field_check( 'bale_auto_publish', orvio_t( 'Automatically send new published products to the channel', 'ارسال خودکار محصولات جدیدِ منتشرشده به کانال' ), $o );
 						orvio_field_textarea( 'bale_product_template', orvio_t( 'Channel template', 'قالب پیام کانال' ), $o, "{title}\n{short_description}\n{price}\n{stock}\n{features}\n{url}" );
+						orvio_field_select( 'bale_price_currency', orvio_t( 'Default Bale price unit', 'واحد پیش‌فرض قیمت در ربات بله (قابل تغییر برای هر محصول)' ), $o, array( 'toman' => orvio_t( 'Toman', 'تومان' ), 'rial' => orvio_t( 'Rial', 'ریال' ) ) );
 						?>
 						<div class="orvio-bale-settings__actions">
 							<?php echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=orvio_bale_test' ), 'orvio_bale_action' ) ) . '">' . esc_html( orvio_t( 'Test bot connection', 'تست اتصال ربات' ) ) . '</a>'; ?>
