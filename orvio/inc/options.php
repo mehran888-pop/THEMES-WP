@@ -416,9 +416,10 @@ function orvio_render_settings_page() {
 	}
 	$o['cart_style'] = 'saas';
 	$tabs = array(
-		'general'  => orvio_t( 'Design', 'طراحی' ),
-		'header'   => orvio_t( 'Header', 'هدر' ),
-		'footer'   => orvio_t( 'Footer', 'فوتر' ),
+		'general'    => orvio_t( 'Design', 'طراحی' ),
+		'header'     => orvio_t( 'Header', 'هدر' ),
+		'mobile-nav' => orvio_t( 'Mobile navigation', 'ناوبری موبایل' ),
+		'footer'     => orvio_t( 'Footer', 'فوتر' ),
 		'shop'     => orvio_t( 'Shop', 'فروشگاه' ),
 		'product'  => orvio_t( 'Product', 'محصول' ),
 		'cart'     => orvio_t( 'Cart', 'سبد خرید' ),
@@ -545,30 +546,7 @@ function orvio_render_settings_page() {
 							'soft'    => orvio_t( 'Soft', 'نرم' ),
 						) );
 						orvio_field_number( 'menu_size', orvio_t( 'Menu size', 'اندازه منو' ), $o, 12, 20 );
-						orvio_field_check( 'mobile_nav_enabled', orvio_t( 'Mobile navigation', 'ناوبری موبایل' ), $o );
-						orvio_field_select( 'mobile_nav_style', orvio_t( 'Mobile nav style', 'استایل ناوبری موبایل' ), $o, array(
-						'bar'      => orvio_t( 'Bottom bar', 'نوار پایین' ),
-						'floating' => orvio_t( 'Floating panel', 'پنل شناور' ),
-						'pill'     => orvio_t( 'Pill', 'کپسولی' ),
-						'glass'    => orvio_t( 'Glass', 'شیشه‌ای' ),
-						'dark'     => orvio_t( 'Dark', 'تیره' ),
-						'minimal'  => orvio_t( 'Minimal', 'مینیمال' ),
-					) );
-						orvio_field_optional_color( 'mobile_nav_background', orvio_t( 'Background color', 'رنگ پس‌زمینه' ), $o );
-						orvio_field_optional_color( 'mobile_nav_text', orvio_t( 'Text and icon color', 'رنگ متن و آیکن' ), $o );
-						orvio_field_optional_color( 'mobile_nav_border', orvio_t( 'Border color', 'رنگ حاشیه' ), $o );
-						orvio_field_optional_color( 'mobile_nav_active', orvio_t( 'Active color', 'رنگ حالت فعال' ), $o );
-						orvio_field_optional_color( 'mobile_nav_active_bg', orvio_t( 'Active background', 'پس‌زمینه فعال' ), $o );
-						orvio_field_select( 'mobile_nav_shadow', orvio_t( 'Shadow', 'سایه' ), $o, array( '' => orvio_t( 'Preset default', 'پیش‌فرض استایل' ), 'none' => orvio_t( 'None', 'بدون سایه' ), 'soft' => orvio_t( 'Soft', 'نرم' ), 'strong' => orvio_t( 'Strong', 'قوی' ) ) );
-						orvio_field_select( 'mobile_nav_active_style', orvio_t( 'Active state', 'حالت فعال' ), $o, array( 'soft' => orvio_t( 'Soft background', 'پس‌زمینه نرم' ), 'solid' => orvio_t( 'Solid', 'پر' ), 'underline' => orvio_t( 'Underline', 'خط زیر' ), 'dot' => orvio_t( 'Dot', 'نقطه' ) ) );
-						orvio_field_number( 'mobile_nav_radius', orvio_t( 'Radius', 'گردی' ), $o, 0, 40 );
-						orvio_field_number( 'mobile_nav_spacing', orvio_t( 'Spacing', 'فاصله' ), $o, 0, 20 );
-						orvio_field_number( 'mobile_nav_height', orvio_t( 'Height', 'ارتفاع' ), $o, 42, 96 );
-						orvio_field_number( 'mobile_nav_icon_size', orvio_t( 'Icon size', 'اندازه آیکن' ), $o, 16, 32 );
-						echo '<h3 style="margin-top:18px">' . esc_html( orvio_t( 'Mobile navigation buttons', 'دکمه‌های ناوبری موبایل' ) ) . '</h3>';
-						foreach ( orvio_mobile_nav_defaults() as $slot => $default ) {
-							orvio_field_mobile_nav_item( $slot, $o['mobile_nav_items'][ $slot ] ?? $default );
-						}
+
 						?>
 					</div>
 					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Elements', 'المان‌ها' ) ); ?></h2>
@@ -580,6 +558,39 @@ function orvio_render_settings_page() {
 						orvio_field_check( 'show_announcement', orvio_t( 'Announcement', 'نوار اعلان' ), $o );
 						orvio_field_text( 'announcement', orvio_t( 'Announcement text', 'متن اعلان' ), $o );
 						orvio_field_text( 'announcement_en', orvio_t( 'English announcement', 'متن انگلیسی' ), $o );
+						?>
+					</div>
+				</section>
+				<section data-panel="mobile-nav" class="orvio-panel">
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Mobile navigation', 'ناوبری موبایل' ) ); ?></h2>
+						<?php
+						orvio_field_check( 'mobile_nav_enabled', orvio_t( 'Enable mobile navigation', 'فعال‌سازی ناوبری موبایل' ), $o );
+						orvio_field_select( 'mobile_nav_style', orvio_t( 'Navigation style', 'استایل ناوبری' ), $o, array(
+							'bar'      => orvio_t( 'Bottom bar', 'نوار پایین' ),
+							'floating' => orvio_t( 'Floating panel', 'پنل شناور' ),
+							'pill'     => orvio_t( 'Pill', 'کپسولی' ),
+							'glass'    => orvio_t( 'Glass', 'شیشه‌ای' ),
+							'dark'     => orvio_t( 'Dark', 'تیره' ),
+							'minimal'  => orvio_t( 'Minimal', 'مینیمال' ),
+						) );
+						orvio_field_optional_color( 'mobile_nav_background', orvio_t( 'Background color', 'رنگ پس‌زمینه' ), $o );
+						orvio_field_optional_color( 'mobile_nav_text', orvio_t( 'Text and icon color', 'رنگ متن و آیکن' ), $o );
+						orvio_field_optional_color( 'mobile_nav_border', orvio_t( 'Border color', 'رنگ حاشیه' ), $o );
+						orvio_field_optional_color( 'mobile_nav_active', orvio_t( 'Active color', 'رنگ حالت فعال' ), $o );
+						orvio_field_optional_color( 'mobile_nav_active_bg', orvio_t( 'Active background', 'پس‌زمینه فعال' ), $o );
+						orvio_field_select( 'mobile_nav_shadow', orvio_t( 'Shadow', 'سایه' ), $o, array( '' => orvio_t( 'Preset default', 'پیش‌فرض استایل' ), 'none' => orvio_t( 'None', 'بدون سایه' ), 'soft' => orvio_t( 'Soft', 'نرم' ), 'strong' => orvio_t( 'Strong', 'قوی' ) ) );
+						orvio_field_select( 'mobile_nav_active_style', orvio_t( 'Active state', 'حالت فعال' ), $o, array( 'soft' => orvio_t( 'Soft background', 'پس‌زمینه نرم' ), 'solid' => orvio_t( 'Solid', 'پر' ), 'underline' => orvio_t( 'Underline', 'خط زیر' ), 'dot' => orvio_t( 'Dot', 'نقطه' ) ) );
+						orvio_field_number( 'mobile_nav_radius', orvio_t( 'Radius', 'گردی' ), $o, 0, 40 );
+						orvio_field_number( 'mobile_nav_spacing', orvio_t( 'Spacing', 'فاصله' ), $o, 0, 20 );
+						orvio_field_number( 'mobile_nav_height', orvio_t( 'Height', 'ارتفاع' ), $o, 42, 96 );
+						orvio_field_number( 'mobile_nav_icon_size', orvio_t( 'Icon size', 'اندازه آیکن' ), $o, 16, 32 );
+						?>
+					</div>
+					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Mobile navigation buttons', 'دکمه‌های ناوبری موبایل' ) ); ?></h2>
+						<?php
+						foreach ( orvio_mobile_nav_defaults() as $slot => $default ) {
+							orvio_field_mobile_nav_item( $slot, $o['mobile_nav_items'][ $slot ] ?? $default );
+						}
 						?>
 					</div>
 				</section>
