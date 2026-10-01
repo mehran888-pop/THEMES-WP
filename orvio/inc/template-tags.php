@@ -96,10 +96,28 @@ function orvio_breadcrumb() {
 		) );
 		return;
 	}
-	echo '<nav class="orvio-crumb"><a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html( orvio_t( 'Home', 'خانه' ) ) . '</a>';
-	if ( ! is_front_page() ) {
-		echo '<span class="orvio-crumb__sep">/</span><span>' . esc_html( wp_get_document_title() ) . '</span>';
+
+	// The current title is already rendered by the pagehead h1. Keep the
+	// breadcrumb contextual without printing that same title a second time.
+	echo '<nav class="orvio-crumb" aria-label="Breadcrumb"><a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html( orvio_t( 'Home', 'خانه' ) ) . '</a>';
+
+	if ( is_page() ) {
+		$ancestors = array_reverse( get_post_ancestors( get_queried_object_id() ) );
+		foreach ( $ancestors as $ancestor_id ) {
+			echo '<span class="orvio-crumb__sep">/</span><a href="' . esc_url( get_permalink( $ancestor_id ) ) . '">' . esc_html( get_the_title( $ancestor_id ) ) . '</a>';
+		}
+	} elseif ( is_single() ) {
+		$posts_page = absint( get_option( 'page_for_posts' ) );
+		if ( $posts_page ) {
+			echo '<span class="orvio-crumb__sep">/</span><a href="' . esc_url( get_permalink( $posts_page ) ) . '">' . esc_html( get_the_title( $posts_page ) ) . '</a>';
+		} elseif ( function_exists( 'get_the_category' ) ) {
+			$categories = get_the_category();
+			if ( ! empty( $categories ) && ! is_wp_error( $categories[0] ) ) {
+				echo '<span class="orvio-crumb__sep">/</span><a href="' . esc_url( get_category_link( $categories[0]->term_id ) ) . '">' . esc_html( $categories[0]->name ) . '</a>';
+			}
+		}
 	}
+
 	echo '</nav>';
 }
 
