@@ -201,6 +201,13 @@ function orvio_defaults() {
 		'instagram'          => '',
 		'telegram'           => '',
 		'whatsapp'           => '',
+		'bale_enabled'       => 0,
+		'bale_bot_token'     => '',
+		'bale_channel_id'    => '',
+		'bale_admin_ids'     => '',
+		'bale_webhook_secret'=> '',
+		'bale_auto_publish'  => 0,
+		'bale_product_template' => "🛍️ {title}\n\n{short_description}\n\n💳 {price}\n📦 {stock}\n\n{url}",
 		'enable_wishlist'    => 1,
 		'enable_quick_view'  => 1,
 	);
@@ -377,6 +384,16 @@ function orvio_sanitize_settings( $input ) {
 		$clean[ $key ] = sanitize_text_field( $input[ $key ] ?? '' );
 	}
 	$clean['email'] = sanitize_email( $clean['email'] );
+	$clean['bale_enabled'] = empty( $input['bale_enabled'] ) ? 0 : 1;
+	$clean['bale_bot_token'] = sanitize_text_field( $input['bale_bot_token'] ?? '' );
+	$clean['bale_channel_id'] = sanitize_text_field( $input['bale_channel_id'] ?? '' );
+	$clean['bale_admin_ids'] = preg_replace( '/[^0-9,;\s-]/', '', (string) ( $input['bale_admin_ids'] ?? '' ) );
+	$existing_settings = get_option( 'orvio_settings', array() );
+	$posted_bale_secret = sanitize_key( $input['bale_webhook_secret'] ?? '' );
+	$clean['bale_webhook_secret'] = $posted_bale_secret ? $posted_bale_secret : ( is_array( $existing_settings ) ? sanitize_key( $existing_settings['bale_webhook_secret'] ?? '' ) : '' );
+	$clean['bale_auto_publish'] = empty( $input['bale_auto_publish'] ) ? 0 : 1;
+	$clean['bale_product_template'] = sanitize_textarea_field( $input['bale_product_template'] ?? $defaults['bale_product_template'] );
+	return $clean;
 	return $clean;
 }
 
@@ -410,6 +427,8 @@ function orvio_render_settings_page() {
 		return;
 	}
 	$o = orvio_settings();
+	$bale_webhook_url = function_exists( 'orvio_bale_webhook_url' ) ? orvio_bale_webhook_url() : '';
+	$o = orvio_settings();
 	$cart_choices = orvio_cart_layout_choices();
 	if ( ! isset( $cart_choices[ $o['cart_layout'] ?? '' ] ) ) {
 		$o['cart_layout'] = 'saas-split';
@@ -425,6 +444,7 @@ function orvio_render_settings_page() {
 		'cart'     => orvio_t( 'Cart', 'سبد خرید' ),
 		'checkout' => orvio_t( 'Checkout', 'صورتحساب' ),
 		'account'  => orvio_t( 'Account', 'حساب کاربری' ),
+		'bale'     => orvio_t( 'Bale bot', 'ربات بله' ),
 		'contact'  => orvio_t( 'Contact', 'ارتباط' ),
 		'home'     => orvio_t( 'Homepage', 'صفحه اول' ),
 	);
@@ -457,6 +477,10 @@ function orvio_render_settings_page() {
 			<?php endif; ?>
 			<?php if ( isset( $_GET['orvio-front-error'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 				<div class="notice notice-error" style="margin:0 28px"><p><?php echo esc_html( orvio_t( 'Elementor is not active, so the homepage could not be built.', 'المنتور فعال نیست و صفحه اول ساخته نشد.' ) ); ?></p></div>
+			<?php endif; ?>
+			<?php if ( isset( $_GET['orvio-bale'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+				<?php $bale_notice = sanitize_key( wp_unslash( $_GET['orvio-bale'] ) ); ?>
+				<div class="notice <?php echo false !== strpos( $bale_notice, 'error' ) ? 'notice-error' : 'notice-success'; ?>" style="margin:0 28px"><p><?php echo esc_html( orvio_bale_admin_notice( $bale_notice ) ); ?></p></div>
 			<?php endif; ?>
 			<form method="post" action="options.php">
 				<?php settings_fields( 'orvio_settings_group' ); ?>
@@ -756,6 +780,27 @@ function orvio_render_settings_page() {
 						?>
 					</div>
 				</section>
+				<section data-panel="bale" class="orvio-panel">
+					<div class="orvio-card orvio-bale-settings"><h2><?php echo esc_html( orvio_t( 'Bale bot product studio', 'استودیو مدیریت محصول با ربات بله' ) ); ?></h2>
+						<p class="orvio-admin__hint"><?php echo esc_html( orvio_t( 'Create, edit, publish and send WooCommerce products to a Bale channel from a private admin bot conversation.', 'با یک گفت‌وگوی خصوصی با ربات بله، محصول ووکامرس را کامل بسازید، ویرایش کنید، منتشر کنید و با قالب حرفه‌ای به کانال بفرستید.' ) ); ?></p>
+						<?php
+						orvio_field_check( 'bale_enabled', orvio_t( 'Enable Bale product manager', 'فعال‌سازی مدیریت محصول با ربات بله' ), $o );
+						orvio_field_password( 'bale_bot_token', orvio_t( 'Bale bot token', 'توکن ربات بله' ), $o, '123456789:your-token' );
+						orvio_field_text( 'bale_channel_id', orvio_t( 'Channel ID or @username', 'شناسه کانال یا @نام‌کاربری' ), $o );
+						orvio_field_text( 'bale_admin_ids', orvio_t( 'Allowed Bale user IDs', 'شناسه کاربران مجاز بله' ), $o );
+						orvio_field_password( 'bale_webhook_secret', orvio_t( 'Webhook secret', 'کلید امنیتی وب‌هوک' ), $o, 'Generated automatically' );
+						orvio_field_check( 'bale_auto_publish', orvio_t( 'Automatically send new published products to the channel', 'ارسال خودکار محصولات جدیدِ منتشرشده به کانال' ), $o );
+						orvio_field_textarea( 'bale_product_template', orvio_t( 'Channel template', 'قالب پیام کانال' ), $o, "{title}\n{short_description}\n{price}\n{stock}\n{url}" );
+						?>
+						<div class="orvio-bale-settings__actions">
+							<?php echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=orvio_bale_test' ), 'orvio_bale_action' ) ) . '">' . esc_html( orvio_t( 'Test bot connection', 'تست اتصال ربات' ) ) . '</a>'; ?>
+							<?php echo '<a class="button" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=orvio_bale_set_webhook' ), 'orvio_bale_action' ) ) . '">' . esc_html( orvio_t( 'Register webhook', 'ثبت وب‌هوک' ) ) . '</a>'; ?>
+							<?php echo '<a class="button" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=orvio_bale_delete_webhook' ), 'orvio_bale_action' ) ) . '">' . esc_html( orvio_t( 'Disable webhook', 'غیرفعال‌کردن وب‌هوک' ) ) . '</a>'; ?>
+						</div>
+						<p class="description"><strong><?php echo esc_html( orvio_t( 'Webhook URL:', 'آدرس وب‌هوک:' ) ); ?></strong> <code><?php echo esc_html( $bale_webhook_url ); ?></code></p>
+						<p class="description"><?php echo esc_html( orvio_t( 'Add the bot as an administrator of the Bale channel. Enter your own Bale numeric user ID in the allowed list, separated by commas.', 'ربات را مدیر کانال بله کنید. شناسه عددی کاربر خودتان را در فهرست مجاز وارد کنید و چند شناسه را با ویرگول جدا کنید.' ) ); ?></p>
+					</div>
+				</section>
 				<section data-panel="contact" class="orvio-panel">
 					<div class="orvio-card"><h2><?php echo esc_html( orvio_t( 'Studio', 'استودیو' ) ); ?></h2>
 						<?php
@@ -822,7 +867,13 @@ function orvio_field_optional_color( $key, $label, $o ) {
 	echo '<label class="orvio-admin__field"><span>' . esc_html( $label ) . '</span><input type="text" name="orvio_settings[' . esc_attr( $key ) . ']" value="' . esc_attr( $o[ $key ] ?? '' ) . '" placeholder="' . esc_attr( orvio_t( 'Preset default', 'پیش‌فرض استایل' ) ) . '"></label>';
 }
 function orvio_field_text( $key, $label, $o ) {
-	echo '<label class="orvio-admin__field orvio-admin__field--wide"><span>' . esc_html( $label ) . '</span><input type="text" class="regular-text" name="orvio_settings[' . esc_attr( $key ) . ']" value="' . esc_attr( $o[ $key ] ) . '"></label>';
+	echo '<label class="orvio-admin__field orvio-admin__field--wide"><span>' . esc_html( $label ) . '</span><input type="text" class="regular-text" name="orvio_settings[' . esc_attr( $key ) . ']" value="' . esc_attr( $o[ $key ] ?? '' ) . '"></label>';
+}
+function orvio_field_password( $key, $label, $o, $placeholder = '' ) {
+	echo '<label class="orvio-admin__field orvio-admin__field--wide"><span>' . esc_html( $label ) . '</span><input type="password" class="regular-text" name="orvio_settings[' . esc_attr( $key ) . ']" value="' . esc_attr( $o[ $key ] ?? '' ) . '" placeholder="' . esc_attr( $placeholder ) . '" autocomplete="new-password"></label>';
+}
+function orvio_field_textarea( $key, $label, $o, $placeholder = '' ) {
+	echo '<label class="orvio-admin__field orvio-admin__field--wide"><span>' . esc_html( $label ) . '</span><textarea class="large-text" rows="5" name="orvio_settings[' . esc_attr( $key ) . ']" placeholder="' . esc_attr( $placeholder ) . '">' . esc_textarea( $o[ $key ] ?? '' ) . '</textarea></label>';
 }
 function orvio_field_number( $key, $label, $o, $min, $max ) {
 	echo '<label class="orvio-admin__field"><span>' . esc_html( $label ) . '</span><input type="number" name="orvio_settings[' . esc_attr( $key ) . ']" value="' . esc_attr( $o[ $key ] ) . '" min="' . esc_attr( $min ) . '" max="' . esc_attr( $max ) . '"></label>';

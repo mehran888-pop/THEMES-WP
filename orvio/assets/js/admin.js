@@ -18,6 +18,9 @@
     open(tab.getAttribute("data-tab"));
   });
   var saved = "general";
-  try { saved = localStorage.getItem("orvio-admin-tab") || "general"; } catch (err) {}
+  try {
+    var requested = new URLSearchParams(window.location.search).get("orvio-tab");
+    saved = requested || localStorage.getItem("orvio-admin-tab") || "general";
+  } catch (err) {}
   open(saved);
 })();

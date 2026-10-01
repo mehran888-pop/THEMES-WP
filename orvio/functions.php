@@ -20,5 +20,6 @@ require ORVIO_DIR . '/inc/assets.php';
 require ORVIO_DIR . '/inc/template-tags.php';
 require ORVIO_DIR . '/inc/woocommerce.php';
 require ORVIO_DIR . '/inc/ajax.php';
+require ORVIO_DIR . '/inc/bale.php';
 require ORVIO_DIR . '/inc/elementor.php';
 require ORVIO_DIR . '/inc/demo-import.php';

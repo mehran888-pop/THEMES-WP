@@ -183,3 +183,8 @@ body.rtl #orvio-app { margin: 16px 0 40px 20px; }
   .orvio-card .orvio-admin__field,
   .orvio-card .orvio-admin__check { grid-template-columns: 1fr; }
 }
+
+.orvio-bale-settings__actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 12px; }
+.orvio-bale-settings__actions .button { min-height: 36px; display: inline-flex; align-items: center; }
+.orvio-bale-settings code { display: block; max-width: 100%; overflow-wrap: anywhere; direction: ltr; text-align: left; margin-top: 6px; padding: 8px 10px; background: #f5f3ef; border-radius: 8px; }
+.orvio-bale-settings .orvio-admin__hint { max-width: 780px; color: #6e665e; line-height: 1.8; }
