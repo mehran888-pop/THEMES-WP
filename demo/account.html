@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>حساب کاربری — اُرویو</title>
+  <meta name="description" content="Orvio — قالب فروشگاهی ووکامرس با پشتیبانی المنتور">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/main.css?v=6">
+</head>
+<body class="orvio-body" data-page="account">
+<div class="orvio-themebar"><div class="orvio-container">
+  <p data-fa="این صفحه، ظاهر قالب وردپرس Orvio است." data-en="This page is the face of the Orvio WordPress theme.">این صفحه، ظاهر قالب وردپرس Orvio است.</p>
+  <a href="theme.html" data-fa="خود قالب" data-en="The theme">خود قالب</a>
+  <a href="orvio.zip" download data-fa="دانلود پوسته" data-en="Download theme">دانلود پوسته</a>
+</div></div>
+<a class="orvio-skip" href="#main" data-i18n="skip">پرش به محتوا</a>
+<div class="orvio-announce" data-announce>
+  <div class="orvio-container orvio-announce__inner">
+    <p data-i18n="announce">ارسال رایگان برای سفارش‌های بالای ۲ میلیون تومان  ·  بازگشت آسان تا ۳۰ روز</p>
+    <button type="button" class="orvio-announce__x" data-announce-close data-i18n-aria="close" aria-label="بستن">×</button>
+  </div>
+</div>
+<header class="orvio-header" data-header>
+  <div class="orvio-container orvio-header__row">
+    <button type="button" class="orvio-iconbtn orvio-burger" data-open="menu" data-i18n-aria="menu" aria-label="منو"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h11"/></svg></button>
+    <a class="orvio-logo" href="index.html"><span class="orvio-logo__mark" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="8" fill="none" stroke="#F4F0EA" stroke-width="1.6"/><circle cx="16" cy="16" r="2.4" fill="#C46A3A"/></svg></span><span class="orvio-logo__word"><strong>ORVIO</strong><small data-i18n="tagline">اشیاء آرام</small></span></a>
+    <form class="orvio-search" role="search" action="shop.html">
+      <span class="orvio-search__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16.2 16.2L20 20"/></svg></span>
+      <input type="search" name="q" data-search data-i18n-placeholder="searchPh" placeholder="جستجو میان اشیاء…" autocomplete="off">
+      <button type="submit" data-i18n="search">جستجو</button>
+      <div class="orvio-suggest" data-suggest hidden></div>
+    </form>
+    <button type="button" class="orvio-iconbtn orvio-search-toggle" data-open="search" data-i18n-aria="search" aria-label="جستجو"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16.2 16.2L20 20"/></svg></button>
+    <div class="orvio-tools">
+      <button type="button" class="orvio-tool orvio-lang" data-lang>EN</button>
+      <a class="orvio-tool" href="account.html"><span class="orvio-tool__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5.2 19.2c1.3-3 3.7-4.5 6.8-4.5s5.5 1.5 6.8 4.5"/></svg></span><span class="orvio-tool__label" data-i18n="account">حساب</span></a>
+      <button type="button" class="orvio-tool" data-open="wish"><span class="orvio-tool__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19s-7-4.4-7-8.5A3.5 3.5 0 0 1 12 8a3.5 3.5 0 0 1 7 2.5C19 14.6 12 19 12 19z"/></svg><span class="orvio-count is-zero" data-wish-count>0</span></span><span class="orvio-tool__label" data-i18n="wish">علاقه‌مندی</span></button>
+      <a class="orvio-tool orvio-cartbtn" href="cart.html" data-open="cart" aria-controls="orvio-cart-drawer" aria-expanded="false"><span class="orvio-tool__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 8h11L16.4 20H7.6L6.5 8z"/><path d="M9 8V7a3 3 0 0 1 6 0v1"/></svg><span class="orvio-count is-zero" data-cart-count>0</span></span><span class="orvio-tool__meta"><span class="orvio-tool__label" data-i18n="cart">سبد</span><span class="orvio-cartbtn__total" data-cart-total>۰</span></span></a>
+    </div>
+  </div>
+  <div class="orvio-searchpanel" data-searchpanel>
+    <form class="orvio-container" action="shop.html">
+      <div class="orvio-search" style="display:flex">
+        <span class="orvio-search__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16.2 16.2L20 20"/></svg></span>
+        <input type="search" name="q" data-search data-i18n-placeholder="searchPh" placeholder="جستجو میان اشیاء…">
+        <button type="submit" data-i18n="search">جستجو</button>
+        <div class="orvio-suggest" data-suggest hidden></div>
+      </div>
+    </form>
+  </div>
+  <nav class="orvio-catbar" aria-label="categories">
+    <div class="orvio-container orvio-catbar__row">
+      <div class="orvio-catall">
+        <button type="button" class="orvio-catall__btn" data-catall><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span data-i18n="allCats">همه دسته‌ها</span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+        <div class="orvio-catall__panel"><a href="shop.html?cat=home"><span data-fa="خانه و دکور" data-en="Home">خانه و دکور</span><span>4</span></a><a href="shop.html?cat=fashion"><span data-fa="پوشاک" data-en="Apparel">پوشاک</span><span>2</span></a><a href="shop.html?cat=audio"><span data-fa="صدا" data-en="Audio">صدا</span><span>1</span></a><a href="shop.html?cat=scent"><span data-fa="رایحه" data-en="Scent">رایحه</span><span>1</span></a><a href="shop.html?cat=travel"><span data-fa="سفر" data-en="Travel">سفر</span><span>1</span></a></div>
+      </div>
+      <ul class="orvio-catbar__menu"><li><a href="shop.html?cat=home" data-fa="خانه و دکور" data-en="Home">خانه و دکور</a><div class="orvio-mega"><div class="orvio-mega__grid"><div class="orvio-mega__col"><strong data-fa="اتاق نشیمن" data-en="Living">اتاق نشیمن</strong><a href="shop.html?cat=home" data-fa="چراغ‌ها" data-en="Lamps">چراغ‌ها</a><a href="shop.html?cat=home" data-fa="سرامیک" data-en="Ceramic">سرامیک</a><a href="shop.html?cat=home" data-fa="پارچه" data-en="Textile">پارچه</a></div><div class="orvio-mega__col"><strong data-fa="میز غذا" data-en="Table">میز غذا</strong><a href="shop.html?cat=home" data-fa="سرویس" data-en="Tableware">سرویس</a><a href="shop.html?cat=home" data-fa="شمع" data-en="Candles">شمع</a></div><a class="orvio-mega__feature" href="shop.html?cat=home"><img src="assets/images/categories/home.jpg" alt=""><span data-fa="خانه و دکور" data-en="Home">خانه و دکور</span></a></div></div></li><li><a href="shop.html?cat=fashion" data-fa="پوشاک" data-en="Apparel">پوشاک</a><div class="orvio-mega"><div class="orvio-mega__grid"><div class="orvio-mega__col"><strong data-fa="رویی" data-en="Outerwear">رویی</strong><a href="shop.html?cat=fashion" data-fa="پالتو" data-en="Coats">پالتو</a><a href="shop.html?cat=fashion" data-fa="کتانی" data-en="Sneakers">کتانی</a></div><div class="orvio-mega__col"><strong data-fa="جزئیات" data-en="Details">جزئیات</strong><a href="shop.html?cat=fashion" data-fa="چرم" data-en="Leather">چرم</a><a href="shop.html?cat=fashion" data-fa="پشم" data-en="Wool">پشم</a></div><a class="orvio-mega__feature" href="shop.html?cat=fashion"><img src="assets/images/categories/fashion.jpg" alt=""><span data-fa="پوشاک" data-en="Apparel">پوشاک</span></a></div></div></li><li><a href="shop.html?cat=audio" data-fa="صدا" data-en="Audio">صدا</a><div class="orvio-mega"><div class="orvio-mega__grid"><div class="orvio-mega__col"><strong data-fa="روزمره" data-en="Everyday">روزمره</strong><a href="shop.html?cat=audio" data-fa="هدفون" data-en="Headphones">هدفون</a><a href="shop.html?cat=audio" data-fa="بی‌سیم" data-en="Wireless">بی‌سیم</a></div><div class="orvio-mega__col"><strong data-fa="کار" data-en="Work">کار</strong><a href="shop.html?cat=audio" data-fa="حذف نویز" data-en="Noise cancelling">حذف نویز</a></div><a class="orvio-mega__feature" href="shop.html?cat=audio"><img src="assets/images/categories/audio.jpg" alt=""><span data-fa="صدا" data-en="Audio">صدا</span></a></div></div></li><li><a href="shop.html?cat=scent" data-fa="رایحه" data-en="Scent">رایحه</a><div class="orvio-mega"><div class="orvio-mega__grid"><div class="orvio-mega__col"><strong data-fa="خانه" data-en="Home">خانه</strong><a href="shop.html?cat=scent" data-fa="شمع" data-en="Candles">شمع</a><a href="shop.html?cat=scent" data-fa="شیشه" data-en="Glass">شیشه</a></div><div class="orvio-mega__col"><strong data-fa="رایحه" data-en="Notes">رایحه</strong><a href="shop.html?cat=scent" data-fa="چوب" data-en="Wood">چوب</a><a href="shop.html?cat=scent" data-fa="انجیر" data-en="Fig">انجیر</a></div><a class="orvio-mega__feature" href="shop.html?cat=scent"><img src="assets/images/categories/scent.jpg" alt=""><span data-fa="رایحه" data-en="Scent">رایحه</span></a></div></div></li><li><a href="shop.html?cat=travel" data-fa="سفر" data-en="Travel">سفر</a><div class="orvio-mega"><div class="orvio-mega__grid"><div class="orvio-mega__col"><strong data-fa="کیف" data-en="Bags">کیف</strong><a href="shop.html?cat=travel" data-fa="هفته" data-en="Weekender">هفته</a><a href="shop.html?cat=travel" data-fa="چرم" data-en="Leather">چرم</a></div><div class="orvio-mega__col"><strong data-fa="یراق" data-en="Hardware">یراق</strong><a href="shop.html?cat=travel" data-fa="برنج" data-en="Brass">برنج</a></div><a class="orvio-mega__feature" href="shop.html?cat=travel"><img src="assets/images/categories/travel.jpg" alt=""><span data-fa="سفر" data-en="Travel">سفر</span></a></div></div></li></ul>
+      <a class="orvio-catbar__sale" href="shop.html?sale=1" data-i18n="weekSale">تخفیف‌های هفته</a>
+    </div>
+  </nav>
+</header>
+<div class="orvio-overlay" data-overlay data-cart-overlay="dim"></div>
+<aside class="orvio-drawer orvio-drawer--menu" data-drawer="menu" aria-hidden="true">
+  <div class="orvio-drawer__head"><h2 data-i18n="menu">منو</h2><button type="button" class="orvio-drawer__x" data-close aria-label="بستن">×</button></div>
+  <div class="orvio-drawer__body">
+    <button type="button" class="orvio-btn orvio-btn--ghost orvio-btn--sm" data-lang style="margin-bottom:12px">EN</button>
+    <form action="shop.html" class="orvio-search" style="display:flex;margin-bottom:12px">
+      <input type="search" name="q" data-i18n-placeholder="searchPh" placeholder="جستجو میان اشیاء…">
+      <button type="submit" data-i18n="search">جستجو</button>
+    </form>
+    <div class="orvio-menu-acc"><details><summary data-fa="خانه و دکور" data-en="Home">خانه و دکور</summary><a href="shop.html?cat=home" data-fa="مشاهده همه" data-en="View all">مشاهده همه</a><a href="shop.html?cat=home" data-fa="چراغ‌ها" data-en="Lamps">چراغ‌ها</a><a href="shop.html?cat=home" data-fa="سرامیک" data-en="Ceramic">سرامیک</a><a href="shop.html?cat=home" data-fa="پارچه" data-en="Textile">پارچه</a><a href="shop.html?cat=home" data-fa="سرویس" data-en="Tableware">سرویس</a><a href="shop.html?cat=home" data-fa="شمع" data-en="Candles">شمع</a></details><details><summary data-fa="پوشاک" data-en="Apparel">پوشاک</summary><a href="shop.html?cat=fashion" data-fa="مشاهده همه" data-en="View all">مشاهده همه</a><a href="shop.html?cat=fashion" data-fa="پالتو" data-en="Coats">پالتو</a><a href="shop.html?cat=fashion" data-fa="کتانی" data-en="Sneakers">کتانی</a><a href="shop.html?cat=fashion" data-fa="چرم" data-en="Leather">چرم</a><a href="shop.html?cat=fashion" data-fa="پشم" data-en="Wool">پشم</a></details><details><summary data-fa="صدا" data-en="Audio">صدا</summary><a href="shop.html?cat=audio" data-fa="مشاهده همه" data-en="View all">مشاهده همه</a><a href="shop.html?cat=audio" data-fa="هدفون" data-en="Headphones">هدفون</a><a href="shop.html?cat=audio" data-fa="بی‌سیم" data-en="Wireless">بی‌سیم</a><a href="shop.html?cat=audio" data-fa="حذف نویز" data-en="Noise cancelling">حذف نویز</a></details><details><summary data-fa="رایحه" data-en="Scent">رایحه</summary><a href="shop.html?cat=scent" data-fa="مشاهده همه" data-en="View all">مشاهده همه</a><a href="shop.html?cat=scent" data-fa="شمع" data-en="Candles">شمع</a><a href="shop.html?cat=scent" data-fa="شیشه" data-en="Glass">شیشه</a><a href="shop.html?cat=scent" data-fa="چوب" data-en="Wood">چوب</a><a href="shop.html?cat=scent" data-fa="انجیر" data-en="Fig">انجیر</a></details><details><summary data-fa="سفر" data-en="Travel">سفر</summary><a href="shop.html?cat=travel" data-fa="مشاهده همه" data-en="View all">مشاهده همه</a><a href="shop.html?cat=travel" data-fa="هفته" data-en="Weekender">هفته</a><a href="shop.html?cat=travel" data-fa="چرم" data-en="Leather">چرم</a><a href="shop.html?cat=travel" data-fa="برنج" data-en="Brass">برنج</a></details></div>
+    <div class="orvio-menu-links">
+      <a href="shop.html" data-i18n="shop">فروشگاه</a>
+      <a href="account.html" data-i18n="account">حساب</a>
+      <a href="about.html" data-i18n="about">درباره ما</a>
+      <a href="contact.html" data-i18n="contact">ارتباط با ما</a>
+      <a href="theme.html" data-fa="قالب وردپرس" data-en="WordPress theme">قالب وردپرس</a>
+    </div>
+  </div>
+</aside>
+<aside class="orvio-drawer orvio-drawer--cart orvio-drawer--side-right orvio-drawer--style-saas" data-drawer="cart" aria-hidden="true">
+  <div class="orvio-drawer__head"><h2 data-i18n="cart">سبد</h2><button type="button" class="orvio-drawer__x" data-close>×</button></div>
+  <div class="orvio-shipbar"><div class="orvio-shipbar__track"><span data-ship-fill></span></div><p data-ship-text></p></div>
+  <div class="orvio-drawer__body" data-cart-items></div>
+  <div class="orvio-drawer__foot">
+    <div class="orvio-drawer__total"><span data-i18n="subtotal">جمع جزء</span><strong data-cart-subtotal>۰</strong></div>
+    <a class="orvio-btn orvio-btn--ghost orvio-btn--full" href="cart.html" data-i18n="viewCart">مشاهده سبد</a>
+    <a class="orvio-btn orvio-btn--primary orvio-btn--full" href="checkout.html" data-i18n="checkout">تسویه و صورتحساب</a>
+  </div>
+</aside>
+<aside class="orvio-drawer orvio-drawer--wish" data-drawer="wish" aria-hidden="true">
+  <div class="orvio-drawer__head"><h2 data-i18n="wish">علاقه‌مندی</h2><button type="button" class="orvio-drawer__x" data-close>×</button></div>
+  <div class="orvio-drawer__body" data-wish-items></div>
+</aside>
+<div class="orvio-toast" data-toast role="status"></div>
+<a class="orvio-themechip" href="theme.html" data-fa="قالب وردپرس" data-en="WordPress theme">قالب وردپرس</a>
+<aside class="orvio-dock" data-dock>
+  <button type="button" class="orvio-dock__toggle" data-dock-toggle data-i18n="dock">ظاهر دمو</button>
+  <div class="orvio-dock__panel">
+    <strong data-i18n="accent">رنگ تأکید</strong>
+    <div class="orvio-swatches-ui">
+      <button type="button" data-ui="accent" data-val="copper" style="background:#A34B2B" aria-label="copper"></button>
+      <button type="button" data-ui="accent" data-val="forest" style="background:#234237" aria-label="forest"></button>
+      <button type="button" data-ui="accent" data-val="ink" style="background:#1C1916" aria-label="ink"></button>
+      <button type="button" data-ui="accent" data-val="navy" style="background:#1E3A5F" aria-label="navy"></button>
+      <button type="button" data-ui="accent" data-val="wine" style="background:#7A2E3A" aria-label="wine"></button>
+    </div>
+    <strong data-i18n="header">چیدمان هدر</strong>
+    <div class="orvio-seg">
+      <button type="button" data-ui="header" data-val="standard" data-i18n="standardH">استاندارد</button>
+      <button type="button" data-ui="header" data-val="centered" data-i18n="centered">لوگوی وسط</button>
+    </div>
+    <strong data-i18n="card">کارت کالا</strong>
+    <div class="orvio-seg">
+      <button type="button" data-ui="card" data-val="classic" data-i18n="classic">کلاسیک</button>
+      <button type="button" data-ui="card" data-val="minimal" data-i18n="minimal">مینیمال</button>
+      <button type="button" data-ui="card" data-val="overlay" data-i18n="overlay">روی تصویر</button>
+    </div>
+    <strong data-i18n="radius">گوشه‌ها</strong>
+    <div class="orvio-seg">
+      <button type="button" data-ui="radius" data-val="soft" data-i18n="soft">نرم</button>
+      <button type="button" data-ui="radius" data-val="sharp" data-i18n="sharp">تیز</button>
+    </div>
+  </div>
+</aside>
+<main id="main"><div class="orvio-container orvio-pagehead"><nav class="orvio-crumb"><a href="index.html" data-i18n="home">خانه</a><span class="orvio-crumb__sep">/</span><span data-i18n="account">حساب</span></nav><h1 data-i18n="account">حساب</h1></div>
+<div class="orvio-container orvio-account">
+  <nav class="orvio-account__nav">
+    <button type="button" class="is-on" data-tab="dash" data-i18n="dash">داشبورد</button>
+    <button type="button" data-tab="orders" data-i18n="orders">سفارش‌ها</button>
+    <button type="button" data-tab="addresses" data-i18n="addresses">آدرس‌ها</button>
+    <button type="button" data-tab="details" data-i18n="details">اطلاعات حساب</button>
+    <button type="button" data-tab="wish" data-i18n="wish">علاقه‌مندی</button>
+    <a href="shop.html" data-i18n="logout">خروج</a>
+  </nav>
+  <div>
+    <section data-panel="dash">
+      <div class="orvio-welcome"><div><p class="orvio-note" style="color:#E7C3B0" data-fa="خوش آمدید" data-en="Welcome back">خوش آمدید</p><h2 data-i18n="guest">مهمان اُرویو</h2></div><a class="orvio-btn orvio-btn--light" href="shop.html" data-i18n="shop">فروشگاه</a></div>
+      <div class="orvio-stats-row"><div class="orvio-stat"><strong>۳</strong><span data-i18n="orders">سفارش‌ها</span></div><div class="orvio-stat"><strong>۱</strong><span data-fa="در راه" data-en="On the way">در راه</span></div><div class="orvio-stat"><strong data-wish-count>۰</strong><span data-i18n="wish">علاقه‌مندی</span></div></div>
+      <div class="orvio-panel"><h2 style="font-size:16px;letter-spacing:0;margin-bottom:8px" data-fa="آخرین سفارش‌ها" data-en="Recent orders">آخرین سفارش‌ها</h2>
+        <table class="orvio-table"><thead><tr><th data-fa="شماره" data-en="No.">شماره</th><th data-fa="تاریخ" data-en="Date">تاریخ</th><th data-i18n="total">مبلغ</th><th data-fa="وضعیت" data-en="Status">وضعیت</th></tr></thead>
+        <tbody>
+          <tr><td data-label="no">ORV-2408</td><td>۱۲ مهر</td><td>۴٬۲۰۰٬۰۰۰</td><td><span class="orvio-status orvio-status--ship" data-fa="در حال ارسال" data-en="Shipping">در حال ارسال</span></td></tr>
+          <tr><td>ORV-2381</td><td>۲ مهر</td><td>۱٬۸۹۰٬۰۰۰</td><td><span class="orvio-status orvio-status--done" data-fa="تحویل شد" data-en="Delivered">تحویل شد</span></td></tr>
+          <tr><td>ORV-2310</td><td>۱۸ شهریور</td><td>۷۸۰٬۰۰۰</td><td><span class="orvio-status orvio-status--done" data-fa="تحویل شد" data-en="Delivered">تحویل شد</span></td></tr>
+        </tbody></table>
+      </div>
+    </section>
+    <section data-panel="orders" hidden>
+      <div class="orvio-panel"><h2 style="font-size:18px;letter-spacing:0" data-i18n="orders">سفارش‌ها</h2>
+      <table class="orvio-table"><thead><tr><th>#</th><th data-fa="کالاها" data-en="Items">کالاها</th><th data-i18n="total">مبلغ</th><th data-fa="وضعیت" data-en="Status">وضعیت</th></tr></thead>
+      <tbody>
+        <tr><td>ORV-2408</td><td data-fa="کیف چرم هفته" data-en="Weekender bag">کیف چرم هفته</td><td>۴٬۲۰۰٬۰۰۰</td><td><span class="orvio-status orvio-status--ship" data-fa="در حال ارسال" data-en="Shipping">در حال ارسال</span></td></tr>
+        <tr><td>ORV-2381</td><td data-fa="کتری سرامیکی نُوا" data-en="Nova kettle">کتری سرامیکی نُوا</td><td>۱٬۸۹۰٬۰۰۰</td><td><span class="orvio-status orvio-status--done" data-fa="تحویل شد" data-en="Delivered">تحویل شد</span></td></tr>
+        <tr><td>ORV-2294</td><td data-fa="چراغ رومیزی" data-en="Table lamp">چراغ رومیزی</td><td>۱٬۶۵۰٬۰۰۰</td><td><span class="orvio-status orvio-status--wait" data-fa="در انتظار پرداخت" data-en="Awaiting payment">در انتظار پرداخت</span></td></tr>
+      </tbody></table></div>
+    </section>
+    <section data-panel="addresses" hidden>
+      <div class="orvio-panel"><h2 style="font-size:18px;letter-spacing:0" data-i18n="addresses">آدرس‌ها</h2>
+      <article class="orvio-info" style="margin-top:12px"><div><strong data-fa="خانه" data-en="Home">خانه</strong><p data-fa="تهران، خیابان طراحی، پلاک ۱۲، واحد ۳" data-en="12 Design Street, No. 3, Tehran">تهران، خیابان طراحی، پلاک ۱۲، واحد ۳</p><p class="orvio-note">۰۹۱۲۰۰۰۰۰۰۰</p></div></article>
+      <button class="orvio-btn orvio-btn--ghost" style="margin-top:12px" type="button" data-fa="افزودن آدرس" data-en="Add address">افزودن آدرس</button>
+      </div>
+    </section>
+    <section data-panel="details" hidden>
+      <form class="orvio-panel" id="contact-form">
+        <div class="orvio-fields">
+          <label class="orvio-field"><span data-i18n="name">نام</span><input value="مهمان اُرویو" data-fa-value="مهمان اُرویو"></label>
+          <label class="orvio-field"><span data-i18n="phone">موبایل</span><input value="09120000000"></label>
+          <label class="orvio-field orvio-field--full"><span data-i18n="email">ایمیل</span><input type="email" value="guest@orvio.shop"></label>
+        </div>
+        <button class="orvio-btn orvio-btn--primary" style="margin-top:12px" type="submit" data-i18n="update">به‌روزرسانی</button>
+      </form>
+    </section>
+    <section data-panel="wish" hidden><div data-account-wish></div></section>
+  </div>
+</div></main>
+<footer class="orvio-footer">
+  <div class="orvio-container orvio-footer__grid">
+    <div class="orvio-footer__brand">
+      <a class="orvio-logo" href="index.html" style="color:#fff"><span class="orvio-logo__mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="22" height="22"><circle cx="16" cy="16" r="8" fill="none" stroke="#F4F0EA" stroke-width="1.6"/><circle cx="16" cy="16" r="2.4" fill="#C46A3A"/></svg></span><span class="orvio-logo__word"><strong>ORVIO</strong></span></a>
+      <p data-fa="ویترینی از اشیاء روزمره؛ انتخاب‌شده برای دوام، سکوت و زیبایی بی‌هیاهو." data-en="A shop of everyday objects, chosen to last and to stay quiet.">ویترینی از اشیاء روزمره؛ انتخاب‌شده برای دوام، سکوت و زیبایی بی‌هیاهو.</p>
+      <div class="orvio-social">
+        <a href="https://instagram.com" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="12" cy="12" r="3.5"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"/></svg></a>
+        <a href="https://t.me" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12l16-7-4 16-5-5-7-4z"/></svg></a>
+        <a href="https://wa.me/989100000042" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 18l-1 4 4-1a8 8 0 1 0-3-3z"/></svg></a>
+      </div>
+      <div class="orvio-pay"><span>COD</span><span>CARD</span><span>TRANSFER</span><span>GATEWAY</span></div>
+    </div>
+    <div>
+      <h3 data-i18n="shop">فروشگاه</h3>
+      <ul>
+        <li><a href="shop.html?cat=home" data-fa="خانه و دکور" data-en="Home">خانه و دکور</a></li>
+        <li><a href="shop.html?cat=fashion" data-fa="پوشاک" data-en="Apparel">پوشاک</a></li>
+        <li><a href="shop.html?cat=audio" data-fa="صدا" data-en="Audio">صدا</a></li>
+        <li><a href="shop.html?cat=scent" data-fa="رایحه" data-en="Scent">رایحه</a></li>
+        <li><a href="shop.html?cat=travel" data-fa="سفر" data-en="Travel">سفر</a></li>
+        <li><a href="shop.html?sale=1" data-i18n="weekSale">تخفیف‌های هفته</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 data-fa="راهنما" data-en="Help">راهنما</h3>
+      <ul>
+        <li><a href="account.html" data-i18n="account">حساب</a></li>
+        <li><a href="cart.html" data-i18n="cart">سبد</a></li>
+        <li><a href="checkout.html" data-i18n="checkout">تسویه و صورتحساب</a></li>
+        <li><a href="about.html" data-i18n="about">درباره ما</a></li>
+        <li><a href="contact.html" data-i18n="contact">ارتباط با ما</a></li>
+        <li><a href="theme.html" data-fa="قالب وردپرس" data-en="WordPress theme">قالب وردپرس</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 data-i18n="contact">ارتباط با ما</h3>
+      <ul>
+        <li data-fa="تهران، خیابان طراحی، پلاک ۱۲" data-en="12 Design Street, Tehran">تهران، خیابان طراحی، پلاک ۱۲</li>
+        <li><a href="tel:+982191000042">۰۲۱−۹۱۰۰۰۰۴۲</a></li>
+        <li><a href="mailto:hello@orvio.shop">hello@orvio.shop</a></li>
+        <li data-i18n="hours">شنبه تا پنجشنبه، ۱۰ تا ۱۸</li>
+      </ul>
+    </div>
+  </div>
+  <div class="orvio-container orvio-footer__bottom">
+    <span data-fa="© اُرویو — همه حقوق برای نسخه نمایشی محفوظ نیست." data-en="© Orvio — demo store, not a real checkout.">© اُرویو — همه حقوق برای نسخه نمایشی محفوظ نیست.</span>
+    <span>ORVIO THEME</span>
+  </div>
+</footer>
+<script src="catalog.js"></script>
+<script src="assets/js/theme.js?v=6" defer></script>
+<script src="demo.js?v=6" defer></script>
+
+</body>
+</html>

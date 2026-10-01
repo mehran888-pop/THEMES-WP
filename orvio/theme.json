@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 2,
+  "settings": {
+    "appearanceTools": true,
+    "layout": {
+      "contentSize": "760px",
+      "wideSize": "1220px"
+    },
+    "color": {
+      "palette": [
+        { "slug": "ink", "color": "#1C1916", "name": "Ink" },
+        { "slug": "paper", "color": "#F3EFE8", "name": "Paper" },
+        { "slug": "accent", "color": "#A34B2B", "name": "Copper" },
+        { "slug": "forest", "color": "#234237", "name": "Forest" },
+        { "slug": "surface", "color": "#FFFCF8", "name": "Surface" },
+        { "slug": "muted", "color": "#6E665E", "name": "Muted" },
+        { "slug": "line", "color": "#E5DDD3", "name": "Line" },
+        { "slug": "sale", "color": "#9C2F2F", "name": "Sale" },
+        { "slug": "dark", "color": "#171512", "name": "Dark" }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        { "fontFamily": "Vazirmatn, system-ui, sans-serif", "slug": "vazirmatn", "name": "Vazirmatn" },
+        { "fontFamily": "Instrument Sans, Vazirmatn, system-ui, sans-serif", "slug": "instrument", "name": "Instrument Sans" },
+        { "fontFamily": "Fraunces, Vazirmatn, Georgia, serif", "slug": "fraunces", "name": "Fraunces" }
+      ]
+    }
+  },
+  "styles": {
+    "elements": {
+      "button": {
+        "color": { "background": "var:preset|color|ink", "text": "#ffffff" },
+        "border": { "radius": "999px", "width": "0" },
+        "typography": { "fontSize": "14px", "fontWeight": "700" },
+        ":hover": { "color": { "background": "var:preset|color|accent", "text": "#ffffff" } }
+      }
+    }
+  }
+}
